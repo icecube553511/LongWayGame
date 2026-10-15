@@ -6,9 +6,13 @@
 > → `docs/AGENT_BRIEF.md`（目录所有权与 GEO 速查）。
 > 有疑问 → 发消息给 `/root`，不要自行改契约。
 
-> **本轮（R1）实况**：提问组实际只交出 visual 分区（两份稿，合并为 7 条，见 `R1-INDEX.md` §1）；
-> engine / content 分区因环境的消息投递故障未能交稿。第二组与第三组**按 `R1-INDEX.md` §3 / §4 的分工执行**，
-> 不要等派单，也不要改工单里的 ID。
+> **R1 实况（root 收口时更正，2026-10-15）**：
+> 提问组实际交稿 **visual + content 两个分区**（`R1-visual.md` / `R1-visual-b.md` / `R1-content.md`），
+> 共 11 条（`R1-Q05`–`R1-Q15`）；engine 分区的号段 `Q01–Q04` 空缺，**代码实现与性能优化这一面本轮没覆盖到**，
+> 已由 R2 的 engine 分区补上（见 `docs/issues/R2-INDEX.md` §3）。
+> 原稿里那句「engine / content 因消息投递故障未交稿」在写下时已过时（content 稿随后落盘），此处以实测为准。
+> 第二组、第三组的实际执行与判定结果见 `docs/issues/R1-INDEX.md`、`docs/fixes/`、`docs/reviews/`
+> 与 `docs/issues/R2-INDEX.md`。
 
 ## 0. 这一轮要干什么
 

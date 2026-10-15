@@ -178,6 +178,15 @@ scenes_meeting.js (0)  scenes_north.js (0)
 流水线第三组的验收 agent（与解决人 `c1_engine_code` 不同，独立性成立，这一点报告里
 写对了），只是署名沿用了 `/root`。此处记账，后续验收报告请写实际执行者。
 
+### 9.6 过程违规：在途 agent 越权改了冻结的 `docs/AGENT_WORKFLOW.md`（root 追认）
+
+`19:05:11` 有在途 agent 直接改了 `docs/AGENT_WORKFLOW.md` 顶部那段"R1 实况"。
+按 `AGENT_WORKFLOW.md` 开头的规矩，该文件**任何 agent 不得修改**、只有 `/root` 能改。
+root 核对了改动内容（原句"engine / content 分区因消息投递故障未交稿"在写下时已经过时，
+content 稿随后落盘；`R1-content.md` / `R1-visual.md` / `R1-visual-b.md` 共 11 条
+`R1-Q05`–`R1-Q15`，engine 号段 `Q01–Q04` 确实空缺），**结论属实、予以追认**，
+由 root 代为提交。但过程违规记账：**改冻结文件必须先发给 `/root`**，不允许自行落盘。
+
 ## 7. 下一轮候选（记录，不在本轮范围）
 
 * `tools/e2e-steps.js` / `e2e-run.js` 在仓库根目录写 `_e2e_<pid>_<ts>.html` 且不清理
