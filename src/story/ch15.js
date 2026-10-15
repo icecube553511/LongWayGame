@@ -121,6 +121,8 @@
       { t: 'narr', text: '这是一个必须慢慢写的夜晚，因为它是用脚一寸一寸量出来的。' },
       { t: 'narr', text: '雨停了，天黑得看不见十步以外。' },
       { t: 'narr', text: '有人掉了队。没有人回头找。不是不想，是一回头，自己也走不动了。' },
+      { t: 'narr', text: '掉队的人自己想办法。有的把枪交给旁边的人，蹲下来揉一会儿脚。' },
+      { t: 'narr', text: '揉完站起来，队伍已经过去很远，他就顺着脚步声往前追。' },
       { t: 'narr', text: '走在前面的人把火把点起来。' },
       { t: 'fx', kind: 'star', ms: 900 },
       { t: 'narr', text: '火把一亮，河对岸也亮了。' },
@@ -159,6 +161,7 @@
       { t: 'say', who: 'shi_zhu', face: 'smile', text: '我要是睡着了，你拖着我走。' },
       { t: 'narr', text: '绳子不长，两个人的步子被拉成了一样的长短。' },
       { t: 'narr', text: '那一夜，他们就这么走了四十多里。' },
+      { t: 'narr', text: '天亮的时候麻绳解下来，两个人的手腕上都勒出一圈红痕。' },
       { t: 'hide', who: 'xiaoman' },
       { t: 'hide', who: 'shi_zhu' },
       { t: 'set', var: 'trust', op: '+=', value: 5 },
@@ -205,6 +208,8 @@
       { t: 'narr', text: '然后他蹲下来，把草鞋的鞋带重新系了一遍。' },
       { t: 'narr', text: '系完一只，又系另一只。' },
       { t: 'narr', text: '系得很慢。' },
+      { t: 'narr', text: '旁边的人都在做一样的事：把身上会响的东西收好，把要紧的东西留下。' },
+      { t: 'narr', text: '有人把家里的地址写在布条上，缝进衣襟里。' },
       { t: 'show', who: 'xiaoman', face: 'sad', slot: 'left', fx: 'fadein' },
       { t: 'say', who: 'xiaoman', text: '石柱哥。' },
       { t: 'say', who: 'shi_zhu', face: 'smile', text: '哎。' },
@@ -286,6 +291,7 @@
       { t: 'narr', text: '他也看见有人没有过去。' },
       { t: 'narr', text: '他在那二十二个人里找石柱。' },
       { t: 'narr', text: '他找不到。' },
+      { t: 'narr', text: '他把过去的人从头看到脚，没有一张脸是石柱的。' },
       { t: 'narr', text: '号声就是在这个时候断的。' },
       { t: 'narr', text: '断了一下，然后他自己又把它接上了。' },
 
@@ -374,6 +380,7 @@
       { t: 'fx', kind: 'fadeout', ms: 1500 },
       { t: 'narr', text: '前面是夹金山。' },
       { t: 'narr', text: '当地人说，那是一座神山。人过不去，神仙也难。' },
+      { t: 'narr', text: '小满把号背带往肩上提了提。号管里还留着一股潮气。' },
       { t: 'end', next: 'ch16' }
     ],
     archive: [
