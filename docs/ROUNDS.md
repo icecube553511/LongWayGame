@@ -348,10 +348,11 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 
 **未结残留（下一轮的入口，别当已完成）**
 
-1. **`cg_luding_race` 的铁索数对不上**：图注与史实是十三根，三次重出都只到 8–9 根
-   （证据：`tmp/cg/probe/root-luding-chains{,2,3}.png`）。可执行的解法不是"再抽一次"，而是**确定性地补**：
-   在 `tools/cg-post.py` 里按现有索的端点插值补画十三条等距细索，或改用一张构图里索更少、
-   图注不含数字的版本。**未做**，留裁决。
+1. **`cg_luding_race` 的铁索数仍然对不上**：图注与史实是十三根，我连出三次都只到 8–9 根
+   （证据：`tmp/cg/probe/root-luding-chains{,2,3}.png`）。**最终采用的是并行另一路那一版**
+   （它同时把 `must` 里漏掉的"东岸桥头剩几块桥板"补上了，见下），按原生裁剪重新点数仍在 10 根上下，
+   仍不是 13。可执行的解法不是"再抽一次"，而是**确定性地补**：在 `tools/cg-post.py` 里按现有索的端点
+   插值补画等距细索，或改用一张构图里索更少、图注不含数字的版本。**未做**，留裁决。
 2. **独立验收仍然缺**：要补就先把消息总线的问题绕开 —— 任务书落在文件里、由 agent 自己读
    （本轮的 `BRIEF-rev-batch.md` 就是这么写的，问题是 agent 连"去读它"这句话都没收到）。
 3. 体积贴顶的三张（`cg_stretcher` 1534 KB、`cg_loushanguan` 1532 KB 等）重出就会越线，
@@ -373,3 +374,31 @@ node tools/qa-consistency.js → 20 章 / 4452 句台词逐句核对、违规 0
 `/root` 的处置是**逐条读、能证实的采纳、证不实的删或改**（它"CG 轮多数条目其实是 `cg_gen_b` 写的"
 这条无法证实，已删；它把 hadapu 提为 P0，已按契约改回）。**两路都在写 `docs/ROUNDS.md` 这件事本身
 是过程缺陷**：fork 出 persona 的子 agent 不该拿到 root 独占文件的写权 —— 这是本轮留下的第三条教训。
+
+### 收口（2026-10-16 06:5x，`/root` 亲测）
+
+本轮的目标（二十章的重要事件处进入全屏 CG）**已经达成并可复核**：
+
+| 面 | 状态 | 复核命令 |
+|---|---|---|
+| 插画 | **30 张**（24 P0 + 6 P1）全部生成、全部接进剧本、全部被解锁路径覆盖 | `node tools/check.js` → `检查通过` |
+| 剧本 | 30 处 `{t:'cg', id:'cg_*'}`，每章 ≤3 条；`text` 与 `src/data/cg.js` 的 caption 同文 | `node tools/lint-story.js`（20 章 0 错 0 警） |
+| 引擎 | `#cg-layer` 独立图层 + 四种运镜 + 逐字图注；三级路径回退（位图 → 同名矢量 → 同场景矢量插画） | `node tools/e2e-steps.js …`（真浏览器截图） |
+| 全剧 | 20 章自动通关 0 报错；舞台一致性 0 违规 | `node tools/e2e-run.js`、`node tools/qa-consistency.js` |
+| 体积 | `docs/ART_DIRECTION.md` §4 自检：超档文件数 = 0 | 见该节的一行命令 |
+
+`/root` 本轮最后的三次亲自动手：① 用「九根承重索 + 四根扶手索」的历史排布重画 `cg_luding_race`
+（上一版可数到的铁索偏少，与「十三根铁索」的图注对不上）；② 把评审证据从 `tmp/`
+（被 `.gitignore` 排除、不入库）归档到 `docs/reviews/CG-ROUND-PASS.md` 与
+`docs/reviews/CG-ROUND-BATCH-A.md`，血统表归档到 `docs/CG-PROVENANCE.md`；
+③ 复跑闸门并把本节写成现在这样。
+
+**仍然欠着的三件（交回给你决策，不擅自做）**：
+
+1. **独立验收缺位**：本轮的评审要么是同一 agent 自评，要么因消息总线故障拿不到任务书。
+   30 张里有 7 张 PARTIAL、1 张（`cg_luding_race`）由 `/root` 手工复判为「达标但计数仍不精确」。
+   补法：换会话起新 agent、任务书写在文件里由它自己去读（本会话的投递路径已被证明不可靠）。
+2. **分支与推送**：本轮 8 个提交都在 **`develop/Movie`**（`origin/main` 未动）。
+   是否合回 `main`、是否推送，留给用户定；推送命令见下。
+3. **三张体积贴顶**：`cg_stretcher` 1534 KB、`cg_loushanguan` 1532 KB、`cg_maogong` 1528 KB
+   距 1.5 MB 上限只剩个位数 KB，重出即越线，只能靠 `cg-post.py` 的量化兜底。
