@@ -325,3 +325,51 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 * **README 口径校正**：`cg/ 30 张全屏插画` → 写明 24 P0 + 6 P1 与 PNG→SVG 两级回退；
   「插画画廊里列了 20 张可解锁的」→ 30 张，并写清与剧本 30 处 `cg` 步一一对应；
   探针那节写的 `cg` 停顿 3200ms → 契约的 4400ms（`docs/CG_DESIGN.md` §3）。
+
+### 返工与收口（2026-10-16 06:0x–07:0x，`/root` 亲自做）
+
+**先说结论：本轮的独立验收没做成，别当"已验收"。** 子 agent 的消息总线送不到 payload（见上一节），
+所以 30 张的判定只有**自评**这一份：`docs/reviews/CG-SELF-REVIEW.md`（归档自 `tmp/cg/review/root-pass.md`，
+连同 15 处原生分辨率裁剪的取证路径一起保留）。自评档位 **PASS 21 / PARTIAL 7 / FAIL 2**。
+下面是我按那张返工单**实际做的**（不是"打算做"）：
+
+| 条目 | 动作 | 复验方式 | 结果 |
+|---|---|---|---|
+| `cg_xiaoman_horn`（FAIL） | 重出：`--force --extra "medium-long shot, not a portrait: …holds the bugle raised away from his lips, the mouthpiece not touching his mouth, the instrument silent…"` | 原生裁剪查脸与号 | 两个硬伤都消掉：不再是大特写正脸，画面也不再"提前吹响"（与图注、紧后正文、`STORY_BIBLE` 的成长线一致）。1343 KB |
+| `cg_luding_race`（FAIL） | **连出三次**，每次都在 `--extra` 里点名 "exactly thirteen chains … countable" | 三次都按原生分辨率裁剪点数 | **没修到位**：三次都在 8–9 根，仍少于图注与史实的十三根 → 登记为未结残留（见下） |
+| `cg_wuqi`（PARTIAL，踩 `avoid`） | 重出：墙上标语压成不可辨的风渍 | 原生裁剪 | 大字标语消失，只剩淡红痕。1372 KB |
+| `cg_jinsha`（PARTIAL） | 重出：`seven small wooden boats … none clipped by the frame edges` | 原生裁剪数船 | 河面可数到 7 条（原来 4 条），与图注「七条木船」一致。1117 KB |
+| `cg_grassland`（PARTIAL） | 重出：把分面推到远景与低空 | 缩图 + 原生裁剪 | 远天/沼泽比原来"整块"，采纳。1164 KB |
+| `cg_hadapu_paper`（PARTIAL） | 重出：把报面压成大片淡灰块面 | 缩图 | 报纸的写实细纹消失，也不违背该条 `avoid` 的 legible print / readable headlines。1130 KB |
+| `cg_maogong`（PARTIAL） | 重出：把两个近景人物拉回画框内、草鞋离开金线 | 缩图 | 人物完整在框内、草鞋可见。1263 KB（原先 1528 KB 贴顶） |
+| `cg_guo_daniang_door`（PARTIAL） | **改图注不改图**：`各家各户拆下门板，架起五座浮桥。` → `各家各户拆下门板，往河边去。` | `src/data/cg.js` 的 `caption` 与 ch01 的 `cg` 步 `text` **同步改** | 图注不再声称画面里没有的东西。**"左边框贴边"一条经原生裁剪核查为不成立**（门板与人物都在金线内） |
+| `cg_yihai`、火色偏艳的三张（`cg_xiangjiang_night` / `cg_loushanguan` / `cg_luding_bridge`） | **不改** | 缩图复核 | `cg_yihai` 两个人是中景侧脸、不在"大特写"档；火色属契约允许的暗红一族（`#a33a2e`），为它重出火场只会更不稳。判为可接受，理由记在这 |
+| `cg_hadapu_paper` 的 `priority` | 并行推进的那次改动把它提成 `P0`，我**改回 `P1`** | 契约 `docs/CG_DESIGN.md` §1「30 条 = 24 P0 + 6 P1」 | 优先级记的是"剧情落点审查当初排的批次"；"这张图已启用"由剧本里有没有 `cg` 步表达（ch19 已有），新闸门对 P0/P1 一视同仁 —— 两件事不必挤在一个字段里 |
+
+**未结残留（下一轮的入口，别当已完成）**
+
+1. **`cg_luding_race` 的铁索数对不上**：图注与史实是十三根，三次重出都只到 8–9 根
+   （证据：`tmp/cg/probe/root-luding-chains{,2,3}.png`）。可执行的解法不是"再抽一次"，而是**确定性地补**：
+   在 `tools/cg-post.py` 里按现有索的端点插值补画十三条等距细索，或改用一张构图里索更少、
+   图注不含数字的版本。**未做**，留裁决。
+2. **独立验收仍然缺**：要补就先把消息总线的问题绕开 —— 任务书落在文件里、由 agent 自己读
+   （本轮的 `BRIEF-rev-batch.md` 就是这么写的，问题是 agent 连"去读它"这句话都没收到）。
+3. 体积贴顶的三张（`cg_stretcher` 1534 KB、`cg_loushanguan` 1532 KB 等）重出就会越线，
+   只能靠 `cg-post.py` 的量化兜底，`check.js` 会报警告。
+
+**最后的闸门（跑在返工后的资产上，不是返工前）**
+
+```
+node tools/check.js          → exit 0；插画 P0 24 / 24 已生成、P1 6 / 6 已被剧本引用；警告仅 narrator 豁免
+node tools/e2e-run.js        → 20/20 走完、23712 步、JS 报错 0（CG 列 21 张次，含 ch19 新接的 hadapu 插画）
+node tools/qa-consistency.js → 20 章 / 4452 句台词逐句核对、违规 0
+```
+
+**并发的另一路（如实记，不并成一个人的账）**
+
+同一份工作区里还有另一路 agent 在跑 —— 它 fork 了 `/root` 的上下文，于是把自己当成了协调者：
+写了 `tmp/cg/review/root-pass.md`（本文件里那份自评的来源）与 `tmp/cg/review/batch-a.md`、
+把 `cg_hadapu_paper` 接进 ch19 并改图注、往 `docs/ROUNDS.md` 插了两节、还提交了 `dd59145`/`5deec41`。
+`/root` 的处置是**逐条读、能证实的采纳、证不实的删或改**（它"CG 轮多数条目其实是 `cg_gen_b` 写的"
+这条无法证实，已删；它把 hadapu 提为 P0，已按契约改回）。**两路都在写 `docs/ROUNDS.md` 这件事本身
+是过程缺陷**：fork 出 persona 的子 agent 不该拿到 root 独占文件的写权 —— 这是本轮留下的第三条教训。

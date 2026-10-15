@@ -44,6 +44,10 @@
       { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 900 },
       { t: 'narr', text: '那一摞报纸摊在一张八仙桌上。' },
       { t: 'narr', text: '几个领导人围着桌子，一张一张地看。' },
+      /* 全屏插画：这张画的就是「一摞报纸摊在桌上、几个人围着看」这一刻，
+         所以图注按画面写，而不是按后面「折起来塞进口袋」那一句写。
+         —— 由 root 裁定（原图注与画面不是同一件事；判定与证据见 docs/reviews/CG-SELF-REVIEW.md） */
+      { t: 'cg', id: 'cg_hadapu_paper', text: '一摞报纸摊在桌上。认得出的那几行，最要紧。' },
       { t: 'show', who: 'mao', face: 'calm', slot: 'center', fx: 'fadein' },
       { t: 'show', who: 'zhou', face: 'worry', slot: 'left', fx: 'slidein' },
       { t: 'show', who: 'zhang_wentian', face: 'calm', slot: 'right', fx: 'slidein' },

@@ -75,7 +75,7 @@
       { t: 'narr', text: '这样架了四个晚上。对岸的飞机一次都没有发现。', note: '为隐蔽行动，浮桥每日傍晚架设、拂晓拆除，连续四夜运送全军渡河。' },
       { t: 'show', who: 'guo_daniang', face: 'stern', slot: 'left' },
       { t: 'narr', text: '郭大娘来了。她抱着一块门板，门板上有被灶烟熏黑的痕迹。' },
-      { t: 'cg', id: 'cg_guo_daniang_door', text: '各家各户拆下门板，架起五座浮桥。' },
+      { t: 'cg', id: 'cg_guo_daniang_door', text: '各家各户拆下门板，往河边去。' },
       { t: 'say', who: 'guo_daniang', text: '抬上去。' },
       { t: 'say', who: 'xiaoman', text: '大娘，这是您家的门？' },
       { t: 'say', who: 'guo_daniang', text: '我家的门。' },

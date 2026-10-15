@@ -190,7 +190,7 @@
       must: ['small boy soldier raising a battered brass bugle','uniform plainly too large for the boy','long waiting column of tiny soldiers behind him','dark river with pontoon bridges in the distance','older weathered soldier standing at his side'],
       avoid: ['bright daylight','modern instruments','large figures crowding the foreground'] },
     { id: 'cg_guo_daniang_door', ch: 'ch01', title: '门板桥',      anchor: '', motion: 'still',    priority: 'P1',
-      caption: '各家各户拆下门板，架起五座浮桥。',
+      caption: '各家各户拆下门板，往河边去。',
       prompt_en: 'A village lane at the edge of a southern Chinese river town at dusk in October 1934. An elderly woman in a blue cloth jacket and a dark apron carries a heavy wooden door panel on her shoulder toward the water, and the panel is blackened with years of cooking smoke. Other villagers carry boards and bed frames along the same road toward the river, where wooden pontoons are being lashed together. Low whitewashed walls and a large camphor tree frame the lane, and the river lies flat and grey beyond.',
       prompt_cn: '一九三四年十月，于都城外的一条村巷，黄昏。一位穿蓝布大襟衫、系深色围裙的老妇人肩扛一块沉重的门板朝水边去，门板被多年灶烟熏得发黑。同一条路上，其他乡亲扛着木板和床板往河边走，河上正在绑扎浮桥。近处是矮白墙和一棵大樟树，再远是平而且灰的河面。',
       must: ['elderly village woman carrying a wooden door panel on her shoulder','door panel blackened with cooking smoke','villagers carrying boards and bed frames toward the river','low whitewashed walls and a large camphor tree','wooden pontoons being lashed together at the river'],
@@ -215,8 +215,15 @@
       prompt_cn: '一九三五年八月，川西北没有树的草地的雨夜。雨不停地下进积水里，一小圈一小圈的人背靠背坐在地上，低着头，肩膀挤在一起，衣服全湿透了；周围没有一棵树，没有任何遮拦。其中一圈的中间有一小堆火，用支起的衣服挡着雨，摊出一小片暗橙的光和一线烟，火边放着一口锅。其余全是近黑的水、泥和雨雾。',
       must: ['circles of tiny soldiers sitting back to back in steady rain','small low fire propped under a coat with a cooking pot beside it','waterlogged treeless grassland at night with no shelter','single dull orange pool of light in a dark wet plain'],
       avoid: ['large bonfire','dry ground','clear starry sky'] },
+    /* 落点与图注由 root 裁定：接在 ch19「那一摞报纸摊在一张八仙桌上」之后。
+       原图注「一张旧报纸，折得很小，塞进口袋。」是本章后面另一句（把报纸折起来收好），
+       而画面画的是一群人围着桌子看报 —— 图注与画面不是同一件事，故按画面改写。 */
+    /* priority 仍是契约里的 P1（docs/CG_DESIGN.md §1：30 条 = 24 P0 + 6 P1）。
+       并行推进的那次改动一度把它提成 P0；`/root` 改回 P1 —— 优先级记的是"剧情落点审查
+       当初排的批次"，而"这张图已经启用"由剧本里有没有 cg 步表达（ch19 已有），
+       check.js 的引用判定现在对 P0/P1 一视同仁，所以两件事不必混在一个字段里。 */
     { id: 'cg_hadapu_paper',    ch: 'ch19', title: '哈达铺的报纸', anchor: 'bg_hadapu',          motion: 'zoom-in',  priority: 'P1',
-      caption: '一张旧报纸，折得很小，塞进口袋。',
+      caption: '一摞报纸摊在桌上。认得出的那几行，最要紧。',
       prompt_en: 'A small town shop room in Gansu, China, in September 1935, in the afternoon. A stack of old newspapers is spread across a square wooden table, some pages torn at the corners and one stained and warped by water, and a few men lean over the table reading them. One figure holds a single page up against the light from a papered window and studies its corner, where the print is a dense grey texture of tiny illegible columns. The room is plain, with a wooden counter and a faded blank metal sign board fixed outside the window, and everything else is quiet.',
       prompt_cn: '一九三五年九月的一个下午，甘肃哈达铺镇上的一间铺面。一摞旧报纸摊在方木桌上，有的边角被老鼠咬过，有的被雨水泡得发皱；几个人俯在桌上看。一个人把一张报纸举到纸窗透进来的光里，仔细看边角上的铅字。屋子很素，有一张木柜台，窗外墙上钉着一块褪色的铁皮牌子，其余都很安静。',
       must: ['stack of old newspapers spread across a square wooden table','newspaper pages torn at the corners and warped by water','figure holding one page up against the light of a papered window','few men leaning over the table reading','plain room with a wooden counter'],
