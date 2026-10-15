@@ -240,6 +240,59 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 * `tmp/cg/PROVENANCE.md`：逐张标出这批图的三代血统（提示词改版 / 模型换代前后）；
 * 重出 `cg_yudu_night`（原图是 `/root` 的管线试片，画了「火把成排点亮」与图注矛盾）。
 
+### 评审阶段：投递第三次失败，`/root` 自评顶上（2026-10-16 01:1x–02:0x）
+
+**事故（如实记）**：按 §评审组的两次返工 改成的分批方案起了三个 agent（`cg_rev_batch_a/b/c`），
+但**任务书三次都没送到**：
+
+1. 并发的两次 `followup_task` 发生**目标串号**（报 `live agent path /root/cg_rev_batch_b/cg_rev_batch_a not found`）；
+2. 顺序重发返回成功，`cg_rev_batch_a` 也被 `interrupt_agent` 成功唤醒（completed → running → completed），
+   **但它回的仍是「no task has been sent yet」** —— 能触发 turn，消息体到不了；
+3. 一条**两行**的短消息投给 `cg_rev_batch_b`，零反应；b / c **从未执行过 turn**。
+
+这与 `cg_rev_story`「两次没收到任务文本」是同一个故障，不是我的措辞或长度问题（短消息同样丢）。
+**结论：本会话的子 agent 消息总线不可用。**
+
+**处置**：`/root` 自己把 30 张判完 → `tmp/cg/review/root-pass.md`，
+文件头明确标注**「自评 · 不是独立评审」**（`R1-SELF-CHECK.md` 立的规矩：自校不算验收）。
+判定结果：**PASS 21 / PARTIAL 7 / FAIL 2**；两张 FAIL 是
+`cg_xiaoman_horn`（大特写正脸，且画面「吹响了号」与 `STORY_BIBLE`「于都出发时连号都吹不响」矛盾）
+与 `cg_luding_race`（图注与史实是十三根铁索，画面只数得到约 9 根）。
+**这两张的返工与整轮的独立验收都还没做**，别把自评当收口。
+
+**两条方法论产出**（都已写回任务书，下一轮直接生效）：
+
+* **缩图不能判「块面」。** `/root` 第一遍拿 640 宽缩图扫全套，误判 5 张为「写实/连续渐变」；
+  逐张按原生分辨率裁剪后全部推翻。可执行解法是**裁剪 600–900 px 局部**
+  （既保真又不撑请求体），已写进 `tmp/cg/BRIEF-rev-batch.md` §3.1。
+* **「代差」不成立。** `tmp/cg/PROVENANCE.md` 自述「新风格头明显更块面化」**未被图像支持**：
+  旧世代里有块面最强的（`cg_huining` 718 KB、`cg_maogong`），新世代里也有偏柔的
+  （`cg_grassland`、`cg_camp_fire`、`cg_hadapu_paper` 的报纸面）。**故不按世代整批重出**，
+  只做个体返工 —— 这一条替本轮省掉 20 张以上的额度。
+  同时更正了 PROVENANCE 的两处：`cg_luding_race` / `cg_huining` 的**成品** mtime 是 23:22
+  重新烘焙的（世代仍看原始图 mtime）；`cg_yudu_night` 的重出时刻实测是 **00:38**，不是记的 00:52。
+
+**期间实测到的既成事实（不是我做的）**：六张 P1 **全部已出图并已接进剧本**
+（`cg_xiaoman_horn`/`cg_guo_daniang_door` → ch01，`cg_stretcher` → ch05，`cg_tucheng` → ch08，
+`cg_camp_fire` → ch17，`cg_hadapu_paper` → ch19），`node tools/check.js` 绿：
+`P0 24/24 已生成` + `P1 6/6 已被剧本引用`，每章 ≤3 条未破（ch01 / ch17 各 3 条，顶格）。
+四张新出的 P1（`cg_xiaoman_horn` 1231 KB、`cg_guo_daniang_door` 1425 KB、
+`cg_stretcher` 1534 KB、`cg_tucheng` 1400 KB）体积都在上限内，但 `cg_stretcher`
+离 1.5 MB（1536 KB）只剩 2 KB —— 重出原始图就会越线，`check.js` 会报警告。
+
+**提交实况（我核对过的，不是我一个人的账）**：
+
+* 30 张位图、`src/story/ch01|ch05|ch08|ch17.js` 的 5 处 P1 接入、`tools/cg-sheet.py` 的
+  `--thumbs/--cell-w/JPEG`、`tools/check.js` 的 P1 引用判定、README，**已在 `1b2b848`
+  （01:38:55）一并入库** —— 那不是我提交的，是在同一份工作区里并行推进的另一次提交；
+  `/root` 复核了它的内容（`git show --stat`：38 files，含 30 张 PNG）确认与我的实测一致。
+* `/root` 本次只补提了**本文件**（`dd59145`）—— 我原本准备的三条提交里，有两条因为
+  `1b2b848` 已经把内容收走而空转，`git commit` 直接报 `no changes added`，如实记在这里。
+* **仍在工作区、我这一轮刻意没碰**：`src/data/cg.js` 与 `src/story/ch19.js` 的在途改动
+  （把 `cg_hadapu_paper` 由 P1 提为 P0、图注按画面改写、落点接进 ch19）。
+  提为 P0 后闸门读数变为 `P0 25/25 已生成` + `P1 5/5 已被剧本引用`，仍然全绿。
+* 别人 01:05 跑 `e2e-run` 留下的 `_e2erun_45752_mv9siiuu.html` 仍在仓库根（在 `.gitignore` 内，我没清）。
+
 ### P1 收口（2026-10-16 01:0x–01:5x，`/root` 亲自做）
 
 本轮清单是 24 P0 + 6 P1。交接时 P0 还差 18 张、P1 一张没出。收口实况：
