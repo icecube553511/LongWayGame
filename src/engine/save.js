@@ -74,4 +74,30 @@
       Object.keys(mem).forEach(function (k) { if (k.indexOf(PREFIX) === 0) delete mem[k]; });
     }
   };
+
+  /* SPEC §6 承诺的是 VN.save(slot) / VN.load(slot) / VN.slots()，
+     而历史上 VN.save 被做成了一个普通对象（writeSlot / readSlot / listSlots …），
+     VN.load 与 VN.slots 根本不存在 —— 契约与实现不一致（R2-E04）。
+
+     这里把 VN.save 改成「可调用的对象」：直接调用即把当前进度存进该槽，
+     同时把上面那个对象上的全部方法与常量原样搬过来，
+     所以 VN.save.writeSlot(...) 等既有调用点一个都不用改。 */
+  var saveApi = VN.save;
+  var saveFn = function (slot) {
+    var n = slot | 0;
+    if (n <= 0 || typeof VN.snapshot !== 'function') return false;
+    return !!saveApi.writeSlot(n, VN.snapshot());
+  };
+  Object.keys(saveApi).forEach(function (k) { saveFn[k] = saveApi[k]; });
+  VN.save = saveFn;
+
+  /* VN.load(slot)：读回该槽；有数据就交给引擎的 VN.doLoad(obj) 真正载入。 */
+  VN.load = function (slot) {
+    var data = VN.save.readSlot(slot | 0);
+    if (!data || typeof VN.doLoad !== 'function') return false;
+    return !!VN.doLoad(data);
+  };
+
+  /* VN.slots()：列出全部槽位（含空槽，data 为 null）。 */
+  VN.slots = function () { return VN.save.listSlots(); };
 })();
