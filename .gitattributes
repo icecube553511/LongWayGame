@@ -1,0 +1,8 @@
+# 统一换行：仓库内一律 LF，检出也保持 LF。
+# 这个仓库里有多个 agent 并行改文件，行尾抖动会污染 diff，必须钉死。
+* text=auto eol=lf
+
+# 二进制资源不做行尾/文本转换
+*.png binary
+*.jpg binary
+*.ico binary

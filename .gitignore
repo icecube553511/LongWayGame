@@ -1,0 +1,15 @@
+# 开发期临时产物（截图 / 无头 Edge profile / 探针输出 / AI 生图原图）
+# 都可以由 tools/*.js 重新生成，不进版本库。
+tmp/
+
+# 仓库根目录下的一次性拼版图与探针页
+tmp-*.png
+_e2e-probe-*.html
+
+# 系统 / 编辑器垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.vscode/
+.idea/

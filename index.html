@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="《长征·万水千山》——立体几何风格视觉小说。二十章，从于都河畔到会宁会师。">
+<title>长征 · 万水千山</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <!-- 舞台 -->
+  <div id="stage">
+    <div id="bg-layer">
+      <img id="bg-a" class="bg-img" alt="">
+      <img id="bg-b" class="bg-img" alt="">
+      <div id="bg-fallback"></div>
+    </div>
+
+    <div id="char-layer">
+      <div class="slot" data-slot="left"><img alt=""></div>
+      <div class="slot" data-slot="center"><img alt=""></div>
+      <div class="slot" data-slot="right"><img alt=""></div>
+    </div>
+
+    <canvas id="fx-canvas"></canvas>
+    <div id="fx-flash"></div>
+    <div id="fx-fade"></div>
+    <div id="vignette"></div>
+
+    <div id="hud">
+      <div id="chapter-tag"><span id="chapter-tag-text"></span></div>
+      <div id="meters">
+        <div class="meter" data-k="morale">
+          <span class="meter-label">士气</span>
+          <span class="meter-track"><i></i></span>
+          <span class="meter-val">60</span>
+        </div>
+        <div class="meter" data-k="trust">
+          <span class="meter-label">信任</span>
+          <span class="meter-track"><i></i></span>
+          <span class="meter-val">50</span>
+        </div>
+        <div class="meter" data-k="hope">
+          <span class="meter-label">信念</span>
+          <span class="meter-track"><i></i></span>
+          <span class="meter-val">55</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="titlecard" class="hidden">
+      <div class="tc-rule"></div>
+      <div class="tc-text"></div>
+      <div class="tc-sub"></div>
+      <div class="tc-rule"></div>
+    </div>
+
+    <div id="note-layer" class="hidden"><span class="note-mark">史料</span><span id="note-text"></span></div>
+
+    <div id="dialogue" class="hidden">
+      <div id="name-plate" class="hidden"><span id="name-text"></span></div>
+      <div id="text-box">
+        <div id="text-body"><span id="text-main"></span><span id="text-caret">▌</span></div>
+        <div id="next-arrow">▼</div>
+      </div>
+    </div>
+
+    <div id="choice-layer" class="hidden">
+      <div id="choice-prompt"></div>
+      <div id="choice-list"></div>
+    </div>
+
+    <div id="quickbar">
+      <button class="qbtn" data-act="auto" title="自动播放 (A)">自动</button>
+      <button class="qbtn" data-act="skip" title="快进 (S / 按住 Ctrl)">快进</button>
+      <button class="qbtn" data-act="history" title="回想 (L)">记录</button>
+      <button class="qbtn" data-act="save" title="存档 (Esc → 存档)">存档</button>
+      <button class="qbtn" data-act="settings" title="设置">设置</button>
+      <button class="qbtn" data-act="hide" title="隐藏界面 (H)">隐藏</button>
+    </div>
+
+    <div id="toast-layer"></div>
+    <div id="cg-caption" class="hidden"></div>
+    <div id="loading">
+      <div class="ld-ring"></div>
+      <div class="ld-text">正在装订行军地图……</div>
+    </div>
+  </div>
+
+  <!-- 覆盖层：标题/菜单/图鉴等由 src/engine/ui.js 注入 -->
+  <div id="overlay" class="hidden"></div>
+</div>
+
+<!-- art/palette.js 与 art/geosvg.js 只在**构建期**被 tools/build-art.js 用来把
+     几何定义烘焙成 assets/generated/**.svg，游戏运行期一行都不用（引擎只读
+     window.ART.charactersById 这份数据表）。所以这里不加载它们：
+     少解析约 4 万行绘图代码，也兑现 README 里"运行时不加载绘制逻辑"的说法。
+     —— 由 root 移除（移除后已跑过 20 章全自动通关验证：0 报错） -->
+<script src="src/data/characters.js"></script>
+<script src="src/data/backgrounds.js"></script>
+<script src="src/story/manifest.js"></script>
+<script src="src/story/ch01.js"></script>
+<script src="src/story/ch02.js"></script>
+<script src="src/story/ch03.js"></script>
+<script src="src/story/ch04.js"></script>
+<script src="src/story/ch05.js"></script>
+<script src="src/story/ch06.js"></script>
+<script src="src/story/ch07.js"></script>
+<script src="src/story/ch08.js"></script>
+<script src="src/story/ch09.js"></script>
+<script src="src/story/ch10.js"></script>
+<script src="src/story/ch11.js"></script>
+<script src="src/story/ch12.js"></script>
+<script src="src/story/ch13.js"></script>
+<script src="src/story/ch14.js"></script>
+<script src="src/story/ch15.js"></script>
+<script src="src/story/ch16.js"></script>
+<script src="src/story/ch17.js"></script>
+<script src="src/story/ch18.js"></script>
+<script src="src/story/ch19.js"></script>
+<script src="src/story/ch20.js"></script>
+<script src="src/engine/save.js"></script>
+<script src="src/engine/audio.js"></script>
+<script src="src/engine/engine.js"></script>
+<script src="src/engine/ui.js"></script>
+<script src="src/engine/gallery.js"></script>
+</body>
+</html>

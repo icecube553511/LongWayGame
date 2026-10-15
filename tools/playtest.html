@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>《长征·万水千山》自动试玩 / 冒烟测试</title>
+<base href="../">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!--
+  用途：在真实浏览器里自动试玩并输出诊断，验证「引擎能读剧本、渲染、选项、解锁、跨章、缺章跳过、结局结算」。
+  用法（直接双击，或用无头浏览器截图读取屏幕上方的绿色 DIAG 文本）：
+    tools/playtest.html?ch=ch01&steps=all      # 从第一章自动玩到结局
+    tools/playtest.html?ch=ch16&steps=60       # 只跑 60 步做画面检查
+  本文件不参与游戏运行（index.html 不引用它），只是开发 / 验收工具。
+-->
+<div id="app">
+  <div id="stage">
+    <div id="bg-layer"><img id="bg-a" class="bg-img" alt=""><img id="bg-b" class="bg-img" alt=""><div id="bg-fallback"></div></div>
+    <div id="char-layer">
+      <div class="slot" data-slot="left"><img alt=""></div>
+      <div class="slot" data-slot="center"><img alt=""></div>
+      <div class="slot" data-slot="right"><img alt=""></div>
+    </div>
+    <canvas id="fx-canvas"></canvas>
+    <div id="fx-flash"></div><div id="fx-fade"></div><div id="vignette"></div>
+    <div id="hud">
+      <div id="chapter-tag"><span id="chapter-tag-text"></span></div>
+      <div id="meters">
+        <div class="meter" data-k="morale"><span class="meter-label">士气</span><span class="meter-track"><i></i></span><span class="meter-val">60</span></div>
+        <div class="meter" data-k="trust"><span class="meter-label">信任</span><span class="meter-track"><i></i></span><span class="meter-val">50</span></div>
+        <div class="meter" data-k="hope"><span class="meter-label">信念</span><span class="meter-track"><i></i></span><span class="meter-val">55</span></div>
+      </div>
+    </div>
+    <div id="titlecard" class="hidden"><div class="tc-rule"></div><div class="tc-text"></div><div class="tc-sub"></div><div class="tc-rule"></div></div>
+    <div id="note-layer" class="hidden"><span class="note-mark">史料</span><span id="note-text"></span></div>
+    <div id="dialogue" class="hidden">
+      <div id="name-plate" class="hidden"><span id="name-text"></span></div>
+      <div id="text-box"><div id="text-body"><span id="text-main"></span><span id="text-caret">▌</span></div><div id="next-arrow">▼</div></div>
+    </div>
+    <div id="choice-layer" class="hidden"><div id="choice-prompt"></div><div id="choice-list"></div></div>
+    <div id="quickbar">
+      <button class="qbtn" data-act="auto">自动</button><button class="qbtn" data-act="skip">快进</button>
+      <button class="qbtn" data-act="history">记录</button><button class="qbtn" data-act="save">存档</button>
+      <button class="qbtn" data-act="settings">设置</button><button class="qbtn" data-act="hide">隐藏</button>
+    </div>
+    <div id="toast-layer"></div>
+    <div id="cg-caption" class="hidden"></div>
+    <div id="loading" class="hidden"><div class="ld-ring"></div><div class="ld-text">loading</div></div>
+  </div>
+  <div id="overlay" class="hidden"></div>
+</div>
+<div id="diag" style="position:fixed;left:0;top:0;right:0;z-index:9999;background:#000;color:#0f0;font:bold 21px monospace;padding:8px;white-space:pre-wrap"></div>
+<script>
+window.__errs = [];
+window.onerror = function (m, s, l) { window.__errs.push(m + ' @' + (s || '').split('/').pop() + ':' + l); return false; };
+window.addEventListener('unhandledrejection', function (e) { window.__errs.push('promise: ' + (e.reason && e.reason.message)); });
+</script>
+<script src="art/palette.js"></script>
+<script src="art/geosvg.js"></script>
+<script src="src/data/characters.js"></script>
+<script src="src/data/backgrounds.js"></script>
+<script src="src/engine/save.js"></script>
+<script src="src/engine/audio.js"></script>
+<script src="src/engine/engine.js"></script>
+<script src="src/engine/ui.js"></script>
+<script src="src/engine/gallery.js"></script>
+<script src="src/story/manifest.js"></script>
+<script src="src/story/ch01.js"></script>
+<script src="src/story/ch02.js"></script>
+<script src="src/story/ch03.js"></script>
+<script src="src/story/ch04.js"></script>
+<script src="src/story/ch05.js"></script>
+<script src="src/story/ch06.js"></script>
+<script src="src/story/ch07.js"></script>
+<script src="src/story/ch08.js"></script>
+<script src="src/story/ch09.js"></script>
+<script src="src/story/ch10.js"></script>
+<script src="src/story/ch11.js"></script>
+<script src="src/story/ch12.js"></script>
+<script src="src/story/ch13.js"></script>
+<script src="src/story/ch14.js"></script>
+<script src="src/story/ch15.js"></script>
+<script src="src/story/ch16.js"></script>
+<script src="src/story/ch17.js"></script>
+<script src="src/story/ch18.js"></script>
+<script src="src/story/ch19.js"></script>
+<script src="src/story/ch20.js"></script>
+<script>
+(function () {
+  var params = {};
+  location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+    var p = kv.split('=');
+    if (p[0]) params[p[0]] = decodeURIComponent(p[1] || '');
+  });
+  var ch = params.ch || 'ch01';
+  var steps = params.steps || '60';
+  var visited = [];
+  var picked = 0, advanced = 0, guard = 0;
+
+  function diag(tag) {
+    var box = document.getElementById('diag');
+    var st = window.VN.state || {};
+    var txt = (document.getElementById('text-main') || {}).textContent || '';
+    var name = (document.getElementById('name-text') || {}).textContent || '';
+    box.textContent = '[DIAG ' + tag + '] errors=' + (window.__errs.length ? window.__errs.join(' | ') : 'none')
+      + '\n| chapter=' + st.chapter + '  visited=' + visited.join('>')
+      + '\n| advanced=' + advanced + '  choicePicked=' + picked
+      + '  meters=' + st.morale + '/' + st.trust + '/' + st.hope
+      + '\n| speaker=' + name + '  text=' + txt.slice(0, 34)
+      + '\n| unlocked chars=' + Object.keys(VN.G.unlocked.chars).length
+      + ' bgs=' + Object.keys(VN.G.unlocked.bgs).length
+      + ' cgs=' + Object.keys(VN.G.unlocked.cgs).length
+      + ' arch=' + Object.keys(VN.G.unlocked.archives).length
+      + '\n| progress=' + Object.keys(VN.G.progress).join(',');
+  }
+
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      VN.settings.textSpeed = 'instant';
+      try { VN.start(ch, { fresh: true }); } catch (e) { window.__errs.push('start: ' + e.message); }
+      visited.push(VN.state.chapter);
+      var last = VN.state.chapter;
+      var max = (steps === 'all') ? 12000 : parseInt(steps, 10);
+      var iv = setInterval(function () {
+        guard++;
+        if (guard > max) { clearInterval(iv); diag('t-max'); return; }
+        if (VN.state.chapter !== last) { visited.push(VN.state.chapter); last = VN.state.chapter; }
+        if (!VN.state.running) {
+          var cont = document.querySelector('#overlay .menu-item');
+          if (cont && cont.textContent && cont.textContent.indexOf('继续') >= 0) { cont.click(); return; }
+          if (guard > 8) { clearInterval(iv); diag('t-stop'); return; }
+          return;
+        }
+        if (VN.state.choice) {
+          var btn = document.querySelector('#choice-list .choice-btn');
+          if (btn) { btn.click(); picked++; } else { clearInterval(iv); diag('t-nochoice'); }
+          return;
+        }
+        try { VN.advance(); advanced++; } catch (e) {
+          window.__errs.push('advance: ' + e.message); clearInterval(iv); diag('t-err');
+        }
+      }, 1);
+    }, 900);
+  });
+})();
+</script>
+</body>
+</html>
