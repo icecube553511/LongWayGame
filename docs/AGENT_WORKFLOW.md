@@ -1,9 +1,14 @@
 # 三组 Agent 流水线作业书（Round 1）
 
 > 由 `/root` 维护，任何 agent **不得修改本文件**。
-> 开工前必读：本文件 → `docs/SPEC.md`（硬性契约）→ `docs/ENGINE_CONTRACT.md`（引擎实际现状）
+> 开工前必读：**`docs/issues/R1-INDEX.md`（本轮唯一工单，ID 与分工以它为准）** → 本文件
+> → `docs/SPEC.md`（硬性契约）→ `docs/ENGINE_CONTRACT.md`（引擎实际现状）
 > → `docs/AGENT_BRIEF.md`（目录所有权与 GEO 速查）。
 > 有疑问 → 发消息给 `/root`，不要自行改契约。
+
+> **本轮（R1）实况**：提问组实际只交出 visual 分区（两份稿，合并为 7 条，见 `R1-INDEX.md` §1）；
+> engine / content 分区因环境的消息投递故障未能交稿。第二组与第三组**按 `R1-INDEX.md` §3 / §4 的分工执行**，
+> 不要等派单，也不要改工单里的 ID。
 
 ## 0. 这一轮要干什么
 
