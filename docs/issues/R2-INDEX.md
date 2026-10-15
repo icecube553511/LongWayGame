@@ -5,7 +5,7 @@
 > → `docs/ENGINE_CONTRACT.md` → 相关分区的 `docs/issues/R2-*.md`（原始证据）。
 > **ID 以本表为准**；分区文档的编号与本表冲突时以本表为准。
 
-## 0. 本轮基线（截至 R1 收口）
+## 0. 本轮基线（组长实测 · 2026-10-15）
 
 * `node tools/check.js` **通过（exit 0）**：20 章 / 6569 步 / 59476 汉字 / 选项 60 / 档案 81 /
   背景 30-30 / 立绘 280-280。
@@ -25,6 +25,11 @@
   `hanzi()` 只累计 `t ∈ say/narr/think/note` 的 **`text`**，不累计 `note:` 字段。
   R1-Q05 把 27 个沉默的 note 步改成对白属性后，这 6 章第一次显出真实欠账 ——
   改前 61043 里有 1567 字是玩家根本看不到的沉默小注。**这 6 章是内容缺口，必须补足。**
+
+* **R1 尾部已经实际动工**：R1 结案（`60318cb`）之后，`R1-Q13` / `R1-Q14` 又各自有提交
+  （`2558ae1` / `1199dc9` / `e507990`），并补了独立复核（`0ebff01`）与组长自校（`51c39fd`）。
+  因此 **`docs/reviews/` 现在不是空的**，§6 已改写为实际状态。本轮开工前的在途改动
+  （`art/scenes_river.js` 去重收尾）由组长代为落库，不再挂在工作区。
 
 ## 1. 远端与提交协议
 
@@ -58,10 +63,29 @@
 
 | ID | 严重度 | 分区 | 标题 | 状态 |
 |---|---|---|---|---|
-| R2-Q?? | — | engine | *待第一组 engine 分区交稿* | 提问组在办 |
-| R2-C01 | P1 | content | ch05/ch06/ch08/ch13/ch15/ch19 六章正文不足 3000 汉字（R1-Q05 暴露的既有欠账） | 待派单 |
-| R2-V01 | **P0** | visual | R1-Q13 转结：9 张背景有未绘制地形的大块空洞，腊子口中央约 9.5% 透舞台底色、碉堡悬空 | 待派单（原稿见 `docs/issues/R1-visual-b.md`） |
-| R2-V02 | P1 | visual | R1-Q14 转结：17 个背景 id 有两份实现，`scenes.js` 静默覆盖地区分册（约 1.9 MB 死代码） | 待派单（原稿见 `docs/issues/R1-visual-b.md`） |
+| R2-E?? | — | engine | *待第一组 engine 分区交稿*（号段 `R2-E01` 起） | 提问组在办 |
+| R2-C01 | P1 | content | ch05/ch06/ch08/ch13/ch15/ch19 六章正文不足 3000 汉字（R1-Q05 暴露的既有欠账） | 待解决组认领 |
+| R2-V01 | **P0** | visual | R1-Q13 转结：9 张背景有未绘制地形的大块空洞，腊子口中央约 9.5% 透舞台底色、碉堡悬空（原稿 `docs/issues/R1-visual-b.md`） | **已改（`2558ae1`/`1199dc9`），待第三组独立验收** |
+| R2-V02 | P1 | visual | R1-Q14 转结：背景 id 有两份实现，`scenes.js` 静默覆盖地区分册（约 1.9 MB 死代码）（原稿 `docs/issues/R1-visual-b.md`） | **重复实现已归零（`e507990` + 组长收尾），残留 4 个空壳分册待清，待独立验收** |
+
+### 3.1 组长已复核的 V02 现状（给解决组/验收组的起点）
+
+组长实测（`2026-10-15`，只读脚本枚举 `art/scenes*.js` 里的 `ART.scenes['id']`）：
+
+```text
+scenes.js  (17)  bg_council_hall … bg_yanan_cave
+scenes_jiang.js  (9)   bg_yudu_night … bg_stretcher
+scenes_river.js  (4)   bg_loushanguan bg_jinsha bg_yihai bg_dadu
+scenes_meeting.js (0)  scenes_north.js (0)
+--- 重复 id 数: 0 / 总 id 数: 30
+```
+
+且 `node tools/build-art.js --scenes` 重跑后 `git status --short` **只有 `art/scenes_river.js` 一行**
+（30 张背景 + 30 张 CG 逐字节不变）—— 证明删掉的那份确实是"被覆盖的真相"，玩家可见产物零变化。
+
+**残留**：`art/scenes_meeting.js`、`art/scenes_north.js` 以及另两个分册已成空壳
+（只剩悬空的分节注释、无人调用的内部函数、过期的头注张数），`tools/build-art.js:37` 按
+`^scenes.*\.js$` 通配加载它们。这属于 V02 的收尾，交给解决组。
 
 ## 4. 并行分区（同一阶段内互不越界）
 
@@ -79,15 +103,35 @@
 `art/geosvg.js`、`art/palette.js`、`src/data/characters.js`、`src/data/backgrounds.js`、
 `src/story/manifest.js`、`tools/build-art.js`、`tools/qa-shot.js`。
 
-## 6. 上一轮（R1）收口情况
+## 6. 上一轮（R1）收口情况（按实际 git 历史更正）
 
 * **已修复并推送**：Q05 / Q06 / Q07 / Q08 / Q09 / Q10 / Q11 / Q12 / Q15 共 9 条，
-  提交区间 `2ecdd2d..f92ca39`，已 `git push origin main`（`90bf4d3..f92ca39`）。
-* **本轮零改动、转结到 R2**：`R1-Q13`（P0，美术）、`R1-Q14`（P1，美术）→ 见§3 的 `R2-V01`/`R2-V02`。
-* **未验收**：R1 的 9 条修复**从未经第三组独立验收**（`docs/reviews/` 为空）。
-  本轮的验收组要**先补验这 9 条**，再验 R2 的新条目。
+  提交区间 `2ecdd2d..f92ca39`。
+* **R1 结案后继续推进的两条**：`R1-Q13`（→`R2-V01`）由 `2558ae1` + `1199dc9` 修复；
+  `R1-Q14`（→`R2-V02`）由 `e507990` 修复；`art/scenes_river.js` 的最后一处重复由组长在
+  本轮开工时代为落库。
+* **验收覆盖（更正）**：`0ebff01` 是第三组对 Q09 / Q10 / Q11 / Q12 / Q15 的**独立复核**
+  （5 条）；`51c39fd` 是**组长自校**（Q05 / Q06 / Q07 / Q08 / Q13 / Q14，6 条），
+  并在 `docs/reviews/R1-SELF-CHECK.md` 里显式声明了"这不是独立验收"的缺口。
+  → **本轮验收组要先对这 6 条做一次真正的独立复核**，再验 R2 新条目。
 * **过程违规（已记账）**：g2_content 完成 Q05/Q08 的代码改动但没留修复记录，
   记录由组长按实际 diff 与实测输出补写（见对应文件末尾的「记录状态」小节）。
+
+## 8. 本轮（R2）执行计划与认领（组长维护）
+
+三段接力，每段收尾由组长提交并推送；**只有组长跑 git**。
+
+| 阶段 | 承担 | 产物 | 号段/边界 |
+|---|---|---|---|
+| 第一段 · 提问 | 3 个 finder（engine / content / visual 各一） | `docs/issues/R2-engine.md`、`R2-content.md`、`R2-visual.md` | engine 用 `R2-E01…`；content `R2-C02…`；visual `R2-V03…`（`V01`/`V02` 已被占用） |
+| 第二段 · 解决 | 按分区派 3 个 fixer | 源码/美术/剧本改动 + `docs/fixes/R2-<ID>.md` | 沿用 §4 分区，`tools/` 一次一人 |
+| 第三段 · 验收 | 3 个 reviewer | `docs/reviews/R2-<ID>.md` | 先独立复核 R1 的 Q05..Q08/Q13/Q14 共 6 条，再验 R2 条目 |
+
+**本轮必须结清的既有条目**：`R2-C01`（六章补正文）、`R2-V01`（独立验收）、
+`R2-V02`（清空壳 + 独立验收）。
+
+**边界提醒**：`R2-C01` 是"补内容"而不是"改口径"—— 不许为了凑字数把 `note:` 字段也算进正文，
+也不许放宽 `tools/check.js` 的判据（那是改口径，要组长授权）。
 
 ## 7. 下一轮候选（记录，不在本轮范围）
 
