@@ -23,7 +23,24 @@
   function manifestList() { return (window.STORY && window.STORY.__manifest) || []; }
   function asset(kind, name) { return 'assets/generated/' + (FOLDER[kind] || kind) + '/' + name + '.svg'; }
   function bgPath(id) { return id ? asset('bg', id) : ''; }
-  function cgPath(id) { return id ? asset('cg', id) : ''; }
+  /* 全屏插画（CG）的路径解析。三种来源按顺序尝试：
+   *   ① assets/generated/cg/{cgId}.png  —— NekoGptImage 出的位图（SPEC §4.3，首选）
+   *   ② assets/generated/cg/{cgId}.svg  —— 同名的矢量插画（若有人手工补）
+   *   ③ assets/generated/cg/{anchorBgId}.svg —— build-art 烘焙的「同场景加强版插画」兜底，
+   *      所以哪怕某张 CG 还没生成出来，玩家看到的仍然是一张插画，而不是空白或普通背景。
+   * 老剧本写的 `{t:'cg', id:'bg_xxx'}`（cg 复用背景 id 的年代）继续按老规则解析。 */
+  function cgEntry(id) {
+    return (window.ART && window.ART.cgById && window.ART.cgById[id]) || null;
+  }
+  function cgCandidates(id) {
+    if (!id) return [];
+    var base = 'assets/generated/' + FOLDER.cg + '/';
+    var entry = cgEntry(id);
+    var list = [base + id + '.png', base + id + '.svg'];
+    if (entry && entry.anchor) list.push(base + entry.anchor + '.svg');
+    return list.filter(function (p, i, a) { return a.indexOf(p) === i; });
+  }
+  function cgPath(id) { return cgCandidates(id)[0] || ''; }
   /* 立绘两种来源：NekoGptImage 生成的 600×900 PNG（首选），
    * 以及 art/portraits_root.js 烘焙的矢量 SVG（兜底）。
    * 这样任何一张 PNG 缺失或加载失败时，游戏仍然显示得出人。 */
@@ -205,6 +222,7 @@
   function cacheDom() {
     D.stage = $('stage');
     D.bgA = $('bg-a'); D.bgB = $('bg-b');
+    D.cgLayer = $('cg-layer'); D.cgImg = $('cg-img');
     D.slots = {
       left: document.querySelector('#char-layer .slot[data-slot="left"]'),
       center: document.querySelector('#char-layer .slot[data-slot="center"]'),
@@ -265,6 +283,8 @@
   function setBg(id, fx, opts) {
     opts = opts || {};
     if (!D.bgA) return;
+    /* 新的背景一上来，舞台上的插画就该退场了（它是舞台底层，不是常驻图层）。 */
+    if (D.cgLayer && !D.cgLayer.classList.contains('hidden')) hideCg(false);
     var path = opts.full ? cgPath(id) : bgPath(id);
     var front = bgFrontIsA ? D.bgA : D.bgB;
     var back = bgFrontIsA ? D.bgB : D.bgA;
@@ -603,20 +623,77 @@
       if (onEnd) onEnd();
     }, ms || 2400);
   }
-  function showCg(id, text, ms, onEnd) {
-    setBg(id, 'fade', { full: true, zoom: false });
-    unlock('cgs', id);
-    if (text) {
-      D.cgCaption.textContent = text;
-      D.cgCaption.classList.remove('hidden');
-      requestAnimationFrame(function () { D.cgCaption.classList.add('on'); });
+  /* ---- 全屏插画（重要事件 CG）----
+   * 与老实现（把插画直接当背景 setBg 进去）的区别：
+   *   ① 位图和矢量两种来源都认，缺图时按 cgCandidates() 逐级回退，不会留白；
+   *   ② 画面上多一层「慢速推近 / 横移」的运镜（ken-burns），一静到底的图也有呼吸；
+   *   ③ 图注逐字打出来，而不是整块淡入——玩家的视线有个落点；
+   *   ④ 它是舞台底层，立绘/特效/暗角照旧叠在上面，直到下一次 bg 步骤才退场，
+   *      所以 `cg` 后面紧跟的 `narr` / `say` 仍然停在这张插画上（老剧本的观感不变）。 */
+  var cgTimer = 0, cgTypeTimer = 0, cgHideTimer = 0;
+  var CG_MOTIONS = { 'zoom-in': 1, 'pan-left': 1, 'pan-right': 1, 'still': 1 };
+
+  function hideCg(immediate) {
+    if (!D.cgLayer) return;
+    clearTimeout(cgHideTimer);
+    clearInterval(cgTypeTimer);
+    D.cgCaption.classList.remove('on');
+    cgHideTimer = setTimeout(function () {
+      D.cgLayer.classList.remove('on');
+      D.cgLayer.classList.add('hidden');
+      D.cgImg.removeAttribute('src');
+      D.cgCaption.classList.add('hidden');
+    }, immediate ? 0 : 420);
+    if (immediate) { D.cgLayer.classList.remove('on'); D.cgLayer.classList.add('hidden'); D.cgImg.removeAttribute('src'); }
+  }
+
+  function cgCaptionType(text, ms) {
+    clearInterval(cgTypeTimer);
+    if (!text) { D.cgCaption.classList.add('hidden'); return; }
+    D.cgCaption.textContent = '';
+    D.cgCaption.classList.remove('hidden');
+    void D.cgCaption.offsetWidth;
+    D.cgCaption.classList.add('on');
+    /* 打字速度跟着停留时长走：图停得久就慢慢打，短促的一击就快些，
+       但始终保证全句在图还在的时候读完。 */
+    var step = Math.max(34, Math.min(120, Math.round((ms || 4200) * 0.55 / Math.max(6, text.length))));
+    var i = 0;
+    cgTypeTimer = setInterval(function () {
+      i++;
+      D.cgCaption.textContent = text.slice(0, i);
+      if (i >= text.length) clearInterval(cgTypeTimer);
+    }, step);
+  }
+
+  function showCg(id, text, ms, onEnd, opts) {
+    opts = opts || {};
+    ms = ms || 4200;
+    if (!D.cgLayer || !D.cgImg) { if (onEnd) setTimeout(onEnd, ms); return; }
+    var cands = cgCandidates(id);
+    var motion = CG_MOTIONS[opts.motion] ? opts.motion : 'zoom-in';
+    var i = 0;
+    function paint(src) {
+      clearTimeout(cgHideTimer);
+      D.cgImg.className = '';
+      D.cgImg.setAttribute('src', src);
+      void D.cgImg.offsetWidth;                 /* 强制回流，让同类运镜也能重新播一遍 */
+      D.cgImg.className = 'm-' + motion;
+      D.cgImg.style.animationDuration = Math.max(2600, ms) + 'ms';
+      D.cgLayer.classList.remove('hidden');
+      void D.cgLayer.offsetWidth;
+      requestAnimationFrame(function () { D.cgLayer.classList.add('on'); });
     }
-    clearTimeout(cardTimer);
-    cardTimer = setTimeout(function () {
-      D.cgCaption.classList.remove('on');
-      setTimeout(function () { D.cgCaption.classList.add('hidden'); }, 640);
-      if (onEnd) onEnd();
-    }, ms || 3200);
+    (function tryNext() {
+      if (i >= cands.length) { advise('CG 没有可用的图：' + id); hideCg(true); return; }
+      var probe = new Image();
+      probe.onload = function () { paint(probe.src); };
+      probe.onerror = function () { i++; tryNext(); };
+      probe.src = cands[i];
+    })();
+    unlock('cgs', id);
+    cgCaptionType(text, ms);
+    clearTimeout(cgTimer);
+    cgTimer = setTimeout(function () { if (onEnd) onEnd(); }, ms);
   }
   function unlock(kind, id) {
     if (!id) return;
@@ -841,9 +918,16 @@
         setNote(s.text);
         return false;
       case 'cg':
-        block('cg', 3200);
+        /* 停留时长：剧本写了 ms 就用它；否则查 CG 表里的条目（默认 4400ms，
+           比老实现的 3200ms 长一点——插画值得多看一秒）。图注默认取表里的
+           caption，剧本里的 text 优先。 */
+        var cgInfo = cgEntry(s.id);
+        var cgMs = s.ms || 4400;
+        var cgText = (s.text != null) ? s.text : (cgInfo ? cgInfo.caption : '');
+        block('cg', cgMs);
         curGateStep = s; markRead(s);
-        showCg(s.id, s.text, 3200, function () { if (VN.state.blockKind === 'cg') advance(); });
+        showCg(s.id, cgText, cgMs, function () { if (VN.state.blockKind === 'cg') advance(); },
+          { motion: s.motion || (cgInfo ? cgInfo.motion : '') });
         return true;
       case 'narr':
         curGateStep = s; markRead(s);
@@ -1050,6 +1134,7 @@
     VN.state.hideUI = false;
     setWeather(null);
     clearChars();
+    hideCg(true);                           /* 新章节开场不该残留上一章的插画 */
     charFace = {};                          /* 表情记忆按章重置 */
     setNote(null);
     D.dialogue.classList.add('hidden');
@@ -1145,7 +1230,9 @@
            原先把 cg 也按 bgPath 预载，等于预载了一张永远不会显示的图，
            而真正要显示的插画没被预载。—— 由 root 修正 */
         if (s.t === 'bg') grab(bgPath(s.id));
-        if (s.t === 'cg') grab(cgPath(s.id));
+        /* 插画按候选链逐张预载：位图命中时后面的矢量不会真的去取（浏览器只在
+           真正赋值给 <img> 时才会请求），所以这里只预载「最可能出现的两级」。 */
+        if (s.t === 'cg') cgCandidates(s.id).slice(0, 2).forEach(grab);
         if (s.t === 'show') grab(charPath(s.who, s.face || 'calm'));
         if (s.t === 'say' && s.face) grab(charPath(s.who, s.face));
         if (s.t === 'if') { walk(s.then); walk(s.else); }
@@ -1199,6 +1286,7 @@
     VN.state.hideUI = false;
     VN.state.weather = obj.weather || null;
     clearChars();
+    hideCg(true);
     D.choiceLayer.classList.add('hidden');
     D.dialogue.classList.add('hidden');
     D.fxFade.classList.remove('on');
@@ -1439,6 +1527,7 @@
   VN.uiPath = uiPath;
   VN.bgPath = bgPath;
   VN.cgPath = cgPath;
+  VN.cgCandidates = cgCandidates;
   VN.charPath = charPath;
   VN.charPaths = charPaths;
   /* 把立绘挂到一个 <img> 上，PNG 失败自动回退 SVG */

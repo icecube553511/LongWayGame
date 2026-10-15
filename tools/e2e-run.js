@@ -110,30 +110,43 @@ const PROBE = `
     var localErrs = [];
     var before = errs.length;
     var cg = 0, choices = 0, bgs = {}, seenSrc = {};
-    /* 每个循环采样一次背景元素上的真实图片路径：
+    /* 每个循环采样一次屏幕上真实显示的图层图片路径：
        cg / bg 步骤都是"非阻塞"的，会被 VN.advance() 在内部连续吃掉，
        所以不能靠"在循环顶部看当前 step 类型"来统计，必须看 DOM 实际换了什么图。 */
+    function sampleOne(el, visEl) {
+      visEl = visEl || el;
+      var s = el && el.getAttribute('src');
+      if (!s) return;
+      /* 只统计"真的显示出来"的那一层：另一个背景元素会残留上一张图的 src，
+         若不加这个判断就会把陈图误算成本章看过的图。 */
+      if (!visEl.classList.contains('on')) return;
+      if (!(parseFloat(getComputedStyle(visEl).opacity) > 0.5)) return;
+      var key = s.replace(/^.*\\/assets\\/generated\\//, '');
+      seenSrc[key] = 1;
+    }
     function sampleBg() {
-      ['bg-a', 'bg-b'].forEach(function (bid) {
-        var el = document.getElementById(bid);
-        var s = el && el.getAttribute('src');
-        if (!s) return;
-        /* 只统计"真的显示出来"的那一层：另一个背景元素会残留上一张图的 src，
-           若不加这个判断就会把陈图误算成本章看过的图。 */
-        if (!el.classList.contains('on')) return;
-        if (!(parseFloat(getComputedStyle(el).opacity) > 0.5)) return;
-        var key = s.replace(/^.*\\/assets\\/generated\\//, '');
-        seenSrc[key] = 1;
-      });
+      ['bg-a', 'bg-b'].forEach(function (bid) { sampleOne(document.getElementById(bid)); });
+      /* 重要事件 CG 自本轮起搬到了独立的 #cg-layer（index.html），不再借道背景层。
+         采样必须跟着搬：否则每一章的「CG」列都会是 0，末尾还会报「全程没用 CG 的章节」——
+         那是仪器瞎了，不是剧本没写。 */
+      sampleOne(document.getElementById('cg-img'), document.getElementById('cg-layer'));
     }
     function onLayers() {
-      return ['bg-a', 'bg-b'].map(function (bid) {
+      var rows = ['bg-a', 'bg-b'].map(function (bid) {
         var el = document.getElementById(bid);
         if (!el) return bid + ':-';
         var s = (el.getAttribute('src') || '').split('/').pop() || '-';
         return bid + ':' + (el.classList.contains('on') ? 'ON' : 'off') + ':' + s +
           ':o' + Number(getComputedStyle(el).opacity).toFixed(1);
-      }).join('  ');
+      });
+      var cg = document.getElementById('cg-layer');
+      if (cg) {
+        var ci = document.getElementById('cg-img');
+        rows.push('cg-layer:' + (cg.classList.contains('on') ? 'ON' : 'off') + ':' +
+          ((ci && (ci.getAttribute('src') || '').split('/').pop()) || '-') +
+          ':o' + Number(getComputedStyle(cg).opacity).toFixed(1));
+      }
+      return rows.join('  ');
     }
     var onAtStart = onLayers();
     VN.start(id, { fresh: true });
@@ -261,5 +274,12 @@ if (bad.length) {
   });
   process.exit(2);
 } else {
-  console.log('全部 20 章均从头走到结尾，且无 JS 报错。');
+  /* 只跑指定的几章（第 5 个参数 ONLY）时，不能说「全部 20 章」——
+     那句话会被维护者当作全剧结论读，属于误导性输出。 */
+  if (ONLY.length) {
+    console.log(`本次只跑了 ${data.results.length} 章（${data.results.map((r) => r.id).join(' ')}），`
+      + '全部从头走到结尾，且无 JS 报错。');
+  } else {
+    console.log('全部 20 章均从头走到结尾，且无 JS 报错。');
+  }
 }

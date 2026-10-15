@@ -80,7 +80,7 @@ assets/generated/**         [生成物, 由 build-art.js 写入]
 | `think` | `who`, `text` | 内心独白（括号括起、斜体感） |
 | `title` | `text`, `sub?` | 章节内小标题卡（如「一九三五年一月·遵义」） |
 | `fx` | `kind`(`flash`/`shake`/`fadeout`/`fadein`/`snow`/`rain`/`ash`/`blood`/`star`), `ms?` | 全屏特效 |
-| `cg` | `id`, `text?` | 全屏插画（复用背景 id），可带一句图注 |
+| `cg` | `id`, `text?`, `ms?`, `motion?` | 全屏插画（重要事件 CG）。`id` 取 `src/data/cg.js` 的 `cg_*`；老写法（写背景 id）仍可用。`text` 省略时用表里的 `caption`；`ms` 默认 4400；`motion` ∈ `zoom-in`/`pan-left`/`pan-right`/`still` |
 | `choice` | `prompt?`, `options[]`, `once?` | 选项分支 |
 | `set` | `var`, `op`(`=`/`+=`/`-=`/`max`/`min`), `value` | 修改状态 |
 | `if` | `cond`, `then[]`, `else?[]` | 条件分支（`steps` 可嵌套） |
@@ -247,12 +247,27 @@ archive: [
 assets/generated/bg/{bgId}.svg                 背景 1920×1080
 assets/generated/chars/{charId}_{face}.svg     立绘 600×900
 assets/generated/ui/{name}.svg                 UI 装饰
-assets/generated/cg/{cgId}.svg                 全屏插画 1920×1080（= 对应背景的加强版）
+assets/generated/cg/{cgId}.png                 全屏插画 1920×1080（**重要事件 CG，首选**，AI 出图后烘焙）
+assets/generated/cg/{bgId}.svg                 全屏插画 1920×1080（= 对应背景的加强版，兜底）
 ```
+
+**插画的两条来源（2026-10-15 变更）**：`{t:'cg'}` 的 `id` 现在优先指向
+`src/data/cg.js` 里 `cg_*` 的条目，成品是 `assets/generated/cg/{cgId}.png`
+（`tools/cg-art.js` 出图 + `tools/cg-post.py` 烘焙）。引擎按
+`cg/{cgId}.png` → `cg/{cgId}.svg` → `cg/{该条目 anchor}.svg` 的顺序逐级回退，
+所以某张插画缺失时玩家看到的仍是「同场景加强版插画」，不会留白。
+规格、风格红线、命令与分工见 `docs/CG_DESIGN.md`。
 
 ### 4.4 缺失兜底
 
 引擎必须对任何缺失图片静默降级：背景 → 渐变占位；立绘 → 不显示。**JS 报错 = 不合格。**
+
+### 4.5 重要事件插画（CG）表
+
+`src/data/cg.js` 的 `window.ART.cgList` 是「哪张插画配哪一章、屏幕上演什么」的唯一来源，
+字段：`id` / `ch` / `title` / `anchor` / `caption` / `prompt_en` / `prompt_cn` / `must` / `avoid` / `motion` / `priority`。
+`node tools/check.js` 会校验：id 唯一且小写 `cg_` 前缀、`ch` 合法、`caption`/`prompt_en` 非空、
+`motion` 合法，以及 **`priority:'P0'` 的条目位图已生成且被剧本引用**。
 
 ## 5. 音频（`src/engine/audio.js`）
 

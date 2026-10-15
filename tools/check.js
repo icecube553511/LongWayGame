@@ -33,6 +33,17 @@ const WHO = [
 
 const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
 
+/* CG（全屏插画）清单来自 src/data/cg.js —— 与引擎、画廊同一个来源。
+ * 老剧本里 `{t:'cg', id:'bg_xxx'}`（cg 复用背景 id）仍然合法，所以这里两张表
+ * 都接受；写不在任何一张表里的 id 才算错。 */
+const CG_LIST = (function () {
+  const sb = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'cg.js'), 'utf8'), sb);
+  return (sb.window.ART && sb.window.ART.cgList) || [];
+})();
+const CG_IDS = new Set(CG_LIST.map(c => c.id));
+const CG_MOTIONS = ['zoom-in', 'pan-left', 'pan-right', 'still'];
+
 const BGS = [
   'bg_yudu_night', 'bg_yudu_village', 'bg_mountain_pass', 'bg_blockade', 'bg_xiangjiang_day',
   'bg_xiangjiang_night', 'bg_council_hall', 'bg_tongdao', 'bg_liping', 'bg_houchang',
@@ -110,7 +121,12 @@ function walk(steps, file, ctx, stats, labels, gotos) {
         if (BGS.indexOf(s.id) < 0) err(file, w + ' 未知背景 id：' + s.id);
         stats.bgs.add(s.id); break;
       case 'cg':
-        if (BGS.indexOf(s.id) < 0) err(file, w + ' cg 必须是背景表中的 id：' + s.id);
+        if (BGS.indexOf(s.id) < 0 && !CG_IDS.has(s.id)) {
+          err(file, w + ' cg 必须是背景表或 src/data/cg.js 里的 id：' + s.id);
+        }
+        if (Object.prototype.hasOwnProperty.call(s, 'motion') && CG_MOTIONS.indexOf(s.motion) < 0) {
+          err(file, w + ' 未知运镜 motion：' + s.motion);
+        }
         stats.cgs.add(s.id); break;
       case 'show':
         if (WHO.indexOf(s.who) < 0) err(file, w + ' 未知人物 id：' + s.who);
@@ -188,6 +204,7 @@ function walk(steps, file, ctx, stats, labels, gotos) {
 /* ---------------- 主流程 ---------------- */
 const report = [];
 const allBgs = new Set();
+const allCgs = new Set();
 const allWho = new Set();
 
 CHAPTERS.forEach(([id, num, title]) => {
@@ -219,6 +236,7 @@ CHAPTERS.forEach(([id, num, title]) => {
   if (stats.end === 0) warn(file, '没有 end 步骤');
 
   stats.bgs.forEach(b => allBgs.add(b));
+  stats.cgs.forEach(c => allCgs.add(c));
   stats.who.forEach(w => allWho.add(w));
   report.push({
     id, title, steps: stats.steps, hanzi: stats.hanzi, choice: stats.choice,
@@ -257,6 +275,42 @@ else {
   });
 }
 
+/* ---------------- CG（全屏插画）自检 ----------------
+ * 这一节是本轮新增的验收面：
+ *   · src/data/cg.js 每条都要有 id / ch / title / caption / prompt_en，id 唯一且小写；
+ *   · P0 条目的位图必须已经生成（assets/generated/cg/<id>.png）——缺一张就不过；
+ *   · P0 条目必须真的被某章剧本的 `{t:'cg'}` 引用，否则玩家永远看不到它。
+ * 判定用命令：node tools/check.js */
+const ASSET_CG = path.join(ROOT, 'assets', 'generated', 'cg');
+const haveCg = listSvg(ASSET_CG) || new Set();
+const cgReport = { p0: 0, p0have: 0, missing: [], unreferenced: [] };
+const cgSeen = new Set();
+CG_LIST.forEach(c => {
+  const where = 'src/data/cg.js(' + c.id + ')';
+  if (!/^cg_[a-z0-9_]+$/.test(c.id)) err(where, 'id 必须是小写 cg_ 前缀：' + c.id);
+  if (cgSeen.has(c.id)) err(where, 'id 重复');
+  cgSeen.add(c.id);
+  if (!c.ch || !CHAPTERS.some(x => x[0] === c.ch)) err(where, 'ch 不是合法章节 id：' + c.ch);
+  if (!c.title) err(where, '缺少 title');
+  if (!c.caption) err(where, '缺少 caption（屏幕上要打出的一句图注）');
+  if (!c.prompt_en || String(c.prompt_en).trim().length < 40) err(where, '缺少 prompt_en（英文场景描述）');
+  if (!c.prompt_cn) warn(where, '缺少 prompt_cn');
+  if (c.motion && CG_MOTIONS.indexOf(c.motion) < 0) err(where, '未知 motion：' + c.motion);
+  /* 契约（docs/CG_DESIGN.md §3）是 ≤36 字；这里与契约对齐，不留两套口径。 */
+  if (c.caption && hanzi(c.caption) > 36) warn(where, 'caption 超过 36 字：' + c.caption);
+  if (c.priority === 'P0') {
+    cgReport.p0++;
+    if (haveCg.has(c.id)) cgReport.p0have++;
+    else { cgReport.missing.push(c.id); err(where, 'P0 插画的位图还没生成：assets/generated/cg/' + c.id + '.png'); }
+  }
+});
+CG_LIST.forEach(c => {
+  if (c.priority === 'P0' && !allCgs.has(c.id)) {
+    cgReport.unreferenced.push(c.id);
+    warn('src/data/cg.js(' + c.id + ')', 'P0 条目没有被任何章节的 cg 步骤引用，玩家看不到它');
+  }
+});
+
 /* ---------------- 输出 ---------------- */
 function pad(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
 function padL(s, n) { s = String(s); while (s.length < n) s = ' ' + s; return s; }
@@ -276,6 +330,8 @@ console.log(pad('合计', 8) + pad(report.length + ' 章', 18) + padL(T.steps, 7
 console.log('\n=== 资源统计 ===');
 console.log('背景   ' + assetReport.bg + ' / ' + assetReport.bgWant);
 console.log('立绘   ' + assetReport.chars + ' / ' + assetReport.charsWant);
+console.log('插画   P0 ' + cgReport.p0have + ' / ' + cgReport.p0 + ' 已生成'
+  + (cgReport.missing.length ? '（缺 ' + cgReport.missing.length + ' 张：' + cgReport.missing.join(', ') + '）' : ''));
 console.log('本篇用到背景 ' + allBgs.size + ' / ' + BGS.length + '，出场人物 ' + allWho.size + ' / ' + WHO.length);
 
 const unusedBg = BGS.filter(b => !allBgs.has(b));

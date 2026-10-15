@@ -75,6 +75,10 @@ docs/                       技术契约、剧本圣经、美术总纲
 | `node tools/build-art.js` | 把 `art/*.js` 里的绘制定义烘焙成 `assets/generated/**` 的 SVG |
 | `node tools/neko-art.js --needed` | 用 **NekoGptImage（`gpt-image-2.5-sunburst`）** 生成立绘原始图 → `tmp/neko-raw/`。只生成剧本实际引用到的组合，按出场频次排序，已存在的自动跳过 |
 | `python tools/neko-post.py` | 把原始图抠掉洋红底、缩放到 600×900 透明 PNG → `assets/generated/chars/` |
+| `node tools/cg-art.js --list` | 列出**重要事件插画（CG）**的 id / 优先级 / 提示词是否已填（清单在 `src/data/cg.js`） |
+| `node tools/cg-art.js --all-p0 --concurrency 2` | 生成全剧 P0 插画的原始图 → `tmp/cg-raw/`（自动接上烘焙）。`--ch ch15` 整章、`--only cg_luding_bridge` 单张、`--dry-run` 只看提示词、`--provider gugu` 换额度池 |
+| `python tools/cg-post.py --all` | 把 `tmp/cg-raw/` 的原始图裁成 16:9、缩到 1920×1080、按立体几何调色并压上电影画框 → `assets/generated/cg/<id>.png` |
+| `python tools/cg-sheet.py tmp/cg/sheet.png` | 把已生成的插画拼成对比版（看风格是否统一、哪些还没出图） |
 | `node tools/neko-crowd.js` | 生成**背景用的群众素材**（8 种姿态 × 若干变体）→ `tmp/neko-crowd/` |
 | `python tools/neko-crowd-post.py` | 群众素材抠底 / 缩放 / 三档明度 → 烘焙成 `art/ui_00_crowd_stamps.js` |
 | `node tools/check.js` | **总验收**：20 章完整性 + 剧本 DSL 合法性 + 资源是否齐备 + 死链 |
@@ -132,9 +136,13 @@ docs/                       技术契约、剧本圣经、美术总纲
 * `assets/generated/chars/` 里的 **174 张 600×900 立绘 PNG** 是 AI 出图后抠底烘焙的
   （SPEC §4.2，2026-10-15 起），是首选图源；同名的 `{id}_{face}.svg`（程序化刻面立绘）
   只在 PNG 缺失时兜底。所以"只有 SVG 和 JS"这句话对立绘**不成立**。
-* `assets/generated/bg/` 与 `assets/generated/cg/` 各有 **18 张**内嵌了 base64 的
+* `assets/generated/bg/` 与 `assets/generated/cg/*.svg` 各有 **18 张**内嵌了 base64 的
   **群众素材位图**（行军小人贴图，由 `art/ui_00_crowd_stamps.js` 烘焙而来）。
   这也是这 36 个文件体积偏大的原因，体积上限的口径见 `docs/ART_DIRECTION.md` §4.4。
+* **重要事件插画** `assets/generated/cg/cg_*.png` 是 AI 出图后烘焙的 1920×1080 位图
+  （`tools/cg-art.js` + `tools/cg-post.py`，2026-10-15 起）。它的电影黑边、暗角与细金
+  内框**和矢量插画的 `gradeCG()` 是同一套参数**，两种插画在屏幕上看不出接缝；
+  清单与风格红线见 `docs/CG_DESIGN.md`。
 
 ---
 

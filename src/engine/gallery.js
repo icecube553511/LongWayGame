@@ -17,23 +17,23 @@
     bg_map_table: '指挥部 · 地图桌', bg_stretcher: '担架队'
   };
   var BG_ORDER = Object.keys(BG_LABEL);
-  /* 插画 id 必须与"真正的解锁键"一致：
-   *   引擎的 showCg() 走的是 unlock('cgs', <背景id>) 与 cgPath(<背景id>)，
-   *   即 assets/generated/cg/<背景id>.svg（cg 复用背景 id，见 SPEC §2.1）。
-   *   以前这里写的是 cg_yudu / cg_luding 这类**不存在的 id**：
-   *   既永远不会被解锁（unlocked('cgs','cg_yudu') 恒为 false），
-   *   真解锁了也会指向不存在的文件。所以这一节以前是死的。
-   *   现在改用真实的背景 id。—— 由 root 修正 */
-  var CG_LABEL = {
-    bg_yudu_night: '夜渡于都河', bg_xiangjiang_night: '湘江血战', bg_xiangjiang_day: '湘江·白昼',
-    bg_blockade: '突破封锁线',
-    bg_tongdao: '通道转兵', bg_liping: '黎平会议', bg_houchang: '猴场跨年',
-    bg_zunyi: '遵义会议', bg_chishui: '四渡赤水', bg_loushanguan: '娄山关',
-    bg_jinsha: '巧渡金沙江', bg_yihai: '彝海结盟', bg_dadu: '强渡大渡河',
-    bg_luding: '飞夺泸定桥', bg_snow_mountain: '翻越夹金山', bg_grassland: '过草地',
-    bg_maogong: '懋功会师', bg_lazikou: '激战腊子口', bg_wuqi: '吴起镇',
-    bg_huining: '三军会师'
-  };
+  /* 插画（重要事件 CG）的清单一律从 window.ART.cgList 来（src/data/cg.js）：
+   * 那是「哪张画配哪一章、解锁键叫什么、屏幕上打哪句图注」的唯一来源。
+   * 引擎的 showCg() 用同一个 id 解锁，所以画廊不会出现"解锁了却看不见"的死条目。
+   * 老写法（cg 复用背景 id）仍然列出——那些章的剧本若还没换成 cg_* id，
+   * 对应条目就还在，画廊不会突然空掉。 */
+  function cgList() {
+    var list = (window.ART && window.ART.cgList) || [];
+    return list.slice();
+  }
+  function cgLabel(id) {
+    var c = (window.ART && window.ART.cgById) ? window.ART.cgById[id] : null;
+    return (c && c.title) || id;
+  }
+  var CG_LABEL = {};   /* 兼容外部读取：maintain 一份 id → 标题 的映射 */
+  (function fillLabels() {
+    cgList().forEach(function (c) { CG_LABEL[c.id] = c.title; });
+  })();
 
   function make(tag, cls, txt) {
     var n = document.createElement(tag);
@@ -153,46 +153,76 @@
 
   /* ---------- 插画画廊 ---------- */
   function showArt() {
-    var e = VN.ui.open({ title: '插画画廊', sub: '背景 ' + BG_ORDER.length + '　·　插画 ' + Object.keys(CG_LABEL).length });
+    var cgs = cgList();
+    var got = cgs.filter(function (c) { return unlocked('cgs', c.id); }).length;
+    var e = VN.ui.open({ title: '插画画廊', sub: '背景 ' + BG_ORDER.length + '　·　插画 ' + got + ' / ' + cgs.length });
     e.body.appendChild(make('div', 'sec-head', '场景背景'));
     var grid = make('div', 'gallery-grid');
     BG_ORDER.forEach(function (id) {
       grid.appendChild(artTile('bgs', id, BG_LABEL[id], VN.bgPath(id)));
     });
     e.body.appendChild(grid);
-    e.body.appendChild(make('div', 'sec-head', '全屏插画'));
+    e.body.appendChild(make('div', 'sec-head', '全屏插画（重要事件）'));
     var grid2 = make('div', 'gallery-grid');
-    Object.keys(CG_LABEL).forEach(function (id) {
-      grid2.appendChild(artTile('cgs', id, CG_LABEL[id], VN.cgPath(id)));
+    if (!cgs.length) {
+      e.body.appendChild(make('div', 'empty-tip', '插画清单还没写进 src/data/cg.js。'));
+      return;
+    }
+    cgs.forEach(function (c) {
+      var m = VN.manifest(c.ch);
+      var label = cgLabel(c.id) + (m ? '　·　第' + VN.numCn(m.num) + '章' : '');
+      grid2.appendChild(artTile('cgs', c.id, label, VN.cgCandidates ? VN.cgCandidates(c.id) : VN.cgPath(c.id), c.caption));
     });
     e.body.appendChild(grid2);
   }
-  function artTile(kind, id, label, src) {
+  /* srcs 可以是字符串，也可以是候选路径数组（第一个能加载出来的就用它）——
+     插画有「位图 → 同名矢量 → 同场景矢量插画」三级回退，画廊必须跟着回退，
+     否则没出图的那几张在画廊里会变成空白格子。 */
+  function artTile(kind, id, label, srcs, sub) {
     var ok = unlocked(kind, id);
     var item = make('div', 'gal-item' + (ok ? '' : ' locked'));
     if (ok) {
       var img = make('img');
       img.setAttribute('alt', label);
-      img.setAttribute('src', src);
-      img.addEventListener('error', function () { img.style.display = 'none'; });
+      setFirstAvailable(img, srcs);
       item.appendChild(img);
     } else {
       item.appendChild(document.createTextNode('？'));
     }
     item.appendChild(make('span', '', (ok ? '' : '未解锁 · ') + label));
+    /* 插画多一行「当时那句话」：图注是这一张画存在的理由，玩家在画廊里回看时才接得上。 */
+    if (ok && sub) item.appendChild(make('span', 'gal-sub', sub));
     item.addEventListener('click', function () {
       if (!ok) { VN.toast('走到这一段时自动解锁'); return; }
       var wrap = make('div', '');
       wrap.id = 'modal-wrap';
       var img2 = make('img');
-      img2.setAttribute('src', src);
       img2.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:94vw;max-height:88vh;';
-      img2.addEventListener('error', function () { VN.toast('这张图还没有生成'); });
+      if (!setFirstAvailable(img2, srcs, function () { VN.toast('这张图还没有生成'); })) {
+        VN.toast('这张图还没有生成');
+        return;
+      }
       wrap.appendChild(img2);
       wrap.addEventListener('click', function () { wrap.remove(); });
       document.getElementById('app').appendChild(wrap);
     });
     return item;
+  }
+  function setFirstAvailable(img, srcs, onAllFailed) {
+    var list = [].concat(srcs || []).filter(Boolean);
+    if (!list.length) return false;
+    var i = 0;
+    img.addEventListener('error', function onerr() {
+      i++;
+      if (i < list.length) img.setAttribute('src', list[i]);
+      else {
+        img.removeEventListener('error', onerr);
+        img.style.display = 'none';
+        if (onAllFailed) onAllFailed();
+      }
+    });
+    img.setAttribute('src', list[0]);
+    return true;
   }
 
   VN.gallery = { showChars: showChars, showArchives: showArchives, showArt: showArt, BG_LABEL: BG_LABEL, CG_LABEL: CG_LABEL };

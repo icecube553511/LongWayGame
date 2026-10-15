@@ -17,6 +17,14 @@
       <div id="bg-fallback"></div>
     </div>
 
+    <!-- 全屏插画层（重要事件 CG）：位图优先，命中不了再退到同名 SVG，
+         再退到 art/*.js 烘焙的「同场景加强版插画」。它和背景一样是舞台底层，
+         所以立绘、特效、暗角照常叠在它上面；直到下一次 bg 步骤才退场。
+         路径规则见 src/engine/engine.js 的 cgCandidates()。 -->
+    <div id="cg-layer" class="hidden">
+      <img id="cg-img" alt="">
+    </div>
+
     <div id="char-layer">
       <div class="slot" data-slot="left"><img alt=""></div>
       <div class="slot" data-slot="center"><img alt=""></div>
@@ -99,6 +107,7 @@
      —— 由 root 移除（移除后已跑过 20 章全自动通关验证：0 报错） -->
 <script src="src/data/characters.js"></script>
 <script src="src/data/backgrounds.js"></script>
+<script src="src/data/cg.js"></script>
 <script src="src/story/manifest.js"></script>
 <script src="src/story/ch01.js"></script>
 <script src="src/story/ch02.js"></script>

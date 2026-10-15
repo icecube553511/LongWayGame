@@ -81,3 +81,59 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 | 分支事故 | 有 agent 切到 `develop/analyzation`，导致一次提交落错分支、远端一度没收到。root 已把 `main` 前移并切回，远端与本地一致 |
 | 网络 | 本机经 `HTTP_PROXY=127.0.0.1:7897` 出网，期间出现过 `schannel: server closed abruptly` / `failed to receive handshake` 的间歇性推送失败；推送已全部补齐，远端无落后 |
 | 提交纪律 | 45 个提交全部落在 `main` 并已推送；每个问题一个 commit，message 带问题号 |
+
+---
+
+## CG 轮（重要事件插画工程 · 2026-10-15 22:40 起 · **进行中**）
+
+把二十章原本"同场景背景加强版"的插画，换成**独立构图的 1920×1080 重要事件 CG**
+（AI 出图 → 裁剪调色压画框 → 入 `assets/generated/cg/<cgId>.png` → 引擎侧独立图层 + 运镜 + 逐字图注）。
+
+| 项 | 内容 |
+|---|---|
+| 契约 | `docs/CG_DESIGN.md`（root 维护，冻结）；清单 `src/data/cg.js`（30 条 = 24 P0 + 6 P1） |
+| 落点审查 | 第 1 组 `cg_story_audit` → `tmp/cg/EVENTS.md`（24 条 P0 的章 / 下标 / 锚点 / 待改写 id 对照表） |
+| 生成分组 | 第 2 组 `cg_gen_a`（ch01–07）/ `cg_gen_b`（ch08–14）/ `cg_gen_c`（ch15–20，任务书 `tmp/cg/BRIEF-gen-c.md`） |
+| 评审三组 | 第 3 组 `cg_rev_style` / `cg_rev_story` / `cg_rev_tech` —— **尚未开工** |
+| 工作分支 | **`develop/Movie`**（本地与 `origin/main` 当时同为 `4b189d1`）。本轮契约文档没写分支，施工在 `develop/Movie` 上；合回 `main` 的动作留给 root 显式决定，别让后来人按 `main` 找这轮的工作 |
+
+### 当前状态（root 实测，22:5x）
+
+* **24 处 `cg` 步骤已全部改指 `cg_*` id**：`node tmp/cg/check-cg.js` →
+  「已改写成 cg_* id = 24 / 24、仍是旧 bg_* id = 0、P0 与剧本对不上 = 0 条、caption 与 text 不一致 = 0 条」。
+  三处同源旧 id（ch08/ch09/ch11 都是 `bg_chishui`）与两处同章双 CG（ch15、ch20）都按锚点文本对上了。
+  剧本改动经 `git diff --stat -- src/story` 核对：**20 个文件 24 增 24 删，除了 id 一个字节没动**。
+* **P0 位图 6 / 24**（`cg_yudu_night`、`cg_luding_race`、`cg_maogong`、`cg_grassland`、`cg_yudu_return`、`cg_huining`）。
+  `node tools/check.js` 因其余 18 张未生成而**不通过**（预期中间态：那 18 条错误全是
+  「P0 插画的位图还没生成」）。其余面干净：20 章 / 6623 步 / 61086 汉字 / 60 选项 / 81 档案 /
+  背景 30-30 / 立绘 280-280，仅剩既有 `narrator` 豁免警告。
+* 全剧汉字数由 61177 变为 61086，**不是本轮改的**：差额来自 `4b189d1`（humanizer 遍改全剧文本），
+  R3 工单里的 61177 是 `3d75184` 时期的数。
+
+### root 在本轮自改的两处（都有实测证据，不属"顺手改"）
+
+1. **`tools/e2e-run.js` 的 CG 采样器跟着 CG 搬家**。CG 从背景层搬进独立 `#cg-layer` 之后，
+   旧 `sampleBg()` 只看 `#bg-a`/`#bg-b`，于是每章都报「CG 0」、末尾还打印
+   「全程没用 CG 的章节：ch01 ch05」——那是**仪器瞎了**，不是剧本没写。修法：采样同时看
+   `#cg-img`/`#cg-layer`（可见性仍以 `.on` + `opacity > 0.5` 判定），并把 `#cg-layer` 加进
+   `onLayers()` 的诊断行。修完实测：ch01 记 1、ch05 记 1，且能看到回退链实际命中
+   `cg/bg_yudu_night.svg`、`cg/bg_liping.svg`。**顺带消掉 `R1-REGRESSION.md` §4 的老毛病**
+   （CG 列"时灵时不灵"）：插画不再和背景层交叉淡入抢同一个判据。
+   同时修掉 `R2-BACKLOG.md` B01（只跑几章时尾注仍硬编码「全部 20 章」）。
+2. **`tools/cg-art.js` 的风格提示词按实证修订**。第一张 P0（`cg_yudu_night` v1）在旧措辞下出了
+   两处硬伤：①画面点了一整圈火把——而该条目 `avoid` 里写着 `torches`、图注就是
+   「一九三四年十月十七日。河上没有一支火把。」，画面与文字直接打架；②画风偏写实油画，
+   与**已验收的 174 张低多边形立绘**（`assets/generated/chars/*.png`）不是一套语言。
+   修订三处：①`STYLE` 改成硬要求（"每块面 = 一个平涂色块、相邻面有色阶差、面边界可见、
+   像低多边形渲染而不是画/照片"）；②条目自己的 `avoid` 在场景描述**后面紧接着**再讲一遍
+   （`HARD CONSTRAINTS -- none of the following may appear anywhere…`）；③新增 `LIGHTING RULE`
+   （画面只允许描述中点明的光源发光）。
+   验证：同一条目用新提示词重出试片 `tmp/cg/probe-yudu.png`（1050 KB）→ 火把消失、块面感增强。
+   **已知代价**：夜色图容易被冲成近白色，军装灰绿与八角帽红星要靠 `--extra` 补；
+   水面/天空仍容易退化成连续渐变。这两点已写进给生成组的通知里。
+
+### 尚未做的事（别当成已完成）
+
+* 24 张 P0 还差 18 张；6 张 P1 一张没出；评审三组未开工；`develop/Movie` 尚未推送（见下）。
+* 本机 `git fetch origin` 再次撞上代理间歇故障（`schannel: server closed abruptly`），
+  推送与远端同步状态以本轮收口时的实测为准。

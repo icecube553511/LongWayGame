@@ -169,11 +169,12 @@ CG（`assets/generated/cg/{bgId}.svg`）= 同 id 背景的**加强版**：保留
    | 纯矢量 SVG（无内嵌位图） | **400 KB** | 原条款，控制碎多边形数量 |
    | 含内嵌位图素材的 SVG | **640 KB** | 贴图字节另算；实测最大 `cg/bg_xiangjiang_day.svg` = 583 KB |
    | 立绘 PNG（AI 出图 600×900 RGBA） | **512 KB** | 自检实测最大 435 KB（`wu_laoliu_smile.png`） |
+   | 插画 PNG（AI 出图 1920×1080，`cg/cg_*.png`） | **1536 KB** | 细节量比立绘高一个量级；`tools/cg-post.py` 每次烘焙都会打印实际体积 |
 
    自检命令（四条目录一起过，按上表分档比对；末行必须是 `超过本档上限的文件数 = 0`）：
 
    ```powershell
-   node -e "const fs=require('fs'),p=require('path');let bad=0;for(const d of ['bg','cg','ui','chars']){for(const f of fs.readdirSync(p.join('assets/generated',d)).sort()){const fp=p.join('assets/generated',d,f);const s=fs.statSync(fp).size;let lim,why;if(/\.png$/.test(f)){lim=512*1024;why='立绘 PNG';}else if(/\.svg$/.test(f)){const emb=fs.readFileSync(fp,'utf8').indexOf('data:image')>=0;lim=(emb?640:400)*1024;why=emb?'含内嵌位图':'纯矢量';}else continue;if(s>lim){bad++;console.log('超档 '+(s/1024).toFixed(0)+' KB  assets/generated/'+d+'/'+f+'（'+why+'）');}}}console.log('超过本档上限的文件数 = '+bad);"
+   node -e "const fs=require('fs'),p=require('path');let bad=0;for(const d of ['bg','cg','ui','chars']){for(const f of fs.readdirSync(p.join('assets/generated',d)).sort()){const fp=p.join('assets/generated',d,f);const s=fs.statSync(fp).size;let lim,why;if(/\.png$/.test(f)){if(d==='cg'){lim=1536*1024;why='插画 PNG';}else{lim=512*1024;why='立绘 PNG';}}else if(/\.svg$/.test(f)){const emb=fs.readFileSync(fp,'utf8').indexOf('data:image')>=0;lim=(emb?640:400)*1024;why=emb?'含内嵌位图':'纯矢量';}else continue;if(s>lim){bad++;console.log('超档 '+(s/1024).toFixed(0)+' KB  assets/generated/'+d+'/'+f+'（'+why+'）');}}}console.log('超过本档上限的文件数 = '+bad);"
    ```
 
    超档时才动手（减贴图段数 / 降每段像素），不要为了数字去删画面里的行军队伍。

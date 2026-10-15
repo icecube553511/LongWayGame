@@ -65,6 +65,35 @@ html, body {
   z-index: -1;
 }
 
+/* ---------------- 全屏插画层（重要事件 CG） ----------------
+   舞台底层，和背景同层（所以在立绘/特效/暗角之下）；插画自己的电影黑边、暗角与
+   金线是烘焙进图片里的，这里只负责入场淡入与运镜。
+   运镜时长由引擎写内联 animation-duration（= 该 CG 的停留时长），所以
+   「图停多久，镜头就推多久」，两件事不会各走各的。 */
+#cg-layer { position: absolute; inset: 0; overflow: hidden; opacity: 0; transition: opacity 400ms ease; }
+#cg-layer.on { opacity: 1; }
+#cg-layer img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+}
+#cg-layer img.m-zoom-in { animation-name: cgZoomIn; }
+#cg-layer img.m-pan-left { animation-name: cgPanLeft; }
+#cg-layer img.m-pan-right { animation-name: cgPanRight; }
+#cg-layer img.m-still { animation-name: cgStill; }
+/* 全程只推 5%，恰好「看得出在动、又不会把人推出画外」 */
+@keyframes cgZoomIn  { from { transform: scale(1.005) translate3d(0, 0, 0); } to { transform: scale(1.055) translate3d(-0.6%, -0.4%, 0); } }
+@keyframes cgPanLeft { from { transform: scale(1.06) translate3d(1.6%, 0, 0); }    to { transform: scale(1.06) translate3d(-1.6%, -0.3%, 0); } }
+@keyframes cgPanRight { from { transform: scale(1.06) translate3d(-1.6%, 0, 0); }   to { transform: scale(1.06) translate3d(1.6%, -0.3%, 0); } }
+@keyframes cgStill   { from { transform: scale(1.02); } to { transform: scale(1.024); } }
+/* 图注是逐字打出来的，所以不留悬停光标，也不需要「▼」 */
+#stage.ui-hidden #cg-layer { opacity: 0 !important; }
+
 /* ---------------- 立绘层 ---------------- */
 #char-layer { position: absolute; inset: 0; pointer-events: none; }
 #char-layer .slot {
@@ -496,6 +525,8 @@ html, body {
 .gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 300ms; }
 .gal-item:hover img { transform: scale(1.05); }
 .gal-item span { position: absolute; left: 0; right: 0; bottom: 0; font-size: calc(13 * var(--u)); padding: calc(6 * var(--u)) calc(10 * var(--u)); background: linear-gradient(180deg, transparent, rgba(6,9,16,.9)); color: #cfc6b4; letter-spacing: .1em; }
+/* 插画格子第二行：当时那句图注（比标题轻一档，压在标题之上） */
+.gal-item span.gal-sub { bottom: calc(26 * var(--u)); background: none; padding: 0 calc(10 * var(--u)); font-size: calc(11 * var(--u)); letter-spacing: .06em; color: #9c9384; }
 .gal-item.locked { display: flex; align-items: center; justify-content: center; color: #464e5c; font-size: calc(28 * var(--u)); }
 
 /* 回想 */
