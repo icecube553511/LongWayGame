@@ -169,6 +169,7 @@
       { t: 'fx', kind: 'rain' },
       { t: 'narr', text: '夜里下雨。草地上没有树，没有房，没有可以躲的地方。' },
       { t: 'narr', text: '部队背靠背坐着，坐成一个一个的圈。' },
+      { t: 'cg', id: 'cg_camp_fire', text: '雨落在没有树的地方，人背靠着人。' },
       { t: 'narr', text: '坐得紧一点，就能少淋一点雨；谁的背上凉了，旁边的人就知道他快不行了。' },
       { t: 'show', who: 'san_wa', face: 'weak', slot: 'center' },
       { t: 'say', who: 'san_wa', text: '小满哥，今天是第几天？' },

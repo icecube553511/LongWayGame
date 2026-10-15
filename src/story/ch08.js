@@ -200,6 +200,7 @@
       { t: 'show', who: 'wu_laoliu', face: 'worry', slot: 'center', fx: 'fadein' },
       { t: 'narr', text: '先是几个汉子，扛着自家的门板来。' },
       { t: 'narr', text: '后来是十几个，再后来是几十个。' },
+      { t: 'cg', id: 'cg_tucheng', text: '土城的人扛着自家的门板来抬伤员。' },
       { t: 'narr', text: '他们把伤员抬起来，往后面送。' },
       { t: 'say', who: 'wu_laoliu', text: '老乡，你们不能抬。' },
       { t: 'say', who: 'wu_laoliu', text: '我们走了，你们要遭报复。' },

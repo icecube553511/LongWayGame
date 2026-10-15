@@ -40,13 +40,36 @@ def font(size):
 
 
 def main():
+    global CELL_W, CELL_H
     ap = argparse.ArgumentParser()
     ap.add_argument('out')
     ap.add_argument('--only', default='')
     ap.add_argument('--cols', type=int, default=3)
+    ap.add_argument('--thumbs', default='', metavar='DIR',
+                    help='额外把每张按 --thumb-w 缩到 DIR（评审用缩图，避免把 1.4MB 的原图塞进对话）')
+    ap.add_argument('--thumb-w', type=int, default=960)
+    ap.add_argument('--cell-w', type=int, default=CELL_W,
+                    help='拼版每格宽度（默认 640）；想一次看全 24 张又不想把大图塞进对话时用 320')
     args = ap.parse_args()
 
+    if args.cell_w != CELL_W:
+        CELL_H = int(round(args.cell_w * 9 / 16.0))
+        CELL_W = args.cell_w
+
     ids = load_ids(args.only)
+
+    if args.thumbs:
+        os.makedirs(args.thumbs, exist_ok=True)
+        for cid in ids:
+            src = os.path.join(CG_DIR, cid + '.png')
+            if not os.path.exists(src):
+                continue
+            im = Image.open(src).convert('RGB')
+            w = args.thumb_w
+            h = max(1, round(im.height * w / float(im.width)))
+            dst = os.path.join(args.thumbs, cid + '.png')
+            im.resize((w, h), Image.LANCZOS).save(dst, optimize=True)
+            print('  缩图 %-28s %6d KB' % (cid + '.png', os.path.getsize(dst) / 1024))
     cols = max(1, args.cols)
     rows = (len(ids) + cols - 1) // cols
     W = cols * CELL_W + (cols + 1) * PAD
@@ -74,7 +97,12 @@ def main():
         d.text((x + 2, y + CELL_H + 6), label, fill=(216, 207, 187), font=f)
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    sheet.save(args.out)
+    # 拼版是"给人一眼扫"的东西，不是成品资产：存 JPEG 能让同样内容的体积掉一个量级
+    # （320px 格子 × 30 张：PNG 1.9MB → JPEG q88 约 300KB），评审把图塞进对话时才不会撑爆。
+    if args.out.lower().endswith(('.jpg', '.jpeg')):
+        sheet.save(args.out, quality=88, optimize=True)
+    else:
+        sheet.save(args.out)
     print('%s  %d 格（%d 张缺图%s）' % (args.out, len(ids), len(missing),
                                         '：' + ', '.join(missing) if missing else ''))
 

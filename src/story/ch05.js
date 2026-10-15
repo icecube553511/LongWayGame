@@ -61,6 +61,7 @@
       { t: 'narr', text: '到黎平之前的几天，担架队里一直在说话。' },
       { t: 'narr', text: '王稼祥躺在担架上，腹部缠着绷带。他的伤在很久以前的战斗中就落下了，一直没好。' },
       { t: 'narr', text: '毛泽东的担架就在旁边。他那时候疟疾刚好，走不了远路。' },
+      { t: 'cg', id: 'cg_stretcher', text: '担架一颠一颠地走，两个人一路谈。' },
       { t: 'narr', text: '两个人一路走，一路谈。' },
       { t: 'show', who: 'wang_jiaxiang', face: 'weak', slot: 'left', fx: 'fadein' },
       { t: 'show', who: 'mao', face: 'calm', slot: 'right', fx: 'slidein' },

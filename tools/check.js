@@ -334,10 +334,16 @@ CG_LIST.forEach(c => {
   }
 });
 CG_LIST.forEach(c => {
-  if (c.priority === 'P0' && !allCgs.has(c.id)) {
-    cgReport.unreferenced.push(c.id);
-    warn('src/data/cg.js(' + c.id + ')', 'P0 条目没有被任何章节的 cg 步骤引用，玩家看不到它');
-  }
+  if (allCgs.has(c.id)) return;
+  /* 这条判据对 P0 与 P1 一视同仁，理由是画廊的读法：
+     src/engine/gallery.js 按 window.ART.cgList 逐条列出，并用同一个 id 解锁。
+     所以"清单里有一条、剧本里没有它的 cg 步"= 玩家永远点不亮那一格
+     （R1-Q09 就是这一类问题的实例：UI 宣称 20 项、剧本只能产出 19 项）。
+     要么把它接进剧本，要么把它从 cg.js 里删掉 —— 不要留在清单里当装饰。 */
+  cgReport.unreferenced.push(c.id);
+  warn('src/data/cg.js(' + c.id + ')',
+    (c.priority === 'P0' ? 'P0' : 'P1') + ' 条目没有被任何章节的 cg 步骤引用：' +
+    '画廊按 ART.cgList 列条目，这一格玩家永远点不亮（同 R1-Q09）—— 接进剧本或从清单里删掉');
 });
 
 /* ---------------- 输出 ---------------- */
@@ -361,6 +367,11 @@ console.log('背景   ' + assetReport.bg + ' / ' + assetReport.bgWant);
 console.log('立绘   ' + assetReport.chars + ' / ' + assetReport.charsWant);
 console.log('插画   P0 ' + cgReport.p0have + ' / ' + cgReport.p0 + ' 已生成'
   + (cgReport.missing.length ? '（缺 ' + cgReport.missing.length + ' 张：' + cgReport.missing.join(', ') + '）' : ''));
+const cgP1 = CG_LIST.filter(c => c.priority !== 'P0');
+const cgP1ref = cgP1.filter(c => allCgs.has(c.id)).length;
+console.log('       P1 ' + cgP1ref + ' / ' + cgP1.length + ' 已被剧本引用'
+  + (cgReport.unreferenced.length ? '（未引用 ' + cgReport.unreferenced.length +
+    ' 条：' + cgReport.unreferenced.join(', ') + '）' : ''));
 console.log('本篇用到背景 ' + allBgs.size + ' / ' + BGS.length + '，出场人物 ' + allWho.size + ' / ' + WHO.length);
 
 const unusedBg = BGS.filter(b => !allBgs.has(b));
