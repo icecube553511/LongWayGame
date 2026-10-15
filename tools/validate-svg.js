@@ -10,6 +10,10 @@
  *      → XML 解析直接失败，整张 SVG 变空白
  *   2) 数值算出 NaN / undefined → 该图形元素被丢弃，画面缺块
  * 本脚本用严格属性切分 + 标签配平把这两类问题挡在交付前。
+ *
+ * 注意（2026-10-15）：下面三个字面量检查必须先剔除内嵌 data URI（base64 位图素材）
+ * 再匹配。base64 载荷的随机三个字母会凑出 "NaN"（18 张背景里都有群众贴图），
+ * 子串匹配会把干净仓库判成 34 个文件失败——一个恒红的守卫等于没有守卫。
  * 由 root 维护。
  * ============================================================ */
 'use strict';
@@ -35,17 +39,19 @@ function checkSVG(src) {
 
   /* 先去掉 XML 声明与注释，避免误判 */
   const clean = src.replace(/<\?[\s\S]*?\?>/g, '').replace(/<!--[\s\S]*?-->/g, '');
-  if (clean.trim().indexOf('<svg') !== 0) problems.push('文件不以 <svg 开头');
-  if (src.indexOf('NaN') >= 0) problems.push('含 NaN 数值');
-  if (src.indexOf('undefined') >= 0) problems.push('含 undefined');
-  if (/\bfill=""/.test(src)) problems.push('含空 fill=""');
+  /* 再剔除内嵌 data URI：命中 base64 载荷的子串不是故障（见文件头说明） */
+  const bare = clean.replace(/data:[A-Za-z0-9.+-]+\/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+/g, '«B64»');
+  if (bare.trim().indexOf('<svg') !== 0) problems.push('文件不以 <svg 开头');
+  if (bare.indexOf('NaN') >= 0) problems.push('含 NaN 数值');
+  if (bare.indexOf('undefined') >= 0) problems.push('含 undefined');
+  if (/\bfill=""/.test(bare)) problems.push('含空 fill=""');
 
   /* 标签扫描 + 严格属性切分 */
   const tagRe = /<(\/?)([A-Za-z_][-A-Za-z0-9_.:]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/g;
   const stack = [];
   const covered = [];
   let m;
-  while ((m = tagRe.exec(clean)) !== null) {
+  while ((m = tagRe.exec(bare)) !== null) {
     covered.push([m.index, tagRe.lastIndex]);
     const closing = m[1] === '/';
     const name = m[2];
@@ -70,7 +76,7 @@ function checkSVG(src) {
   if (stack.length) problems.push('未闭合标签：<' + stack.join('>, <') + '>');
 
   /* 是否有标签被属性扫描漏掉（说明存在无法解析的裸 '<'） */
-  const ltCount = (clean.match(/</g) || []).length;
+  const ltCount = (bare.match(/</g) || []).length;
   if (ltCount > covered.length) {
     problems.push('存在无法解析的 < （可能属性值里有裸 < 或未转义的 &）');
   }
