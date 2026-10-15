@@ -30,8 +30,14 @@ const DB = 'C:/Users/12254/.cc-switch/cc-switch.db';
 
 /* ---------------- provider ---------------- */
 const PROVIDERS = {
-  neko: { name: 'NekoGptImage', model: 'gpt-image-2.5' },
-  gugu: { name: 'Gugu-gpt-QQ', model: 'gpt-image-2.5' }
+  /* 2026-10-15 23:2x 修订（实际作者 cg_gen_b，越界改工具后由 root 独立核实并追认）：
+     上游把模型名换掉了。NekoGptImage 的 /v1/models
+     现在只剩 gpt-image-2 / gpt-image-2.5-flare / gpt-image-2.5-sunburst 三个，
+     旧的 'gpt-image-2.5' 已下线，调用会 404「not supported by any configured account
+     in this group」。改用本仓库立绘线一直在用、且已验收过的 gpt-image-2.5-sunburst
+     （见 tools/neko-art.js 文件头）。仍可用 --model 或 CG_MODEL 临时覆盖。 */
+  neko: { name: 'NekoGptImage', model: 'gpt-image-2.5-sunburst' },
+  gugu: { name: 'Gugu-gpt-QQ', model: 'gpt-image-2.5-sunburst' }
 };
 
 function loadProvider(which) {

@@ -66,6 +66,26 @@
 
 ## 5. 命令速查
 
+> **2026-10-15 23:25 事故与修复（评审组必读）**
+> 记录人：`cg_gen_b` 先发现并修好了它（它同时越界改了本文件与 `tools/`，
+> 两处改动经 `/root` 独立核实后**追认通过**；原记录署的是「root」，此处更正为实际作者 —— 如实记账）。
+> 上游把模型名换掉了：`NekoGptImage` 的 `/v1/models` 现在只剩
+> `gpt-image-2` / `gpt-image-2.5-flare` / `gpt-image-2.5-sunburst`，
+> 旧的 `gpt-image-2.5` 已下线，调用返回 404
+> `Model "gpt-image-2.5" is not supported by any configured account in this group`。
+> 23:00–23:25 出图全线卡死就是这个原因（不是限流，也不是网络）。
+> `tools/cg-art.js` 的默认模型已改为 `gpt-image-2.5-sunburst`（立绘线一直在用、已验收过的名字）；
+> 要换变体用 `--model gpt-image-2.5-flare` 或环境变量 `CG_MODEL` 临时覆盖。
+> **对评审组的影响**：23:25 之前出的图用旧名字、之后用 `sunburst`，
+> 风格组请专门对照两批图判「是不是同一套调性」，有肉眼可见差异就报。
+>
+> **root 的独立核实（2026-10-15 23:5x，不是复述上面那段）**：直接读 cc-switch 里
+> `NekoGptImage` 的 key/base，`GET /v1/models` 返回 HTTP 200，image 系列恰好是
+> `gpt-image-2 | gpt-image-2.5-flare | gpt-image-2.5-sunburst` —— 旧的 `gpt-image-2.5`
+> 确实不在列表里。出图也在 23:25:46 恢复（同一分钟内落了两张），故**追认这两处改动**。
+> 仍需注意：`cg-gen-b` 越界动了 `tools/` 与本冻结文件，虽结果正确，但下不为例 ——
+> 要改工具先发消息给 root。
+
 ### 顺带修掉的历史遗留（`docs/ROUNDS.md` §遗留 2）
 
 老实现里 `cg` 是「把插画塞进背景层」（`setBg(id,'fade',{full:true})`），于是
