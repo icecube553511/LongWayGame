@@ -425,7 +425,7 @@
       { t: 'say', who: 'he_xiaomei', text: '……我娘会唱。' },
       { t: 'say', who: 'li_tiezhu', text: '（把水瓢停下）' },
       { t: 'say', who: 'li_tiezhu', text: '那你也算听见家里了。' },
-      { t: 'narr', text: '三月里，红军二渡赤水之后连下桐梓、娄山关、遵义。' },
+      { t: 'narr', text: '二月里，红军二渡赤水之后连下桐梓、娄山关、遵义。' },
       { t: 'narr', text: '这是长征以来最大的一次胜利。' },
       { t: 'narr', text: '可在娄山关之前的那一夜，没有人知道这件事。' },
       { t: 'narr', text: '大家只知道第二天要爬山。' },
