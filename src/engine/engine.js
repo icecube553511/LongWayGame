@@ -1305,6 +1305,10 @@
     var m = manifestList();
     var missing = [];
     for (var i = 0; i < m.length; i++) {
+      /* index.html 已经静态加载过全部章节；已经注册过的不要再注入一次，
+         否则每个章节 IIFE 会被解析并执行两遍（20 章约 633 KB 白做功）。
+         只有真的缺了这一章时才走动态注入 + 缺章登记。 */
+      if (window.STORY[m[i].id]) continue;
       var ok = await loadScript(m[i].file);
       if (!ok || !window.STORY[m[i].id]) missing.push(m[i].id);
     }
