@@ -35,6 +35,21 @@ const BG = [
 ];
 const SFX = ['gunfire', 'distant_gun', 'shell', 'horse', 'water', 'bell', 'paper',
   'footsteps', 'wind', 'thunder', 'horn', 'cheer', 'click', 'page'];
+/* 重要事件插画（CG）的 id 来自 src/data/cg.js —— 与引擎、画廊、check.js 同一个来源。
+ * 只认 bg_* 的旧写法会让「cg 步改用 cg_* id」被误判成「未知背景 id」，所以这里读表。
+ * 读不到表（文件缺失/语法坏）时退回只认背景 id，并明确告警，不静默放过。 */
+const CG_IDS = (function () {
+  try {
+    const sb = { window: {} };
+    require('vm').runInNewContext(
+      require('fs').readFileSync(require('path').join(__dirname, '..', 'src', 'data', 'cg.js'), 'utf8'), sb);
+    const list = (sb.window.ART && sb.window.ART.cgList) || [];
+    return list.map((c) => c.id);
+  } catch (e) {
+    console.warn('[lint-story] 读不到 src/data/cg.js 的 CG 清单，cg 步只按背景 id 校验：' + e.message);
+    return [];
+  }
+})();
 const BGM = ['departure', 'march', 'tense', 'battle', 'grief', 'hope', 'victory',
   'night', 'river', 'snow', 'grassland', 'council'];
 const FX = ['flash', 'shake', 'fadeout', 'fadein', 'snow', 'rain', 'ash', 'blood', 'star'];
@@ -200,7 +215,9 @@ function checkChapter(ch, file, c, stats) {
         if (!FX.includes(item.kind)) c.err(file, where + '：非法特效 \"' + item.kind + '\"');
         break;
       case 'cg':
-        needBg(where, item.id);
+        /* cg 步的 id 可以是背景 id（老写法：插画复用背景加强版），也可以是
+           src/data/cg.js 里的 cg_* （本轮的重要事件插画）。两者之外才算错。 */
+        if (CG_IDS.indexOf(item.id) < 0) needBg(where, item.id);
         if (item.text) chars += cjkCount(item.text);
         break;
       case 'choice': {
