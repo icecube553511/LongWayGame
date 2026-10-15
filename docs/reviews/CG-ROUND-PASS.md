@@ -1,3 +1,16 @@
+> **归档说明（`/root` 补，2026-10-16 07:0x）**：本文件是 `tmp/cg/review/root-pass.md` 的归档快照
+> （同一份报告先以 `docs/reviews/CG-SELF-REVIEW.md` 的名字入库过一次，两个副本已合并成本文件；
+> 同批的 A 批评分见 `docs/reviews/CG-ROUND-BATCH-A.md`，血统表见 `docs/CG-PROVENANCE.md`）。
+> 它进 git 的原因不是"这就是验收结论"，而是本轮**唯一**的逐张判定证据（每条的裁剪取证路径都在
+> `tmp/cg/probe/`，那是临时目录、不进版本库），不归档就等于把评审证据丢掉。
+>
+> **它不是独立评审**：写它的 agent 与本轮施工方同属 `/root` 这一路（`docs/reviews/R1-SELF-CHECK.md`
+> 立的规矩：自校不算验收）。它和 A 批那份报告合起来仍然只是**自评**。本轮的独立验收**没有做**，
+> 原因见 `docs/ROUNDS.md` §「评审阶段」与 §「返工与收口」：本会话的子 agent 消息总线送不到 payload
+> （三次投递 + 一次 `interrupt_agent` 唤醒都失败，b/c 从未执行过 turn）。
+>
+> 因此：**下列判定是返工单与对照物，不是验收结论**；未独立复核前，不要把它当成"本轮已验收"。
+
 # CG 插画评审报告（`/root` 自评 · **不是独立评审**）
 
 > 作者：`/root`。判据：`docs/CG_DESIGN.md` §3/§4（规格 + 六条红线）、`docs/SPEC.md` §2.1/§8、
