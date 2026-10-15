@@ -29,6 +29,33 @@ const budget = parseInt(process.argv[4] || '600000', 10);
 const ONLY = (process.argv[5] || '').split(',').map((s) => s.trim()).filter(Boolean);
 const ONLY_JSON = JSON.stringify(ONLY);
 
+/* ---- 位置参数校验（R2-E05）----------------------------------------------
+ * 以前这里直接摊给 parseInt，敲错一个参数就会让 pickIndex 变成 NaN：
+ * 选项面板永远点不开 → 每章跑满步数上限 → 最后打印「ch01 不合格」。
+ * 那是一个**看起来像内容缺陷、实际是参数错误**的结论，而且和真正的
+ * 「内容不合格」共用退出码 2，脚本里没法区分。这里在开工前就挡下，
+ * 并用退出码 1 把它和 2（内容不合格）分开。
+ * ---------------------------------------------------------------------- */
+function argFail(msg) {
+  console.error('[e2e-run] 参数错误：' + msg);
+  console.error('');
+  console.error('用法：node tools/e2e-run.js [选项索引] [每步间隔ms] [虚拟时间上限ms] [只看这些章,逗号分隔]');
+  console.error('  选项索引      1–9 的整数，自动点第几个选项（默认 1）');
+  console.error('  每步间隔ms    正整数，两次推进之间的等待（默认 8）');
+  console.error('  虚拟时间上限  正整数毫秒（默认 600000）');
+  console.error('  只看这些章    可选，例如 ch09,ch15；省略＝全部 20 章');
+  console.error('');
+  console.error('退出码：0 = 全部通过；1 = 参数错误；2 = 有章节不合格。');
+  process.exit(1);
+}
+function isPosInt(v) { return Number.isInteger(v) && v > 0; }
+
+if (!Number.isInteger(pickIndex) || pickIndex < 1 || pickIndex > 9) {
+  argFail('选项索引必须是 1–9 的整数，收到 ' + JSON.stringify(process.argv[2]));
+}
+if (!isPosInt(stepMs)) argFail('每步间隔必须是正整数的毫秒数，收到 ' + JSON.stringify(process.argv[3]));
+if (!isPosInt(budget)) argFail('虚拟时间上限必须是正整数的毫秒数，收到 ' + JSON.stringify(process.argv[4]));
+
 const PROBE = `
 <div id="probe-out" style="display:none"></div>
 <script>
