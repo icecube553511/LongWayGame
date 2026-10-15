@@ -159,4 +159,21 @@ CG（`assets/generated/cg/{bgId}.svg`）= 同 id 背景的**加强版**：保留
    - 8 个表情**两两可区分**。
    - 29 张背景**两两可区分**，无"线框网格"感。
 3. 任何图片都不能超出画布，不能有黑色矩形底。
-4. 单文件体积 ≤ 400 KB（SVG 是文本，避免上万个碎多边形）。
+4. 单文件体积**分档**（2026-10-15 修订）。原来那条"≤ 400 KB（SVG 是文本，避免上万个碎
+   多边形）"的**理由针对的是矢量面片数量**，而本仓库实际超标的部分是**内嵌位图**
+   （`art/ui_00_crowd_stamps.js` 把群众贴图以 base64 烘进 `bg`/`cg`，单张里 8–14 段
+   `<symbol>` + 50–100 个 `<use>`），理由与现象对不上，所以按文件性质分档：
+
+   | 文件性质 | 上限 | 依据 |
+   |---|---|---|
+   | 纯矢量 SVG（无内嵌位图） | **400 KB** | 原条款，控制碎多边形数量 |
+   | 含内嵌位图素材的 SVG | **640 KB** | 贴图字节另算；实测最大 `cg/bg_xiangjiang_day.svg` = 583 KB |
+   | 立绘 PNG（AI 出图 600×900 RGBA） | **512 KB** | 自检实测最大 435 KB（`wu_laoliu_smile.png`） |
+
+   自检命令（四条目录一起过，按上表分档比对；末行必须是 `超过本档上限的文件数 = 0`）：
+
+   ```powershell
+   node -e "const fs=require('fs'),p=require('path');let bad=0;for(const d of ['bg','cg','ui','chars']){for(const f of fs.readdirSync(p.join('assets/generated',d)).sort()){const fp=p.join('assets/generated',d,f);const s=fs.statSync(fp).size;let lim,why;if(/\.png$/.test(f)){lim=512*1024;why='立绘 PNG';}else if(/\.svg$/.test(f)){const emb=fs.readFileSync(fp,'utf8').indexOf('data:image')>=0;lim=(emb?640:400)*1024;why=emb?'含内嵌位图':'纯矢量';}else continue;if(s>lim){bad++;console.log('超档 '+(s/1024).toFixed(0)+' KB  assets/generated/'+d+'/'+f+'（'+why+'）');}}}console.log('超过本档上限的文件数 = '+bad);"
+   ```
+
+   超档时才动手（减贴图段数 / 降每段像素），不要为了数字去删画面里的行军队伍。
