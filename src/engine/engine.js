@@ -169,6 +169,10 @@
       run: { morale: 60, trust: 50, hope: 55, flags: {}, records: {} },
       progress: {},
       unlocked: { chars: {}, archives: {}, cgs: {}, bgs: {} },
+      /* 已读集合：{ 章id: { '步指纹': 1 } }。
+       * 用于「只快进已读」——没有它，二周目想跳过熟悉的部分就会把没读的一起冲掉。
+       * 指纹取自步内容而不是步号，所以剧情被编辑过也不会整章失效（见 stepKey）。 */
+      read: {},
       startedAt: Date.now()
     };
   }
@@ -183,6 +187,7 @@
     g.progress = g.progress || {};
     g.unlocked = g.unlocked || { chars: {}, archives: {}, cgs: {}, bgs: {} };
     ['chars', 'archives', 'cgs', 'bgs'].forEach(function (k) { if (!g.unlocked[k]) g.unlocked[k] = {}; });
+    if (!g.read || typeof g.read !== 'object') g.read = {};
   })();
   VN.settings = VN.G.settings;
   VN.persist = function () { VN.save.putGlobal(VN.G); };
@@ -223,7 +228,12 @@
     D.chapterTagText = $('chapter-tag-text');
     D.meters = {};
     Array.prototype.forEach.call(document.querySelectorAll('.meter'), function (m) {
-      D.meters[m.dataset.k] = { root: m, fill: m.querySelector('i'), val: m.querySelector('.meter-val') };
+      /* 「人话翻译」行由引擎注入，index.html 不必改结构；已存在就复用。 */
+      var note = m.querySelector('.meter-note');
+      if (!note) { note = el('span', 'meter-note'); m.appendChild(note); }
+      D.meters[m.dataset.k] = {
+        root: m, fill: m.querySelector('i'), val: m.querySelector('.meter-val'), note: note
+      };
     });
     D.quickbar = $('quickbar');
     D.toastLayer = $('toast-layer');
@@ -623,14 +633,21 @@
     VN.persist();
     toast('史料档案 · ' + entry.title);
   }
-  function toast(msg) {
+  function toast(msg, cls, ms) {
     if (!D.toastLayer) return;
-    var t = el('div', 'toast', msg);
+    var t = el('div', 'toast' + (cls ? ' ' + cls : ''), msg);
     D.toastLayer.appendChild(t);
-    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, ms || 3200);
   }
 
   /* ===== 11. HUD ===== */
+  /* 三条数值的「人话翻译」。数值本身玩家读不出意义，给一句状态描述才知道自己在乎什么。
+   * 区间划分与 docs/PLAYABILITY-REVIEW.md 轴 A1 一致：≥75 / 45–74 / ≤44。 */
+  var METER_NOTE = {
+    morale: ['队伍还愿意跟着走', '走得动，但没人说话', '掉队的比说话的多'],
+    trust: ['有话肯当面说', '有话说一半', '各走各的'],
+    hope: ['知道为什么走', '只知道往哪走', '只是在走']
+  };
   function syncMeters(flash) {
     ['morale', 'trust', 'hope'].forEach(function (k) {
       var m = D.meters[k];
@@ -638,6 +655,12 @@
       var v = clamp(VN.state[k] | 0, 0, 100);
       m.fill.style.width = v + '%';
       m.val.textContent = v;
+      if (m.note) {
+        var band = v >= 75 ? 0 : (v >= 45 ? 1 : 2);
+        var txt = (METER_NOTE[k] || [])[band] || '';
+        if (m.note.textContent !== txt) m.note.textContent = txt;
+        if (m.note.dataset.band !== String(band)) m.note.dataset.band = String(band);
+      }
       if (flash) {
         m.root.classList.add('flash');
         setTimeout(function () { m.root.classList.remove('flash'); }, 430);
@@ -701,8 +724,39 @@
   }
 
   /* ===== 13. 剧本解释器 ===== */
-  var autoOn = false, skipOn = false, autoTimer = 0, skipTimer = 0;
+  var autoOn = false, skipOn = false, skipMode = 'all', autoTimer = 0, skipTimer = 0;
   var currentChapter = null, currentChoiceStep = null;
+  /* 当前正停在屏幕上的「内容步」（对白 / 旁白 / 独白 / 插画 / 标题卡）。
+   * 「只快进已读」靠它判断这一屏玩家到底看过没有。 */
+  var curGateStep = null;
+  var readDirty = false;
+
+  /* ---- 已读指纹 ----
+   * 用「步类型 + 说话人 + 正文前 12 字」当指纹，而不是用步号：
+   * 剧情被编辑（增删步骤）时，只有被改到的那几句会失效，不会整章作废。 */
+  function stepKey(s) {
+    if (!s) return '';
+    var body = s.text || s.prompt || '';
+    return s.t + '|' + (s.who || '') + '|' + body.slice(0, 12);
+  }
+  function isRead(s) {
+    if (!s || !VN.state.chapter) return false;
+    var b = VN.G.read && VN.G.read[VN.state.chapter];
+    return !!(b && b[stepKey(s)]);
+  }
+  function markRead(s) {
+    if (!s || !VN.state.chapter) return;
+    if (!VN.G.read) VN.G.read = {};
+    var b = VN.G.read[VN.state.chapter] || (VN.G.read[VN.state.chapter] = {});
+    var key = stepKey(s);
+    if (!b[key]) { b[key] = 1; readDirty = true; }
+  }
+  /* 逐句写 localStorage 太重，攒到自动存档点再落盘（见 autosaveTick / endChapter）。 */
+  function flushRead() {
+    if (!readDirty) return;
+    readDirty = false;
+    VN.persist();
+  }
   function topFrame() { return VN.state.frames[VN.state.frames.length - 1]; }
   function isTopLevel() { return VN.state.frames.length <= 1; }
   function block(kind, ms) {
@@ -736,6 +790,8 @@
   function advise(msg) { if (window.console && console.warn) console.warn('[VN] ' + msg); }
 
   function exec(s) {
+    /* 每执行一步先清空「停在屏幕上的内容步」；只有下面的内容步会重新填上它。 */
+    curGateStep = null;
     switch (s.t) {
       /* 把 s.ms 传下去：SPEC §2.1 允许 bg 带 ms（全剧有 106 处作者写了，
          取值 600–1400ms），但引擎原先直接把 ms 丢掉，所有转场一律 620ms。
@@ -778,6 +834,7 @@
         return true;
       case 'title':
         block('title', 2400);
+        curGateStep = s; markRead(s);
         showTitleCard(s.text, s.sub, 2400, function () { if (VN.state.blockKind === 'title') advance(); });
         return true;
       case 'note':
@@ -785,18 +842,22 @@
         return false;
       case 'cg':
         block('cg', 3200);
+        curGateStep = s; markRead(s);
         showCg(s.id, s.text, 3200, function () { if (VN.state.blockKind === 'cg') advance(); });
         return true;
       case 'narr':
+        curGateStep = s; markRead(s);
         showDialogue('narr', null, s.text, s.note);
         block('text');
         return true;
       case 'think':
+        curGateStep = s; markRead(s);
         ensureOnStage(s.who);
         showDialogue('think', s.who, s.text, s.note);
         block('text');
         return true;
       case 'say':
+        curGateStep = s; markRead(s);
         if (s.face) showChar(s.who, s.face, s.slot);
         /* 没写 face 时按 SPEC 的本意是"沿用上一次的表情"，但前提是人得在台上：
            这一幕没 show 过他，就兜底补上场，否则姓名条会配一张空舞台。 */
@@ -884,9 +945,19 @@
     if (!o) return;
     VN.state.choice = false;
     D.choiceLayer.classList.add('hidden');
+    curGateStep = null;
+    /* 选了之后必须让玩家看见发生了什么。
+     * 原先的反馈只有数值条闪 430ms，玩家根本对不上刚才那一下点的是什么。 */
+    var before = { morale: VN.state.morale, trust: VN.state.trust, hope: VN.state.hope };
     if (o.set) {
       (Array.isArray(o.set) ? o.set : [o.set]).forEach(function (ss) { setVar(ss.var, ss.op, ss.value); });
     }
+    var delta = [];
+    [['morale', '士气'], ['trust', '信任'], ['hope', '信念']].forEach(function (p) {
+      var d = (VN.state[p[0]] | 0) - (before[p[0]] | 0);
+      if (d) delta.push(p[1] + ' ' + (d > 0 ? '+' : '−') + Math.abs(d));
+    });
+    if (delta.length) toast(delta.join('　'), 'delta', 2800);
     if (o.record) VN.state.records[o.record] = 1;
     VN.state.history.push({ kind: 'choice', who: '', name: '', text: '▸ ' + o.text });
     unblock();
@@ -950,6 +1021,13 @@
     }
     return steps;
   }
+  /* 某章顶层步数（含开场标题卡）。标题画面用它显示「上次停在 i / 总数」。 */
+  VN.chapterLength = function (id) {
+    var m = VN.manifest(id);
+    var ch = window.STORY && window.STORY[id];
+    if (!m || !ch || !ch.steps) return 0;
+    return chapterSteps(ch, m).length;
+  };
 
   VN.start = function (id, opts) {
     opts = opts || {};
@@ -1001,6 +1079,11 @@
   VN.jump = function (id) { VN.start(id, {}); };
 
   function endChapter(next) {
+    /* 章末必须收掉快进：原先快进定时器在章节结束后仍在跑，
+     * 而章末卡 4.2 秒后会自动开局下一章 —— 两者一叠，按住 Ctrl 就能冲穿全剧。 */
+    setSkip(false);
+    flushRead();
+    curGateStep = null;
     VN.state.running = false;
     VN.state.waiting = false;
     VN.state.frames = [];
@@ -1172,6 +1255,10 @@
     if (!f) return;
     if (f.i % 14 === 0 && f.i !== lastAutosaveIdx) {
       lastAutosaveIdx = f.i;
+      /* 已读集合比自动存档大一个量级（20 章 × 200+ 条），逐次落盘会把
+       * JSON.stringify 变成热路径，拖慢整页、也会让依赖时序的检查器误判。
+       * 每 10 次自动存档落一次，章末与关页时再各补一次。 */
+      if (f.i % 140 === 0) flushRead();
       VN.save.writeAuto(snapshot());
       if (VN.state.chapter) {
         var p = VN.G.progress[VN.state.chapter] || {};
@@ -1188,18 +1275,42 @@
 
   /* ===== 17. 输入 ===== */
   var skipHeld = false;
-  function setSkip(on) {
-    if (skipOn === on) return;
+  /* 两种快进，语义不同：
+   *   'all'      —— 一路推进到「下一个选项」（跳的是对白，结构内容全保留）
+   *   'readonly' —— 只跳已读段落，遇到没读过的内容立刻停下（二周目专用）
+   * 两者都在到达选项或章节结束时自动关闭。原先的快进没有已读判定、也不在章末停止，
+   * 一次误触 S 就可能丢掉整章、甚至一路冲穿全剧。 */
+  function skipButton() {
+    return D.quickbar && D.quickbar.querySelector('[data-act="skip"]');
+  }
+  function renderSkipButton() {
+    var b = skipButton();
+    if (!b) return;
+    var ro = skipOn && skipMode === 'readonly';
+    b.classList.toggle('active', skipOn);
+    b.textContent = ro ? '跳已读' : '快进';
+    b.title = ro
+      ? '正在只跳已读（按住 Ctrl）—— 遇到没读过的内容会停下'
+      : '跳到下一个选项（S）；按住 Ctrl 只跳已读';
+  }
+  function setSkip(on, mode) {
+    if (on && mode) skipMode = mode;
+    if (skipOn === on) { renderSkipButton(); return; }
     skipOn = on;
-    var b = D.quickbar && D.quickbar.querySelector('[data-act="skip"]');
-    if (b) b.classList.toggle('active', on);
+    renderSkipButton();
     clearInterval(skipTimer);
-    if (on) {
-      skipTimer = setInterval(function () {
-        if (!VN.state.running) { setSkip(false); return; }
-        advance();
-      }, 26);
+    if (on) skipTimer = setInterval(skipTick, 26);
+  }
+  function skipTick() {
+    if (!VN.state.running) { setSkip(false); return; }
+    if (VN.ui && VN.ui.isModalOpen()) return;   /* 菜单开着就先不推进，关掉再继续 */
+    if (VN.state.choice) { setSkip(false); return; }
+    if (skipMode === 'readonly' && curGateStep && !isRead(curGateStep)) {
+      setSkip(false);
+      toast('这里你还没读过 —— 已停下', 'warn', 2600);
+      return;
     }
+    advance();
   }
   function setAuto(on) {
     autoOn = on;
@@ -1234,14 +1345,14 @@
       e.stopPropagation();
       var act = b.dataset.act;
       if (act === 'auto') setAuto(!autoOn);
-      else if (act === 'skip') setSkip(!skipOn);
+      else if (act === 'skip') setSkip(!skipOn, 'all');
       else if (act === 'history') VN.ui.showHistory();
       else if (act === 'save') VN.ui.showSlots('save');
       else if (act === 'settings') VN.ui.showSettings();
       else if (act === 'hide') toggleUI();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Control') { if (!skipHeld) { skipHeld = true; setSkip(true); } return; }
+      if (e.key === 'Control') { if (!skipHeld) { skipHeld = true; setSkip(true, 'readonly'); } return; }
       if (VN.ui && VN.ui.isModalOpen()) {
         if (e.key === 'Escape') { VN.ui.closeTop(); e.preventDefault(); }
         return;
@@ -1265,7 +1376,7 @@
         case 'Escape': VN.ui.showSystem(); e.preventDefault(); break;
         case 'h': case 'H': toggleUI(); break;
         case 'a': case 'A': setAuto(!autoOn); break;
-        case 's': case 'S': setSkip(!skipOn); break;
+        case 's': case 'S': setSkip(!skipOn, 'all'); break;
         case 'l': case 'L': VN.ui.showHistory(); break;
         case 'Tab': VN.ui.showSettings(); e.preventDefault(); break;
       }
@@ -1282,7 +1393,10 @@
         VN.audio.duck(false);
       }
     });
-    window.addEventListener('beforeunload', function () { if (VN.state.running) VN.autosave(); });
+    window.addEventListener('beforeunload', function () {
+      flushRead();
+      if (VN.state.running) VN.autosave();
+    });
   }
 
   /* ===== 18. 启动 ===== */

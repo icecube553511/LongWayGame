@@ -15,6 +15,21 @@
   }
   el = make;
 
+  /* 章末卡与结算页是 sticky 覆盖层：引擎的全局 keydown 会吞掉除 Esc 之外的所有键。
+   * 所以这里自己接一次 Space / Enter，让键盘玩家也能往下走。
+   * 离场时必须解绑，否则这个监听会一直吞掉后续章节的空格键。 */
+  function bindPrimaryKey(fn) {
+    function onKey(ev) {
+      if (ev.key !== ' ' && ev.key !== 'Enter') return;
+      ev.preventDefault();
+      unbind();
+      fn();
+    }
+    function unbind() { document.removeEventListener('keydown', onKey, true); }
+    document.addEventListener('keydown', onKey, true);
+    return unbind;
+  }
+
   function manifest() { return (window.STORY && window.STORY.__manifest) || []; }
   function chapterArr() {
     return manifest().map(function (m) {
@@ -58,8 +73,15 @@
     if (VN.audio && VN.audio.sfx) VN.audio.sfx('click');
   }
   function closeAll() {
-    stack.forEach(function (s) { if (s.root.parentNode) s.root.parentNode.removeChild(s.root); });
+    var closing = stack;
     stack = [];
+    closing.forEach(function (s) {
+      if (s.root.parentNode) s.root.parentNode.removeChild(s.root);
+      /* 覆盖层被整体关掉时（例如引擎直接 VN.start 下一章）也必须走一遍 onClose，
+       * 否则在 onClose 里解绑键盘监听的覆盖层会留下悬挂监听，
+       * 之后那个监听还会继续吞掉空格并重启章节。 */
+      if (s.onClose) { try { s.onClose(); } catch (e) { /* 清理失败不该拖垮界面 */ } }
+    });
     if (ovTarget) ovTarget.classList.add('hidden');
     if (VN.setOverlayOpen) VN.setOverlayOpen(false);
   }
@@ -113,12 +135,30 @@
       return b;
     }
     var doneCount = Object.keys(VN.G.progress || {}).filter(function (k) { return VN.G.progress[k].done; }).length;
+    /* 「继续征途」要具体到停在哪一章哪一步。
+     * 原先只写「已走 N 章」，玩家点下去之前根本不知道会回到哪里。 */
+    function continueNote() {
+      var d = VN.save.readAuto();
+      if (!d || !d.chapter) {
+        var slots = VN.save.listSlots().filter(function (s) { return !!s.data; });
+        slots.sort(function (a, b) { return (b.data.ts || 0) - (a.data.ts || 0); });
+        d = slots.length ? slots[0].data : null;
+      }
+      if (!d || !d.chapter) return doneCount ? '已走 ' + doneCount + ' 章' : '';
+      var m = VN.manifest(d.chapter);
+      var total = VN.chapterLength ? VN.chapterLength(d.chapter) : 0;
+      var i = (d.path && d.path[0] && d.path[0].i) || 0;
+      var s = m ? ('第' + VN.numCn(m.num) + '章 · ' + m.title) : String(d.chapter);
+      if (total) s += '　上次停在 ' + i + ' / ' + total + ' 步';
+      return s;
+    }
+    var contNote = continueNote();
     item('开始新的征途', '', function () {
       closeAll();
       VN.start(manifest()[0].id, { fresh: true });
       if (VN.audio) { VN.audio.init(); VN.audio.bgm('departure', { ms: 1200 }); }
     });
-    item('继续征途', doneCount ? '已走 ' + doneCount + ' 章' : '', function () {
+    item('继续征途', '', function () {
       closeAll();
       if (!VN.continueGame()) {
         var pending = chapterArr().filter(function (c) { return !(progressOf(c.meta.id) || {}).done; })[0];
@@ -126,6 +166,7 @@
       }
       if (VN.audio) VN.audio.init();
     }, !hasProgress);
+    if (contNote) right.appendChild(make('div', 'continue-hint', contNote));
     item('章节选择', '', showChapterSelect);
     item('人物图鉴', '35 人', function () { VN.gallery.showChars(); });
     item('史料档案', '', function () { VN.gallery.showArchives(); });
@@ -381,7 +422,13 @@
   /* ---------- 章末过场 ---------- */
   function chapterEndCard(fromM, toM, cb) {
     closeAll();
-    var entry = open({ title: '', noClose: true, sticky: true, cls: 'result-screen', kind: 'chapterend' });
+    var unbindCard = null;
+    var entry = open({
+      title: '', noClose: true, sticky: true, cls: 'result-screen', kind: 'chapterend',
+      /* 这张卡不靠定时器推进，而是等玩家点「继续行军」或按空格。
+       * 一旦它被别处（例如程序化 VN.start）关掉，也要把键盘监听解绑。 */
+      onClose: function () { if (unbindCard) unbindCard(); }
+    });
     var root = entry.root;
     var headEl = root.querySelector('.ov-head');
     if (headEl) headEl.style.display = 'none';
@@ -402,10 +449,19 @@
     go.style.maxWidth = 'calc(420 * var(--u))';
     go.style.marginTop = 'calc(30 * var(--u))';
     go.textContent = '继续行军　▸';
-    go.addEventListener('click', function () { closeAll(); cb(); });
+    /* 原先这里 4.2 秒后自动进入下一章 —— 玩家连三个数值都没看清就被推走了。
+     * 章末是整章唯一能让玩家喘口气、回看一下的地方，改成必须点击。 */
+    var done = false;
+    function proceed() {
+      if (done) return;
+      done = true;
+      if (unbindCard) unbindCard();
+      closeAll();
+      cb();
+    }
+    unbindCard = bindPrimaryKey(proceed);
+    go.addEventListener('click', proceed);
     entry.body.appendChild(go);
-    var t = setTimeout(function () { closeAll(); cb(); }, 4200);
-    go.addEventListener('click', function () { clearTimeout(t); });
   }
 
   /* ---------- 结局结算 ---------- */
@@ -429,7 +485,11 @@
         + '队伍比出发时小得多，可它还在。它翻过山，涉过水，走过没有人烟的地方，'
         + '最后在一片黄土坡上停住，把红旗插在了城楼上。';
     }
-    var entry = open({ title: '', noClose: true, sticky: true, cls: 'result-screen', kind: 'result' });
+    var unbindResult = null;
+    var entry = open({
+      title: '', noClose: true, sticky: true, cls: 'result-screen', kind: 'result',
+      onClose: function () { if (unbindResult) unbindResult(); }
+    });
     var root = entry.root;
     var headEl = root.querySelector('.ov-head');
     if (headEl) headEl.style.display = 'none';
@@ -453,7 +513,16 @@
     again.style.maxWidth = 'calc(420 * var(--u))';
     again.style.marginTop = 'calc(36 * var(--u))';
     again.textContent = '回到标题画面';
-    again.addEventListener('click', function () { closeAll(); showTitle(); });
+    var left = false;
+    function backToTitle() {
+      if (left) return;
+      left = true;
+      if (unbindResult) unbindResult();
+      closeAll();
+      showTitle();
+    }
+    unbindResult = bindPrimaryKey(backToTitle);
+    again.addEventListener('click', backToTitle);
     entry.body.appendChild(again);
     if (VN.audio) VN.audio.bgm('victory', { ms: 1600 });
   }

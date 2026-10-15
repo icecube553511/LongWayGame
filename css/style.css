@@ -141,8 +141,13 @@ html, body {
   opacity: .94;
 }
 #meters { display: flex; flex-direction: column; gap: calc(6 * var(--u)); align-items: flex-end; }
-.meter { display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(13 * var(--u)); letter-spacing: .1em; opacity: .92; }
+.meter { display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(13 * var(--u)); letter-spacing: .1em; opacity: .92; flex-wrap: wrap; justify-content: flex-end; }
 .meter-label { color: var(--paper-dim); }
+/* 数值的「人话翻译」行：由引擎注入（见 engine.js syncMeters）。
+   数值本身玩家读不出意义，给一句状态描述才知道该不该在乎。独占第二行、右对齐。 */
+.meter-note { flex-basis: 100%; text-align: right; font-size: calc(11 * var(--u)); letter-spacing: .08em; color: var(--paper-dim); opacity: .62; }
+.meter-note[data-band="0"] { color: var(--gold); opacity: .88; }
+.meter-note[data-band="2"] { color: #c9707a; opacity: .88; }
 .meter-track {
   display: block; position: relative;
   width: calc(128 * var(--u)); height: calc(8 * var(--u));
@@ -332,6 +337,14 @@ html, body {
 }
 @keyframes toastIn { from { opacity: 0; transform: translateX(calc(30 * var(--u))); } to { opacity: 1; transform: none; } }
 @keyframes toastOut { to { opacity: 0; transform: translateX(calc(20 * var(--u))); } }
+/* 选项后果：贴在数值条下方，告诉玩家刚才那一下改了什么 */
+.toast.delta {
+  color: #f0d79a; letter-spacing: .18em;
+  background: linear-gradient(100deg, rgba(16, 23, 35, .94), rgba(16, 23, 35, .82));
+  border-left-color: var(--gold);
+}
+/* 「只跳已读」撞到没读过的内容时停下 */
+.toast.warn { background: linear-gradient(100deg, rgba(107, 26, 30, .92), rgba(16, 23, 35, .86)); }
 
 /* ---------------- 载入 ---------------- */
 #loading {
@@ -416,6 +429,8 @@ html, body {
 .menu-item:hover { color: #fff; background: rgba(165, 31, 36, .78); border-left-color: var(--gold); padding-left: calc(30 * var(--u)); }
 .menu-item .mi-note { float: right; font-size: calc(13 * var(--u)); color: var(--gold-dim); letter-spacing: .1em; }
 .menu-item:hover .mi-note { color: #f0d79a; }
+/* 标题画面「继续征途」下面那行：停在哪一章、第几步 */
+.continue-hint { font-size: calc(12 * var(--u)); letter-spacing: .1em; color: var(--paper-dim); opacity: .78; padding: calc(2 * var(--u)) calc(20 * var(--u)) calc(10 * var(--u)); }
 .title-foot { position: relative; padding: calc(14 * var(--u)) calc(80 * var(--u)); font-size: calc(13 * var(--u)); letter-spacing: .16em; color: #6f7887; border-top: 1px solid rgba(191,154,56,.14); }
 
 /* 章节选择 */
