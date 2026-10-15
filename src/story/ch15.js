@@ -96,7 +96,7 @@
       { t: 'narr', text: '他一晚上没有把锅放下来。' },
 
       { t: 'choice', prompt: '锅里的水刚烧开一半就要走。你怎么做？', options: [
-        { text: '把水生灌进竹筒，路上边走边喝。', tag: '能省一点是一点',
+        { text: '把水灌进竹筒，路上边走边喝。', tag: '能省一点是一点',
           set: [ { var: 'morale', op: '+=', value: 4 }, { var: 'trust', op: '+=', value: 3 },
                  { var: 'flag.ch15_carry_water', op: '=', value: true } ],
           record: 'ch15_water_take' },
@@ -111,14 +111,14 @@
         { t: 'narr', text: '他自己没留。' },
         { t: 'say', who: 'li_tiezhu', text: '你们带着。我背着锅，手腾不开。' }
       ], else: [
-        { t: 'narr', text: '水倒了。锅背上。' },
+        { t: 'narr', text: '锅背上了，水一滴没留。' },
         { t: 'say', who: 'li_tiezhu', text: '背上的锅，比水有用。' },
         { t: 'say', who: 'li_tiezhu', text: '到了桥边，能烧一锅热水，比什么都强。' }
       ] },
 
       { t: 'title', text: '五月二十八日 · 夜 · 二百四十里' },
       { t: 'bg', id: 'bg_rain_march', fx: 'dissolve', ms: 800 },
-      { t: 'narr', text: '这是一个必须慢慢写的夜晚，因为它是用脚一寸一寸量出来的。' },
+      { t: 'narr', text: '这一段夜路，是用脚一寸一寸量出来的。' },
       { t: 'narr', text: '雨停了，天黑得看不见十步以外。' },
       { t: 'narr', text: '有人掉了队。没有人回头找。不是不想，是一回头，自己也走不动了。' },
       { t: 'narr', text: '掉队的人自己想办法。有的把枪交给旁边的人，蹲下来揉一会儿脚。' },
@@ -147,7 +147,7 @@
       { t: 'narr', text: '数到一百，再从头数。' },
       { t: 'narr', text: '走着走着，有人开始唱歌。声音很低，只有旁边两三个人听得见。' },
       { t: 'narr', text: '江西的调子。于都河边送人时唱的那个。' },
-      { t: 'narr', text: '一个人唱，两个人跟。后来跟的人多了，声音反而小了——唱的人太多，谁都不敢先大声。' },
+      { t: 'narr', text: '一个人唱，两个人跟。后来跟的人多了，声音反而小了：唱的人太多，谁都不敢先大声。' },
       { t: 'narr', text: '半山腰上，那点声音散在雨后的雾里，像一群人在很远的地方说话。' },
 
       { t: 'show', who: 'xiaoman', face: 'weak', slot: 'left', fx: 'fadein' },
@@ -235,11 +235,11 @@
       { t: 'set', var: 'flag.ch15_thimble_to_shizhu', op: '=', value: true },
 
       { t: 'choice', prompt: '二十二个人站在桥头，等一声令下。你要先做哪一件事？', options: [
-        { text: '先把号吹响——让他们上去的时候听见声音。', tag: '司号员',
+        { text: '先把号吹响：让他们上去的时候听见声音。', tag: '司号员',
           set: [ { var: 'morale', op: '+=', value: 7 }, { var: 'hope', op: '+=', value: 5 },
                  { var: 'flag.ch15_bugle_first', op: '=', value: true } ],
           record: 'ch15_bugle_first' },
-        { text: '先把木板抱起来——他们回来的时候要有路。', tag: '铺桥的人',
+        { text: '先把木板抱起来：他们回来的时候要有路。', tag: '铺桥的人',
           set: [ { var: 'morale', op: '+=', value: 4 }, { var: 'trust', op: '+=', value: 6 },
                  { var: 'flag.ch15_bugle_first', op: '=', value: false } ],
           record: 'ch15_planks_first' }
@@ -302,7 +302,7 @@
       { t: 'show', who: 'he_xiaomei', face: 'sad', slot: 'left', fx: 'fadein' },
       { t: 'narr', text: '何晓梅在桥头蹲了半个钟头。' },
       { t: 'narr', text: '她把每一个从火里出来的人翻过来看脸。' },
-      { t: 'narr', text: '看到一个不认识的脸，她就放下，看下一个。' },
+      { t: 'narr', text: '翻过来一张不认识的脸，她就放下，看下一个。' },
       { t: 'narr', text: '最后她在一个墙角找到了石柱。' },
       { t: 'narr', text: '他还活着。' },
       { t: 'say', who: 'he_xiaomei', face: 'worry', text: '石柱！' },
@@ -406,7 +406,7 @@
         id: 'a_huoba',
         title: '两岸的火把',
         tag: '史实',
-        text: '红军沿大渡河西岸向泸定桥急进的同时，川军增援部队亦沿东岸同向行进，双方夜间均以火把照明，隔河相望。红军一度以号音与对岸联络，使对方误认为友军，从而争取到宝贵时间。这一夜的景象，后来成为长征途中最具象征性的画面之一。'
+        text: '红军沿大渡河西岸向泸定桥急进的同时，川军增援部队亦沿东岸同向行进，双方夜间均以火把照明，隔河相望。红军一度以号音与对岸联络，使对方误认为友军，从而争取到宝贵时间。两岸火把相望的这一夜，后来被许多人写进回忆录。'
       }
     ]
   };

@@ -55,7 +55,7 @@
       { t: 'say', who: 'zhou', text: '陕北有根据地。' },
       { t: 'say', who: 'zhou', text: '有根据地，就有群众，有粮食，有能站住脚的地方。' },
       { t: 'narr', text: '毛泽东把那张报纸拿起来，举到窗边的光里，看得很仔细。' },
-      { t: 'narr', text: '他看的是报纸的边角——那些铅字印得歪歪扭扭的地名。' },
+      { t: 'narr', text: '他看的是报纸的边角，那些铅字印得歪歪扭扭的地名。' },
       { t: 'say', who: 'mao', face: 'smile', text: '到陕北去。' },
       { t: 'say', who: 'mao', text: '我们走来走去，走了快一年。' },
       { t: 'say', who: 'mao', text: '原来落脚的地方，就在这张纸上。' },
@@ -133,7 +133,7 @@
       { t: 'say', who: 'a_yue', face: 'smile', text: '这里离腊子口一千里。' },
       { t: 'say', who: 'a_yue', text: '……我试试。' },
       { t: 'narr', text: '她转身走了。走了十几步，又回过头喊了一句苗话。' },
-      { t: 'narr', text: '小满没听懂。但他知道那句话是好的。' },
+      { t: 'narr', text: '小满没听懂那句话。他把手举起来，朝她挥了两下。' },
       { t: 'hide', who: 'a_yue' },
       { t: 'hide', who: 'xiaoman' },
       { t: 'set', var: 'flag.ch19_ayue_left', op: '=', value: true },
@@ -330,7 +330,7 @@
       { t: 'if', cond: { var: 'flag.ch19_first_act', op: '=', value: 'bugle' }, then: [
         { t: 'narr', text: '小满站起来，把号举到嘴边。' },
         { t: 'narr', text: '他吹了一个很长的音。' },
-        { t: 'narr', text: '不是冲锋号，也不是集合号。只是一个音，长音，一直往前送。' },
+        { t: 'narr', text: '只是一个音，长音，一直往前送。' },
         { t: 'narr', text: '沟对面有人站起来了，朝这边看。' }
       ], else: [
         { t: 'if', cond: { var: 'flag.ch19_first_act', op: '=', value: 'sleep' }, then: [
@@ -386,7 +386,7 @@
       { t: 'hide', who: 'mao' },
 
       { t: 'narr', text: '从于都河出发的那一天算起，到走进吴起镇，一共三百六十七天。', note: '《七律·长征》作于1935年10月，红军抵达陕北之后。' },
-      { t: 'narr', text: '八个六千多人出发。到达陕北时，还有七千多人。' },
+      { t: 'narr', text: '八万六千多人出发。到达陕北时，还有七千多人。' },
       { t: 'narr', text: '翻过十八座大山，渡过二十四条大河，走过十一个省。' },
       { t: 'narr', text: '平均每天走七十里。每三百米，就有一个人倒下。' },
       { t: 'narr', text: '这些数字后来被人一遍一遍写进书里。当时没有人数，也数不动。' },

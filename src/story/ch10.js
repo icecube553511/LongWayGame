@@ -17,7 +17,7 @@
       { t: 'bg', id: 'bg_loushanguan', fx: 'fade', ms: 1000 },
       { t: 'bgm', id: 'tense' },
       { t: 'narr', text: '娄山关在遵义城北，是大娄山脉的一处隘口。' },
-      { t: 'narr', text: '关的两边是石峰，中间一条窄路，从山脚盘上去，只有一条。' },
+      { t: 'narr', text: '关的两边是石峰，中间只有一条窄路，从山脚盘上去。' },
       { t: 'narr', text: '这就是贵州通往四川的必经之门。' },
       { t: 'narr', text: '要回遵义，先要过这道门。' },
       { t: 'narr', text: '门后头，是黔军王家烈的两个团。' },
@@ -67,7 +67,7 @@
           { t: 'narr', text: '石阶上的血很快被雨水冲淡，又被新的一层盖上。' },
           { t: 'say', who: 'soldiers', text: '（躺在石阶上）连长……上不去。' },
           { t: 'say', who: 'peng', text: '（在电话里）上不去就趴着，别抬头。' },
-          { t: 'say', who: 'peng', text: '——右沟的人已经上去一半了。' }
+          { t: 'say', who: 'peng', text: '右沟的人已经上去一半了。' }
         ],
         else: [
           { t: 'if', cond: { var: 'flag.siege', op: '=', value: true },
@@ -75,7 +75,7 @@
               { t: 'narr', text: '围了一天。关上的水是山泉，断不了。' },
               { t: 'narr', text: '倒是我们自己，在山下淋了一夜的雨。' },
               { t: 'say', who: 'lin', text: '不能再等了。' },
-              { t: 'say', who: 'lin', text: '敌人已经在做退的准备——再等，他们就走干净了。' }
+              { t: 'say', who: 'lin', text: '敌人已经在做退的准备。再等，他们就走干净了。' }
             ],
             else: [
               { t: 'narr', text: '正面只有两个连，枪声却摆出了一个团的架势。' },
@@ -101,7 +101,7 @@
       { t: 'say', who: 'he_xiaomei', text: '待会儿抬进来的人，你别看脸。' },
       { t: 'say', who: 'san_wa', text: '为什么。' },
       { t: 'say', who: 'he_xiaomei', text: '（把纱布在手上绕）看了脸，你就只记得脸。' },
-      { t: 'say', who: 'he_xiaomei', text: '——你得看伤口。' },
+      { t: 'say', who: 'he_xiaomei', text: '你得看伤口。' },
       { t: 'narr', text: '第一批抬进来三个人。' },
       { t: 'narr', text: '一个打在肩膀上，一个打在腿上，还有一个，弹片从耳朵后面进去。' },
       { t: 'narr', text: '第三个抬进来的时候还在说话，说到一半停了。' },
@@ -126,7 +126,7 @@
       { t: 'say', who: 'wu_laoliu', text: '三十多怎么了。' },
       { t: 'say', who: 'wu_laoliu', text: '我在江西砍过竹子，在湖南爬过城墙。' },
       { t: 'say', who: 'wu_laoliu', text: '你们这些后生，爬崖的时候只知道用胳膊。' },
-      { t: 'say', who: 'wu_laoliu', text: '——那要掉下去的。' },
+      { t: 'say', who: 'wu_laoliu', text: '那要掉下去的。' },
       { t: 'choice',
         prompt: '攀崖的突击队还差一个人。',
         options: [
@@ -148,7 +148,7 @@
       { t: 'if', cond: { var: 'flag.team_climber', op: '=', value: true },
         then: [
           { t: 'narr', text: '会爬的凑了二十七个人。' },
-          { t: 'narr', text: '他们先把绳子送上去——绳子是绑腿接的，一共接了十九根。' },
+          { t: 'narr', text: '他们先把绳子送上去。绳子是绑腿接的，一共接了十九根。' },
           { t: 'narr', text: '第一个人上去以后，把绳子拴在石头上，下面才依次上人。' },
           { t: 'say', who: 'wu_laoliu', text: '（在下面把绳子往腰上绕）' },
           { t: 'say', who: 'wu_laoliu', text: '一个一个来，别抢。' },
@@ -184,10 +184,9 @@
       { t: 'sfx', id: 'horn' },
       { t: 'narr', text: '冲锋号响了。' },
       { t: 'narr', text: '这一声是小满吹的。' },
-      { t: 'narr', text: '他吹得不对劲——第一下没响，第二下哑了半个音，第三下才通。' },
+      { t: 'narr', text: '他吹得不对劲：第一下没响，第二下哑了半个音，第三下才通。' },
       { t: 'narr', text: '但号声就是号声。' },
-      { t: 'narr', text: '关下的两个连起立，关上的枪口转了过来——' },
-      { t: 'narr', text: '关后的手榴弹先响了。' },
+      { t: 'narr', text: '关下的两个连起立，关上的枪口转了过来。关后的手榴弹先响了。' },
       { t: 'fx', kind: 'flash', ms: 300 },
       { t: 'sfx', id: 'shell' },
       { t: 'fx', kind: 'shake', ms: 800 },
@@ -214,7 +213,7 @@
       { t: 'choice',
         prompt: '旗要插在关顶最高的石峰上，那石头只有一人宽。',
         options: [
-          { text: '「你自己去——那是你抱上来的旗。」', tag: '成全',
+          { text: '「你自己去。那是你抱上来的旗。」', tag: '成全',
             set: [ { var: 'morale', op: '+=', value: 6 }, { var: 'trust', op: '+=', value: 3 },
                    { var: 'flag.shi_zhu_flag', op: '=', value: true } ],
             record: 'shi_zhu_flag' },
@@ -239,7 +238,7 @@
           { t: 'narr', text: '旗在石峰上展开了。' },
           { t: 'narr', text: '风从关口下面灌上来，旗整个横了过去，像一面烧着的墙。' },
           { t: 'say', who: 'shi_zhu', text: '（在石峰上喊，声音破了）' },
-          { t: 'say', who: 'shi_zhu', text: '娄山关——是我们的了！' },
+          { t: 'say', who: 'shi_zhu', text: '娄山关是我们的了！' },
           { t: 'narr', text: '关口上的人全在喊。' },
           { t: 'narr', text: '喊声撞在对面的山壁上，又撞回来。' }
         ],
@@ -306,7 +305,7 @@
       { t: 'say', who: 'xiaoman', text: '（脸红了）' },
       { t: 'say', who: 'mao', text: '没事。' },
       { t: 'say', who: 'mao', text: '号是给活人听的。活人不在乎第一下响不响。' },
-      { t: 'say', who: 'mao', text: '——他只在乎后面那一下。' },
+      { t: 'say', who: 'mao', text: '他只在乎后面那一下。' },
       { t: 'set', var: 'trust', op: '+=', value: 3 },
       { t: 'title', text: '二月二十七日·关上清点' },
       { t: 'bg', id: 'bg_loushanguan', fx: 'cut' },
@@ -363,7 +362,6 @@
       { t: 'bgm', id: 'hope' },
       { t: 'narr', text: '娄山关之后两天，红军再占遵义城。' },
       { t: 'narr', text: '这一仗，敌人两个师又八个团被打垮，被俘三千多人。' },
-      { t: 'narr', text: '这是长征以来最大的一次胜利。' },
       { t: 'show', who: 'li_tiezhu', face: 'smile', slot: 'left', fx: 'slidein' },
       { t: 'say', who: 'li_tiezhu', text: '（把锅架起来）今天有米。' },
       { t: 'say', who: 'li_tiezhu', text: '不掺野菜，纯白米。' },
@@ -380,7 +378,7 @@
       { t: 'narr', text: '今天他吹了四次。' },
       { t: 'narr', text: '第一次哑了半个音，后面三次都响。' },
       { t: 'narr', text: '他想着白天石峰上那面旗，想着想着就睡着了。' },
-      { t: 'narr', text: '旗在风里横着，像一面烧着的墙。' },
+      { t: 'narr', text: '火堆边上有人翻了个身，把枪搂紧了一点。' },
       { t: 'title', text: '三月一日·遵义城' },
       { t: 'bg', id: 'bg_zunyi', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '红军在遵义城里住了几天。' },
@@ -419,7 +417,7 @@
       { t: 'title', text: '三月四日·出发前' },
       { t: 'narr', text: '离开遵义的前一夜，司令部通报了娄山关的战果。' },
       { t: 'narr', text: '数字念完，会场里静了一下，随后是鼓掌。' },
-      { t: 'narr', text: '有人鼓掌鼓到一半就停了——在座的人里，有一半是从湘江走过来的。' },
+      { t: 'narr', text: '有人鼓掌鼓到一半就停了：在座的人里，有一半是从湘江走过来的。' },
       { t: 'show', who: 'wu_laoliu', face: 'calm', slot: 'left', fx: 'slidein' },
       { t: 'say', who: 'wu_laoliu', text: '（散会以后蹲在门口）' },
       { t: 'say', who: 'wu_laoliu', text: '杀掉三千个，换我们三千个。' },
@@ -457,13 +455,13 @@
         id: 'a_loushanguan_terrain',
         title: '娄山关的地形',
         tag: '史实',
-        text: '娄山关位于贵州遵义以北的大娄山脉中段，海拔约一千四百米，是川黔交通的要隘。关隘两侧为石峰悬崖，中间只有一条狭窄的石阶古道盘旋而上，「一夫当关，万夫莫开」。红军此役之所以能成功，一方面靠正面部队的顽强牵制，另一方面靠另一部分兵力从侧翼攀崖迂回，形成前后夹击。地形既是阻碍，也成了红军夺取胜利的依托。'
+        text: '娄山关位于贵州遵义以北的大娄山脉中段，海拔约一千四百米，是川黔交通的要隘。关隘两侧为石峰悬崖，中间只有一条狭窄的石阶古道盘旋而上，「一夫当关，万夫莫开」。红军能拿下娄山关，正面部队的顽强牵制和侧翼攀崖迂回缺一不可，两下一夹，关上守军就撑不住了。'
       },
       {
         id: 'a_second_zunyi',
-        title: '再占遵义：从被动到主动',
+        title: '再占遵义',
         tag: '史实',
-        text: '二渡赤水回师黔北，红军先取桐梓，再夺娄山关，后占遵义，前后不满十天。这一系列行动使国民党军队在川南的部署全部落空。更重要的是，这是遵义会议之后红军取得的第一个大胜仗：指挥权集中在新的领导核心手中，部队的机动性与作战意志都发生了明显变化。此后红军在川滇黔边区的连续机动中越来越主动，直到巧渡金沙江摆脱追兵。'
+        text: '二渡赤水回师黔北，红军先取桐梓，再夺娄山关，后占遵义，前后不满十天。这一系列行动使国民党军队在川南的部署全部落空。这是遵义会议之后红军取得的第一个大胜仗。指挥权集中到新的领导核心手中以后，部队的机动与作战意志都有明显变化。此后红军在川滇黔边区的连续机动中越来越主动，直到巧渡金沙江摆脱追兵。'
       }
     ]
   };

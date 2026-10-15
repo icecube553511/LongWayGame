@@ -35,7 +35,7 @@
       { t: 'say', who: 'wu_laoliu', text: '能不能过，得问船。' },
       { t: 'say', who: 'wu_laoliu', text: '（蹲下来看水）……不对。得问船在哪儿。' },
       { t: 'narr', text: '南岸一条船都没有。' },
-      { t: 'narr', text: '船工把船划到北岸藏了。这是常事——南岸来的人，谁来谁就被抓兵。' },
+      { t: 'narr', text: '船工把船划到北岸藏了。这是常事：南岸来的人，谁来谁就被抓兵。' },
       { t: 'show', who: 'li_tiezhu', face: 'worry', slot: 'right', fx: 'slidein' },
       { t: 'say', who: 'li_tiezhu', text: '小满，把水壶给我。' },
       { t: 'say', who: 'xiaoman', text: '……满了。' },
@@ -191,7 +191,7 @@
       { t: 'say', who: 'xiaoman', text: '十五。' },
       { t: 'say', who: 'villagers', text: '他走的时候也十五。' },
       { t: 'say', who: 'villagers', text: '……划吧。' },
-      { t: 'title', text: '五月四日·通江边的大路' },
+      { t: 'title', text: '五月四日·通往江边的大路' },
       { t: 'bg', id: 'bg_rain_march', fx: 'fade', ms: 900 },
       { t: 'bgm', id: 'march' },
       { t: 'narr', text: '先头部队过江的同时，主力还在往江边赶。' },
@@ -254,7 +254,6 @@
       { t: 'narr', text: '那个连长被抬上船。他一路没再说话。' },
       { t: 'sfx', id: 'water' },
       { t: 'title', text: '五月五日—八日·九天九夜' },
-      { t: 'bg', id: 'bg_camp_fire', fx: 'dissolve', ms: 1000 },
       { t: 'bg', id: 'bg_camp_fire', fx: 'dissolve', ms: 1000 },
       { t: 'bgm', id: 'hope' },
       { t: 'narr', text: '船工分了班。一班六个人，两个钟头换一次。' },
@@ -366,7 +365,7 @@
             set: [ { var: 'hope', op: '+=', value: 4 }, { var: 'trust', op: '+=', value: 2 },
                    { var: 'flag.left_meal', op: '=', value: true } ],
             record: 'left_meal' },
-          { text: '不打扰他。回去把号擦干净——天亮还要吹。', tag: '守分',
+          { text: '不打扰他。回去把号擦干净，天亮还要吹。', tag: '守分',
             set: [ { var: 'morale', op: '+=', value: 3 },
                    { var: 'flag.clean_bugle', op: '=', value: true } ],
             record: 'clean_bugle' },
@@ -398,7 +397,7 @@
             else: [
               { t: 'narr', text: '小满回到火堆边，用布把铜号从头到尾擦了一遍。' },
               { t: 'narr', text: '号嘴里的泥，他用一根草秆一点点捅出来。' },
-              { t: 'narr', text: '擦完，他试着吹。没有出声——他把号贴在嘴上，只是吹了一口气。' },
+              { t: 'narr', text: '擦完，他试着吹。没有出声：他把号贴在嘴上，只是吹了一口气。' },
               { t: 'narr', text: '他怕吵醒江边睡着的人。' }
             ]
           }
@@ -442,7 +441,7 @@
       { t: 'bgm', id: 'night' },
       { t: 'narr', text: '全军过完金沙江，用了九天九夜。' },
       { t: 'narr', text: '七条木船，三十六个船工。' },
-      { t: 'narr', text: '船工一分钱没少拿。走得那天早上，刘伯承把手上的表摘下来，给了张师傅。' },
+      { t: 'narr', text: '船工一分钱没少拿。走的那天早上，刘伯承把手上的表摘下来，给了张师傅。' },
       { t: 'say', who: 'liu_bocheng', text: '表你收着。' },
       { t: 'say', who: 'villagers', text: '司令，这太贵。' },
       { t: 'say', who: 'liu_bocheng', text: '不贵。' },
@@ -450,7 +449,7 @@
       { t: 'narr', text: '从皎平渡往北，是四川的会理。' },
       { t: 'narr', text: '追兵到江边的时候，北岸的人已经走了两天。' },
       { t: 'narr', text: '他们把船划到北岸，砸沉了两条，剩下的藏在河湾里。' },
-      { t: 'narr', text: '从此，几十万敌军被一条江隔在了南边。' },
+      { t: 'narr', text: '一条江，把几十万追兵隔在了南边。' },
       { t: 'show', who: 'xiaoman', face: 'calm', slot: 'center', fx: 'fadein' },
       { t: 'say', who: 'xiaoman', text: '（解下水壶，把江水倒进江里）' },
       { t: 'think', who: 'xiaoman', text: '（过了江再倒。师父，我过了。）' },
@@ -460,8 +459,7 @@
       { t: 'say', who: 'li_tiezhu', text: '（把水壶接过去，往锅里添了一瓢新水）……下回，别装那么满。' },
       { t: 'say', who: 'li_tiezhu', text: '沉。' },
       { t: 'narr', text: '篝火烧到后半夜。' },
-      { t: 'narr', text: '小满靠着铜锅睡着了。他手里还攥着一样东西——' },
-      { t: 'narr', text: '一枚铜顶针，被汗水和江水泡得发亮。' },
+      { t: 'narr', text: '小满靠着铜锅睡着了。他手里还攥着一样东西：一枚铜顶针，被汗水和江水泡得发亮。' },
       { t: 'narr', text: '那是于都河边的郭大娘给他的。' },
       { t: 'narr', text: '她说：到了北边，还我。' },
       { t: 'narr', text: '北边还远。' },
@@ -475,7 +473,7 @@
         id: 'a_jiaoping_boats',
         title: '皎平渡的七条木船',
         tag: '史实',
-        text: '一九三五年五月初，中央红军进抵云南禄劝县金沙江畔。皎平渡是金沙江上的一个老渡口，两岸崖壁陡立，江水湍急。红军先头部队赶到时，南岸没有一条船——渡船都被船工划到北岸藏了起来。红军先遣队政治工作人员反复向对岸喊话，说明红军是过路的队伍，不拿群众一针一线，渡江照付工钱。船工们先后出来，把藏在河湾里的木船划了回来。全军共找到七条木船，三十六名船工分成两班，白天把船藏在江湾，夜里划渡。'
+        text: '一九三五年五月初，中央红军进抵云南禄劝县金沙江畔。皎平渡是金沙江上的一个老渡口，两岸崖壁陡立，江水湍急。红军先头部队赶到时，南岸没有一条船：渡船都被船工划到北岸藏了起来。红军先遣队政治工作人员反复向对岸喊话，说明红军是过路的队伍，不拿群众一针一线，渡江照付工钱。船工们先后出来，把藏在河湾里的木船划了回来。全军共找到七条木船，三十六名船工分成两班，白天把船藏在江湾，夜里划渡。'
       },
       {
         id: 'a_jiaoping_nine_days',
