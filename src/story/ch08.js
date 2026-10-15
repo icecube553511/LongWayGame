@@ -294,7 +294,7 @@
 
       { t: 'title', text: '一月二十九日 · 一渡赤水' },
       { t: 'bg', id: 'bg_chishui', fx: 'dissolve', ms: 1200 },
-      { t: 'cg', id: 'bg_chishui', text: '赤水河。第一次往西。' },
+      { t: 'cg', id: 'cg_chishui_first', text: '赤水河。第一次往西。' },
       { t: 'narr', text: '凌晨三点，命令全部传下去了。' },
       { t: 'narr', text: '伤员先走，辎重随后，主力断后。' },
       { t: 'narr', text: '没有人喊，没有人打火把。' },

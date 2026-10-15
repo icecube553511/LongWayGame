@@ -57,7 +57,7 @@
       { t: 'narr', text: '他们从南边来。他们走了一年半。' },
       { t: 'sfx', id: 'cheer' },
       { t: 'fx', kind: 'flash', ms: 500 },
-      { t: 'cg', id: 'bg_huining', text: '两支走了两年的队伍，在同一个下午看见了对方。' },
+      { t: 'cg', id: 'cg_huining', text: '两支走了两年的队伍，在同一个下午看见了对方。' },
 
       { t: 'narr', text: '会宁城墙上的人，先喊起来了。' },
       { t: 'narr', text: '城下的人也跟着喊。' },
@@ -357,7 +357,7 @@
       { t: 'narr', text: '他就吹了。' },
       { t: 'narr', text: '声音出来了，很短。河那边，有人应了一声。' },
       { t: 'fx', kind: 'star', ms: 1400 },
-      { t: 'cg', id: 'bg_yudu_night', text: '一九三四年十月，于都河。一个十五岁的号手举起了他的号。' },
+      { t: 'cg', id: 'cg_yudu_return', text: '一九三四年十月，于都河。一个十五岁的号手举起了他的号。' },
 
       { t: 'narr', text: '两年。' },
       { t: 'narr', text: '从于都到会宁，中央红军走了一年，二万五千里。' },

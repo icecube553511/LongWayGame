@@ -238,7 +238,7 @@
       { t: 'bg', id: 'bg_yudu_night', fx: 'fade' },
       { t: 'fx', kind: 'star' },
       { t: 'title', text: '十月十七日 · 夜渡', sub: '' },
-      { t: 'cg', id: 'bg_yudu_night', text: '一九三四年十月十七日。河上没有一支火把。' },
+      { t: 'cg', id: 'cg_yudu_night', text: '一九三四年十月十七日。河上没有一支火把。' },
       { t: 'narr', text: '渡河从十月十七号傍晚开始。' },
       { t: 'narr', text: '五座浮桥横在河上，桥板高低不平，人走上去，脚底下是水声。' },
       { t: 'narr', text: '火把没有点。命令是：不许说话，不许打手电，不许掉队。' },

@@ -56,7 +56,7 @@
 
       { t: 'title', text: '十二月十八日 · 黎平' },
       { t: 'bg', id: 'bg_liping', fx: 'dissolve', ms: 1100 },
-      { t: 'cg', id: 'bg_liping', text: '路要往哪边走，得当面说出来。' },
+      { t: 'cg', id: 'cg_liping', text: '路要往哪边走，得当面说出来。' },
 
       { t: 'narr', text: '到黎平之前的几天，担架队里一直在说话。' },
       { t: 'narr', text: '王稼祥躺在担架上，腹部缠着绷带。他的伤在很久以前的战斗中就落下了，一直没好。' },

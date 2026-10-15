@@ -171,7 +171,7 @@
       { t: 'hide', who: 'wu_laoliu' },
       { t: 'bg', id: 'bg_blockade', fx: 'fade' },
       { t: 'title', text: '十一月八日 · 汝城城口', sub: '第二道封锁线' },
-      { t: 'cg', id: 'bg_blockade', text: '碉堡连着碉堡，队伍还是从口子里挤了过去。' },
+      { t: 'cg', id: 'cg_blockade', text: '碉堡连着碉堡，队伍还是从口子里挤了过去。' },
       { t: 'narr', text: '第二道封锁线横在湖南汝城与广东城口之间。' },
       { t: 'narr', text: '这一道比第一道密。碉堡连着碉堡，铁丝网拉着铁丝网。' },
       { t: 'narr', text: '打了两天两夜，撕开一个口子，队伍照样从口子里挤过去。' },

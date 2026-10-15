@@ -94,7 +94,7 @@
 
       { t: 'title', text: '元旦' },
       { t: 'bg', id: 'bg_houchang', fx: 'dissolve', ms: 1200 },
-      { t: 'cg', id: 'bg_houchang', text: '一九三五年一月一日。过了年，就过江。' },
+      { t: 'cg', id: 'cg_houchang', text: '一九三五年一月一日。过了年，就过江。' },
       { t: 'narr', text: '第二天是阳历元旦。' },
       { t: 'narr', text: '总政治部下了命令：今天过年，全军改善伙食，每人一斤肉。' },
       { t: 'narr', text: '命令还加了一句：要把年过得像个样子。' },

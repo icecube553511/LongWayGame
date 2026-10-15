@@ -463,7 +463,7 @@
       { t: 'narr', text: '那是于都河边的郭大娘给他的。' },
       { t: 'narr', text: '她说：到了北边，还我。' },
       { t: 'narr', text: '北边还远。' },
-      { t: 'cg', id: 'bg_jinsha', text: '金沙江皎平渡。七条木船，三十六个船工，九天九夜。' },
+      { t: 'cg', id: 'cg_jinsha', text: '金沙江皎平渡。七条木船，三十六个船工，九天九夜。' },
       { t: 'bgm', id: 'hope' },
       { t: 'unlock', kind: 'archive', id: 'a_jiaoping_boats' },
       { t: 'end', next: 'ch13' }

@@ -173,7 +173,7 @@
 
       { t: 'title', text: '五月二十九日 · 泸定桥' },
       { t: 'bg', id: 'bg_luding', fx: 'dissolve', ms: 1200 },
-      { t: 'cg', id: 'bg_luding', text: '十三根铁索，横在一条发怒的河上。' },
+      { t: 'cg', id: 'cg_luding_race', text: '十三根铁索，横在一条发怒的河上。' },
       { t: 'narr', text: '泸定桥。' },
       { t: 'narr', text: '一百多米长，十三根铁索。九根在底下，四根在两边做扶手。' },
       { t: 'narr', text: '铁索之间有木板，人本来是踩着木板过去的。' },
@@ -278,7 +278,7 @@
       { t: 'narr', text: '他一头扎进了火里。' },
       { t: 'fx', kind: 'flash', ms: 400 },
 
-      { t: 'cg', id: 'bg_luding', text: '火里有人冲过去了。' },
+      { t: 'cg', id: 'cg_luding_bridge', text: '火里有人冲过去了。' },
       { t: 'sfx', id: 'cheer' },
       { t: 'narr', text: '桥头堡被夺下了。' },
       { t: 'narr', text: '二十二个人冲进泸定城的街道，和守军短兵相接。' },

@@ -434,7 +434,7 @@
       { t: 'narr', text: '有战士摘了一小枝，别在挎包上。' },
       { t: 'narr', text: '走了半天，花蔫了，他还留着。' },
       { t: 'narr', text: '前面是乌江。过了乌江，就是贵阳的方向。' },
-      { t: 'cg', id: 'bg_loushanguan', text: '娄山关。雄关漫道真如铁，而今迈步从头越。' },
+      { t: 'cg', id: 'cg_loushanguan', text: '娄山关。雄关漫道真如铁，而今迈步从头越。' },
       { t: 'unlock', kind: 'archive', id: 'a_loushanguan_win' },
       { t: 'end', next: 'ch11' }
     ],

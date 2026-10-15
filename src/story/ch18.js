@@ -195,7 +195,7 @@
       { t: 'bg', id: 'bg_lazikou', fx: 'fade' },
       { t: 'sfx', id: 'distant_gun' },
       { t: 'title', text: '十七日 · 拂晓 · 桥头', sub: '' },
-      { t: 'cg', id: 'bg_lazikou', text: '绝壁之间，只剩一道口子。' },
+      { t: 'cg', id: 'cg_lazikou', text: '绝壁之间，只剩一道口子。' },
       { t: 'show', who: 'xiaoman', face: 'stern', slot: 'center' },
       { t: 'narr', text: '小满在桥这边。他趴在石头后面，把号贴在胸口。' },
       { t: 'narr', text: '铜是凉的。他想起夹金山那次，凉到吹不响。' },

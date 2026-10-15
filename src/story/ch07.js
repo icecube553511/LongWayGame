@@ -174,7 +174,7 @@
       { t: 'hide', who: 'xiaoman' },
       { t: 'bg', id: 'bg_zunyi', fx: 'fade' },
       { t: 'title', text: '一月十七日 · 天亮', sub: '决议' },
-      { t: 'cg', id: 'bg_zunyi', text: '楼上散了会，楼下的人都在等。' },
+      { t: 'cg', id: 'cg_zunyi', text: '楼上散了会，楼下的人都在等。' },
       { t: 'show', who: 'chen_yun', face: 'calm', slot: 'center' },
       { t: 'say', who: 'chen_yun', text: '我把会议的决定念一遍。' },
       { t: 'say', who: 'chen_yun', text: '一，增选毛泽东同志为政治局常委。' },

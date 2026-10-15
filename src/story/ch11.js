@@ -428,7 +428,7 @@
       { t: 'narr', text: '从地图上看，这两个月在川黔滇之间画的是一团乱线。' },
       { t: 'narr', text: '可就是这团乱线，把几十万追兵转晕了。' },
       { t: 'narr', text: '再往西，是金沙江。' },
-      { t: 'cg', id: 'bg_chishui', text: '赤水河。一个月，四回。地图上是折线，脚下是血泡。' },
+      { t: 'cg', id: 'cg_chishui_fourth', text: '赤水河。一个月，四回。地图上是折线，脚下是血泡。' },
       { t: 'unlock', kind: 'archive', id: 'a_four_crossings' },
       { t: 'end', next: 'ch12' }
     ],

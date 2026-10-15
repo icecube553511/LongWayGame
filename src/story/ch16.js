@@ -77,7 +77,7 @@
       { t: 'hide', who: 'zhu' },
       { t: 'title', text: '六月十二日 · 半山以上', sub: '海拔三千五百米' },
       { t: 'fx', kind: 'snow' },
-      { t: 'cg', id: 'bg_snow_mountain', text: '四千余米。风把话都吹回去了。' },
+      { t: 'cg', id: 'cg_snow_mountain', text: '四千余米。风把话都吹回去了。' },
       { t: 'bg', id: 'bg_snow_mountain', fx: 'fade' },
       { t: 'narr', text: '雪不是下的。雪是被风吹起来的。' },
       { t: 'narr', text: '风从上面往下刮，把雪刮到人的脸上、领口里、袖子里。前面的人踩出的脚印，转眼就被填平了。' },

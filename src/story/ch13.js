@@ -264,7 +264,7 @@
       { t: 'set', var: 'morale', op: '+=', value: 6 },
       { t: 'set', var: 'trust', op: '+=', value: 8 },
       { t: 'set', var: 'hope', op: '+=', value: 6 },
-      { t: 'cg', id: 'bg_yihai', text: '彝海的水面很静。两个人分喝了一碗酒。' },
+      { t: 'cg', id: 'cg_yihai', text: '彝海的水面很静。两个人分喝了一碗酒。' },
 
       { t: 'title', text: '中国夷民红军沽鸡支队' },
       { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 900 },
