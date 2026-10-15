@@ -273,6 +273,42 @@ const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 fs.writeFileSync(pagePath, src.replace(/<\/body>/, PROBE + '</body>'), 'utf8');
 const pageUrl = 'file:///' + pagePath.replace(/\\/g, '/');
 
+/* ---- 临时页的异常路径清理（R2-E06）---------------------------------------
+ * 以前只在正常收尾那一行 unlink，被 Ctrl+C / SIGTERM 打断就在仓库根目录
+ * 留一个 `_e2e_<pid>_<ts>.html`，越积越多，而且它是一份**能当入口打开的**页面副本。
+ * 两层兜底：
+ *   1) 本进程的退出路径（exit / SIGINT / SIGTERM / SIGHUP）都清自己的页；
+ *   2) 启动时清扫"上一位探针的孤儿页" —— 只删文件名里那个 PID **已经不存在**的，
+ *      正在并行跑的其它 agent 的临时页一律不碰。
+ * 被 Stop-Process -Force 强杀那一下拦不住，那是第 2 层负责的。
+ * ------------------------------------------------------------------------ */
+let pageCleaned = false;
+function cleanupPage() {
+  if (pageCleaned) return;
+  pageCleaned = true;
+  try { fs.unlinkSync(pagePath); } catch (e) { /* 忽略 */ }
+}
+process.on('exit', cleanupPage);
+['SIGINT', 'SIGTERM', 'SIGHUP'].forEach((sig) => {
+  process.on(sig, () => { cleanupPage(); process.exit(130); });
+});
+
+/* 第二层：启动时清扫"上一位探针的孤儿页"。
+ * 只删文件名里那个 PID **已经不存在**的临时页；并行跑的其它探针一律不碰。
+ * （被 Stop-Process -Force 强杀时第一层拦不住，由这一层兜。）
+ * —— 这一层由 root 补完（原改动被中断在只有第一层的状态）。 */
+try {
+  const mine = path.basename(pagePath);
+  fs.readdirSync(ROOT)
+    .filter((f) => /^_e2e(?:run)?_\d+_[0-9a-z]+\.html$/.test(f) && f !== mine)
+    .forEach((f) => {
+      const pid = Number(f.split('_')[2]);
+      let alive = true;
+      try { process.kill(pid, 0); } catch (e) { alive = false; }
+      if (!alive) { try { fs.unlinkSync(path.join(ROOT, f)); } catch (e) { /* 忽略 */ } }
+    });
+} catch (e) { /* 清扫失败不影响探针本身 */ }
+
 function runEdge(extraArgs, opts) {
   const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     '--disable-extensions', '--force-device-scale-factor=1',

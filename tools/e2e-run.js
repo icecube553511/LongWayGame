@@ -24,7 +24,12 @@ const { EDGE, ROOT } = require(path.join(__dirname, 'shot2.js'));
 
 const pickIndex = parseInt(process.argv[2] || '1', 10);
 const stepMs = parseInt(process.argv[3] || '8', 10);
-const budget = parseInt(process.argv[4] || '600000', 10);
+/* 虚拟时间上限默认值。
+ * 原为 600000，到 R2 已经不够用：每章 3 个选项各加了一段停顿（PLAY 批的"选择有回音"），
+ * 20 章合计要消耗的虚拟时间越过了 600000 —— 页面跑不完，浏览器一直转到 spawnSync 的
+ * 900 秒墙钟超时，于是 `node tools/e2e-run.js` 这条默认命令**取不到任何结果**。
+ * 2000000 实测 20 章全部走完（墙钟约 7 秒）。由 root 修复，证据见 docs/reviews/R1-REGRESSION.md §4.2。 */
+const budget = parseInt(process.argv[4] || '2000000', 10);
 /* 第 5 个参数可选：只跑指定章节，逗号分隔（例如 ch01,ch20） */
 const ONLY = (process.argv[5] || '').split(',').map((s) => s.trim()).filter(Boolean);
 const ONLY_JSON = JSON.stringify(ONLY);
@@ -42,7 +47,7 @@ function argFail(msg) {
   console.error('用法：node tools/e2e-run.js [选项索引] [每步间隔ms] [虚拟时间上限ms] [只看这些章,逗号分隔]');
   console.error('  选项索引      1–9 的整数，自动点第几个选项（默认 1）');
   console.error('  每步间隔ms    正整数，两次推进之间的等待（默认 8）');
-  console.error('  虚拟时间上限  正整数毫秒（默认 600000）');
+  console.error('  虚拟时间上限  正整数毫秒（默认 2000000）');
   console.error('  只看这些章    可选，例如 ch09,ch15；省略＝全部 20 章');
   console.error('');
   console.error('退出码：0 = 全部通过；1 = 参数错误；2 = 有章节不合格。');
