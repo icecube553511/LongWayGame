@@ -137,3 +137,31 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 * 24 张 P0 还差 18 张；6 张 P1 一张没出；评审三组未开工；`develop/Movie` 尚未推送（见下）。
 * 本机 `git fetch origin` 再次撞上代理间歇故障（`schannel: server closed abruptly`），
   推送与远端同步状态以本轮收口时的实测为准。
+
+### 追加（23:0x–23:5x，root 继续自改的三处 + 进度）
+
+3. **`tools/check.js` 的 P0 位图判定补上「真的是一张图」**。旧判定只看文件名是否在目录里，
+   于是**出图/烘焙写到一半留下的 0 字节文件会被算成「已生成」**（实测：`cg_snow_mountain.png`
+   在烘焙途中就是 0 字节），玩家那边静默回退到旧插画、闸门却是绿的。现在查三件事：
+   文件在、大小 ≥50 KB、头 8 字节是 PNG 签名；超 1.5 MB（契约上限）报成警告并点名重烘焙命令。
+   隔离验证（把 check.js 复制到 `tmp/` 并把 `ASSET_CG` 指向 scratch 目录，**不动真资产**）：
+   `0 B → ×too-small(0B)`、`34 B 文本 → ×too-small(34B)`、`60 KB 非 PNG → ×not-a-png`、
+   `1.7 MB 带签名 → ·over-limit(1700KB>1536KB)`、正常图 → 通过。
+4. **插画层的两个竞态**（`src/engine/engine.js`，root 自己新写的代码里的缺陷，实测抓到）：
+   CG 列由 1 变 0，而章末读数是 `cg-layer:ON:-:o1.0` —— 图层亮了、里面没有图。
+   ①替身探针 `new Image()` 是游离对象，1.4 MB 位图解码要上百毫秒，它可能在加载完成前被回收，
+   `onload` 永不触发 → 插画永不上屏；改成直接在可见 `<img>` 上换源、借它自己的
+   `onload`/`onerror` 逐级回退。②`paint()` 里的 rAF 没有作废判据，在 `hideCg()` 之后才跑时
+   会把 `.on` 贴回一个已清空 src 的图层；加 `cgSeq` 序号，迟到的 onload/rAF 一律丢弃。
+5. **探针的 src 归一化改成不挑写法**（`tools/e2e-run.js`）：原来假定带前导斜杠，
+   引擎改用 `setAttribute` 传相对路径后统计会静默全灭。
+
+**验证**（`node tools/e2e-run.js 1 8 2000000 ch01,ch05,ch15`）：ch01 CG 1 → `cg/cg_yudu_night.png`
+（位图路径）、ch05 CG 1 → `cg/bg_liping.svg`（候选链回退）、ch15 CG 2 → 两张 PNG 都上屏；
+3 章走完、JS 报错 0。全剧 `node tools/e2e-run.js` → **20/20 走完、23013 步、JS 报错 0**。
+
+**进度**：P0 位图 13 / 24（`cg_blockade`、`cg_camp_fire`、`cg_hadapu_paper` 等已落盘，含 2 张 P1）。
+
+**已知的仪器局限**（不是游戏问题，别被它误导）：全剧一次跑 20 章时，13 张大位图同时解码，
+8 ms 步进的探针会在插画解码完成前就把镜头让给下一个 `bg`，于是「CG」列对某些章显示 0
+（分章跑就正常）。**这一列仍然不能当门禁用** —— 与 `R1-REGRESSION.md` §4 的结论一致。
