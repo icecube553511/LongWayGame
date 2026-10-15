@@ -34,13 +34,41 @@ require(path.join(ROOT, 'art', 'portraits.js'));
 let scenesLoaded = false;
 const artDir = path.join(ROOT, 'art');
 const isRootArt = (f) => f === 'scenes.js' || f === 'portraits_root.js';
+
+/* 注册表在 require 期间就地扩张：同一次构建里若某个 id 被两个文件注册，
+ * 后加载的那份会**静默**盖掉先加载的（历史故障：R1-Q14 的 17 处"两份实现"，
+ * 改错文件时画面却不变）。这里逐文件比对注册表**值**的快照：同一个 key 的注册值
+ * 被换掉，说明有第二个文件写了同一个 id，一律记为错误、让构建直接失败。
+ * （只比较 key 是否存在是不够的 —— 重复注册不会改变 key 集合。）
+ * —— 组长授权解冻本条（见 docs/issues/R2-INDEX.md）。 */
+const REG_KEYS = ['scenes', 'cg', 'ui', 'portraits'];
+const snapshotReg = () => {
+  const a = globalThis.ART || {};
+  const out = {};
+  REG_KEYS.forEach((k) => { out[k] = Object.assign({}, a[k] || {}); });
+  return out;
+};
+const dupRegistrations = [];
+
 fs.readdirSync(artDir)
   .filter((f) => /^(scenes|cg|ui|portraits)[_A-Za-z0-9-]*\.js$/.test(f))
   /* root 的文件最后加载：同名 id 以 root 的注册为准（避免并发写入互相覆盖） */
   .sort((a, b) => (isRootArt(a) ? 1 : 0) - (isRootArt(b) ? 1 : 0) || a.localeCompare(b))
   .forEach((f) => {
-    require(path.join(artDir, f));
+    const file = path.join(artDir, f);
     if (/^scenes/.test(f)) scenesLoaded = true;
+    /* 循环外已经 require 过的文件命中的是 Node 模块缓存，本次不会再注册任何东西 */
+    if (require.cache[require.resolve(file)]) return;
+    const before = snapshotReg();
+    require(file);
+    const after = snapshotReg();
+    REG_KEYS.forEach((k) => {
+      Object.keys(after[k]).forEach((id) => {
+        if (Object.prototype.hasOwnProperty.call(before[k], id) && before[k][id] !== after[k][id]) {
+          dupRegistrations.push(k + ':' + id + ' 被 ' + f + ' 重复注册');
+        }
+      });
+    });
   });
 
 const ART = globalThis.ART || {};
@@ -123,6 +151,12 @@ function gradeCG(svg, id) {
 }
 
 const report = { chars: 0, bg: 0, cg: 0, ui: 0, errors: [], bytes: 0 };
+
+/* root 文件**故意**覆盖同名 id 的既有方式：只允许这一种，其它一律算重复注册 */
+const DUP_ALLOWED = [/^portraits:.+ 被 portraits_root\.js 重复注册$/];
+dupRegistrations
+  .filter((d) => !DUP_ALLOWED.some((re) => re.test(d)))
+  .forEach((d) => report.errors.push('重复注册（后加载者静默覆盖先加载者）：' + d));
 
 /* ---------- 4. 立绘 ---------- */
 if (mode.chars) {
