@@ -1125,15 +1125,26 @@
     setChapterTag(chapterTagText(m));
     var baseSteps = chapterSteps(ch, m);
     var path = obj.path || [{ i: 0 }];
-    var frames = [{ steps: baseSteps, i: path[0] ? path[0].i : 0 }];
+    /* R2-E01：越界存档兜底。存档里记的是**绝对步号**，而剧情编辑可能删掉步骤
+       （例如 R1-Q05 从 8 章删了 27 个 note 步），于是旧存档的步号会越过本章末尾。
+       run() 的语义是"某帧的 i 越界即该帧结束"，一旦越界就会把帧弹空并立即 endChapter，
+       读档的玩家于是被弹回章节结算而不是回到进度。这里先把越界进度落回本章开头，
+       并明确告诉玩家，避免静默损坏。 */
+    var badProgress = false;
+    var first = path[0] ? path[0].i : 0;
+    if (!(first >= 0) || first >= baseSteps.length) { first = 0; badProgress = true; }
+    var frames = [{ steps: baseSteps, i: first }];
     for (var d = 1; d < path.length; d++) {
       var prev = frames[d - 1];
       var ifStep = prev.steps[prev.i - 1];
       if (!ifStep || ifStep.t !== 'if') break;
       var arr = path[d].kind === 'else' ? ifStep.else : ifStep.then;
       if (!arr) break;
-      frames.push({ steps: arr, i: path[d].i || 0 });
+      var sub = path[d].i || 0;
+      if (!(sub >= 0) || sub >= arr.length) break;      // 嵌套分支同样不夹取会越界，直接丢弃该层
+      frames.push({ steps: arr, i: sub });
     }
+    if (badProgress) toast('这份存档的进度已经失效，已从本章开头继续');
     VN.state.frames = frames;
     VN.G.run = {
       morale: VN.state.morale, trust: VN.state.trust, hope: VN.state.hope,
