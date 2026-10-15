@@ -163,34 +163,4 @@
   };
 
   /* ------------------------------------------------------- 泸定桥 */
-  ART.scenes['bg_luding'] = function () {
-    var s = [], rng = GEO.RNG('ld');
-    s.push(GEO.sky(W, H, P.sky.storm, { horizon: 420 }));
-    s.push(GEO.cloudBank(W, 150, '#5d6472', { seed: 'ld-cl', count: 9, opacity: 0.55 }));
-    s.push(GEO.cliffWall(-80, W + 80, 300, 470, P.ramp(P.rock, 0.2), { seed: 'ld-far', cols: 13 }));
-    /* 对岸桥楼 */
-    s.push(GEO.cliffWall(1400, W + 160, 470, 660, P.ramp(P.rock, 0.34), { seed: 'ld-right', cols: 6 }));
-    s.push(GEO.tower(1580, 470, 210, 250, P.ramp(P.brick, 0.34), P.ramp(P.tileDark, 0.3), { tiers: 3 }));
-    s.push(GEO.cliffWall(-160, 500, 490, 680, P.ramp(P.rock, 0.3), { seed: 'ld-left', cols: 6 }));
-    s.push(GEO.tower(320, 490, 200, 235, P.ramp(P.brick, 0.3), P.ramp(P.tileDark, 0.26), { tiers: 3 }));
-    /* 急流 */
-    s.push(GEO.waterBand(W, 640, H, P.water, { seed: 'ld-water', streaks: 300, cols: 20 }));
-    for (var i = 0; i < 110; i++) {
-      var wx = rng.range(0, W), wy = rng.range(660, H);
-      s.push(GEO.poly([[wx, wy], [wx + rng.range(34, 150), wy], [wx + rng.range(24, 120), wy + 6], [wx - 12, wy + 6]], '#e6eff5', { opacity: rng.range(0.22, 0.62) }));
-    }
-    /* 十三根铁索：抽掉桥板，只剩几段残板 */
-    s.push(GEO.ropeBridge(400, 520, 1520, 476, 130, P.ramp(P.wood, 0.34), {
-      decks: 26, gaps: [3, 4, 5, 9, 10, 11, 12, 13, 16, 17, 18, 22, 23],
-      deckColor: P.ramp(P.wood, 0.4), cable: P.ramp(P.metal, 0.34)
-    }));
-    for (var c = 0; c < 5; c++) {
-      var tt = 0.18 + c * 0.17;
-      s.push(GEO.pline([GEO.ptAt([[400, 520], [960, 588], [1520, 476]], Math.max(0, tt - 0.06)),
-        GEO.ptAt([[400, 520], [960, 588], [1520, 476]], tt)], P.ramp(P.metal, 0.46), { sw: 2, opacity: 0.8 }));
-    }
-    s.push(GEO.mistBand(W, 560, 140, '#8d97a2', { op: 0.4 }));
-    s.push(GEO.vignette(W, H, 0.58, '#101822'));
-    return GEO.doc(W, H, s.join(''));
-  };
-})();
+  })();
