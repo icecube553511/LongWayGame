@@ -283,6 +283,21 @@ else {
  * 判定用命令：node tools/check.js */
 const ASSET_CG = path.join(ROOT, 'assets', 'generated', 'cg');
 const haveCg = listSvg(ASSET_CG) || new Set();
+/* 位图"存在"不等于"是一张图"：出图/烘焙写到一半会留下 0 字节或截断的 PNG
+   （本轮实测：cg_snow_mountain.png 在烘焙过程中出现 0 字节）。光看文件名会把它算成
+   "P0 已生成"，于是闸门绿着、玩家看到的却是回退的旧插画。所以这里查三件事：
+   文件在不在、有没有大小、头 8 字节是不是 PNG 签名。 */
+const PNG_SIG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+function cgBitmapProblem(id) {
+  const f = path.join(ASSET_CG, id + '.png');
+  if (!fs.existsSync(f)) return 'missing';
+  const size = fs.statSync(f).size;
+  if (size < 50 * 1024) return 'too-small(' + size + 'B)';
+  const head = fs.readFileSync(f).subarray(0, 8);
+  if (!head.equals(PNG_SIG)) return 'not-a-png';
+  if (size > 1536 * 1024) return 'over-limit(' + Math.round(size / 1024) + 'KB>1536KB)';
+  return null;
+}
 const cgReport = { p0: 0, p0have: 0, missing: [], unreferenced: [] };
 const cgSeen = new Set();
 CG_LIST.forEach(c => {
@@ -300,8 +315,22 @@ CG_LIST.forEach(c => {
   if (c.caption && hanzi(c.caption) > 36) warn(where, 'caption 超过 36 字：' + c.caption);
   if (c.priority === 'P0') {
     cgReport.p0++;
-    if (haveCg.has(c.id)) cgReport.p0have++;
-    else { cgReport.missing.push(c.id); err(where, 'P0 插画的位图还没生成：assets/generated/cg/' + c.id + '.png'); }
+    const bad = cgBitmapProblem(c.id);
+    if (!bad) cgReport.p0have++;
+    else if (bad === 'missing') {
+      cgReport.missing.push(c.id);
+      err(where, 'P0 插画的位图还没生成：assets/generated/cg/' + c.id + '.png');
+    } else if (bad.indexOf('over-limit') === 0) {
+      /* 体积上限是 docs/CG_DESIGN.md §3 的硬规格，但它是"烘焙参数"的事，
+         不该把整条闸门挂住 —— 所以报成警告，并按契约要求在报告里点名。 */
+      cgReport.p0have++;
+      warn(where, 'P0 插画超过 1.5 MB 上限：' + bad + '（契约见 docs/CG_DESIGN.md §3；' +
+        '用 python tools/cg-post.py --id ' + c.id + ' 调参重烘焙）');
+    } else {
+      /* 空文件 / 截断文件 / 挂错扩展名：这不是"还没生成"，是"生成坏了"，
+         必须报错 —— 否则游戏会静默回退到旧插画，闸门却绿着。 */
+      err(where, 'P0 插画的位图不完整：assets/generated/cg/' + c.id + '.png ' + bad);
+    }
   }
 });
 CG_LIST.forEach(c => {
