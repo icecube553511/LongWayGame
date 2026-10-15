@@ -4,7 +4,7 @@ tmp/
 
 # 仓库根目录下的一次性拼版图与探针页
 tmp-*.png
-_e2e-probe-*.html
+_e2e*.html
 
 # 系统 / 编辑器垃圾
 .DS_Store
