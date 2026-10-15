@@ -403,6 +403,9 @@ ART.scenes['bg_zunyi'] = function () {
   ART.scenes['bg_tucheng'] = function () {
     var mud = R(P.earth, 0.28), b = '';
     b += GEO.sky(W, H, ['#6d7076', '#87837c', '#a39784'], { horizon: H * 0.52 });
+    /* R1-Q13：街市地平线以下的远景土坡（原来这片透舞台底色，洋红底重渲占 7.73%） */
+    b += GEO.groundBand(W, H * 0.52 - 16, H * 0.80, GEO.mix(mud, '#a39784', 0.34), { seed: 'tc-v13', cols: 13, op: 0.68 });
+    b += GEO.mistBand(W, H * 0.52 - 30, 120, '#a8a29a', { op: 0.28 });
     b += GEO.mountainRange(W, H * 0.52, R(P.rock, 0.5), { amp: 140, segs: 11, seed: 'tc-far', grad: '#8e8b84' });
     /* 左侧土墙房屋 */
     b += GEO.house(300, H * 0.72, 380, 300, 90, mud, R(P.tileDark, 0.09), {});
@@ -624,6 +627,8 @@ ART.scenes['bg_map_table'] = function () {
   ART.scenes['bg_snow_mountain'] = function () {
     var b = '';
     b += GEO.sky(W, H, P.sky.snow, { horizon: H * 0.42 });
+    /* R1-Q13：雪脊与垭口之间的空隙（原来透舞台底色，洋红底重渲占 0.47%） */
+    b += GEO.groundBand(W, H * 0.42 - 16, H + 40, GEO.mix(R(P.snow, 0.46), '#bdd2e2', 0.34), { seed: 'sm-v13', cols: 13, op: 0.60 });
     b += GEO.sunDisc(1420, 190, 96, '#e6ecf0', { glow: 0.22 });
     /* 远山：冷灰蓝 */
     b += GEO.mountainRange(W, H * 0.50, R(P.rock, 0.30), { amp: 250, segs: 15, seed: 'sm-f', grad: '#aebbca' });
@@ -659,6 +664,9 @@ ART.scenes['bg_map_table'] = function () {
   ART.scenes['bg_maogong'] = function () {
     var b = '';
     b += GEO.sky(W, H, P.sky.day, { horizon: H * 0.44 });
+    /* R1-Q13：山脚到街面之间的远景山体（原来整片透舞台底色，洋红底重渲占 8.32%） */
+    b += GEO.groundBand(W, H * 0.44 - 16, H * 0.72, GEO.mix(R(P.rock, 0.46), '#a6bfd4', 0.34), { seed: 'mg-v13', cols: 13, op: 0.70 });
+    b += GEO.mistBand(W, H * 0.44 - 30, 130, '#cfdae0', { op: 0.32 });
     b += GEO.mountainRange(W, H * 0.46, R(P.rock, 0.42), { amp: 240, segs: 13, seed: 'mg-f', grad: '#93a3ad' });
     b += GEO.mistBand(W, H * 0.47, 120, '#cfdae0', { op: 0.34 });
     /* 山城：层层叠叠的石屋 */
@@ -692,6 +700,8 @@ ART.scenes['bg_map_table'] = function () {
   ART.scenes['bg_grassland'] = function () {
     var b = '';
     b += GEO.sky(W, H, P.sky.overcast, { horizon: H * 0.40 });
+    /* R1-Q13：草甸各带之间与地平线下方的空隙（原来透舞台底色，洋红底重渲占 1.46%） */
+    b += GEO.groundBand(W, H * 0.40 - 16, H + 40, GEO.mix(R(P.grassDry, 0.30), '#c3cbd2', 0.26), { seed: 'gl-v13', cols: 14, op: 0.60 });
     b += GEO.cloudBank ? '' : '';
     /* 压得很低的阴云 */
     var rng = GEO.RNG('gl-cloud'), i;
@@ -728,6 +738,12 @@ ART.scenes['bg_map_table'] = function () {
   ART.scenes['bg_lazikou'] = function () {
     var b = '';
     b += GEO.sky(W, H, ['#7f92a6', '#9aa9b8', '#c2b39c'], { horizon: H * 0.30 });
+    /* R1-Q13：地平线以下的远景谷壁。原来 x∈(660,1260)、y∈(324,~697) 这一整片没有任何地形图元，
+       游戏里透出舞台底色（洋红底重渲占 9.61%）。这一层画在绝壁/激流/木桥/碉堡之下，只负责把空洞
+       填成『远处退晕的岩体』，近景元素照旧压在上面。 */
+    b += GEO.groundBand(W, H * 0.30 - 16, H * 0.64, GEO.mix(R(P.rock, 0.40), '#9aa9b8', 0.32), { seed: 'lz-v13', cols: 12, op: 0.72 });
+    b += GEO.groundBand(W, H * 0.62, H + 40, GEO.mix(R(P.rock, 0.30), '#7f92a6', 0.22), { seed: 'lz-v13b', cols: 14, op: 0.8 });
+    b += GEO.mistBand(W, H * 0.30 - 30, 120, '#aebcc6', { op: 0.30 });
     /* 左右绝壁夹成一线天，只在天顶露一线光 */
     b += GEO.cliffWall(-40, 660, H * 0.02, H + 40, R(P.rock, 0.24), { cols: 9 });
     b += GEO.cliffWall(1260, 1960, H * 0.02, H + 40, R(P.rock, 0.18), { cols: 9 });
@@ -762,6 +778,8 @@ ART.scenes['bg_map_table'] = function () {
   ART.scenes['bg_hadapu'] = function () {
     var b = '';
     b += GEO.sky(W, H, P.sky.clearDay, { horizon: H * 0.40 });
+    /* R1-Q13：街面地平线以下的远景坡地（原来透舞台底色，洋红底重渲占 1.16%） */
+    b += GEO.groundBand(W, H * 0.40 - 16, H + 40, GEO.mix(R(P.loess, 0.42), '#b6a281', 0.30), { seed: 'hd-v13', cols: 13, op: 0.62 });
     b += GEO.mountainRange(W, H * 0.42, R(P.loess, 0.42), { amp: 130, segs: 12, seed: 'hd-f', grad: '#b6a281' });
     /* 一条石板街斜向远处 */
     b += GEO.groundBand(W, H * 0.52, H + 30, R(P.stone, 0.30), { seed: 'hd-fl', cols: 12 });

@@ -380,6 +380,8 @@
   ART.scenes['bg_stretcher'] = function () {
     var s = [], rng = GEO.RNG('st');
     s.push(GEO.sky(W, H, P.sky.dawnCold, { horizon: 560 }));
+    /* R1-Q13：竹林带与地面带之间的空隙（原来透舞台底色，洋红底重渲占 3.12%） */
+    s.push(GEO.groundBand(W, 560 - 16, H + 40, GEO.mix(P.ramp(P.bamboo, 0.28), '#8f9aa2', 0.42), { seed: 'st-v13', cols: 13, op: 0.60 }));
     s.push(GEO.cloudBank(W, 220, '#c6ccd2', { seed: 'st-cl', count: 6, opacity: 0.4 }));
     /* 远景竹林：矮、灰、被雾压住 */
     var farBamboo = GEO.mix(P.ramp(P.bamboo, 0.3), '#8f9aa2', 0.45);
