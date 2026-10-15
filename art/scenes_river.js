@@ -27,74 +27,13 @@
   }
 
   /* ------------------------------------------------------- 赤水河 */
-  ART.scenes['bg_chishui'] = function () {
-    var s = [], rng = GEO.RNG('cs');
-    s.push(GEO.sky(W, H, P.sky.overcast, { horizon: 470 }));
-    s.push(GEO.cloudBank(W, 150, '#aab2ba', { seed: 'cs-cl', count: 7, opacity: 0.45 }));
-    /* 远处峡口 */
-    s.push(GEO.mountainRange(W, 470, P.ramp(P.rockRed, 0.16), { amp: 150, segs: 14, seed: 'cs-ridge', light: 0.05 }));
-    /* 红褐色河水：一直顶到远山脚下 */
-    s.push(GEO.waterBand(W, 466, 820, P.waterRed, { seed: 'cs-water', streaks: 210 }));
-    for (var i = 0; i < 16; i++) {
-      var rx = rng.range(0, W), ry = rng.range(480, 800);
-      s.push(GEO.poly([[rx, ry], [rx + rng.range(40, 150), ry], [rx + rng.range(30, 130), ry + 6], [rx - 8, ry + 6]], P.ramp(P.sand, 0.6), { opacity: rng.range(0.2, 0.45) }));
-    }
-    /* 近景峡谷两壁：夹住画面 */
-    s.push(GEO.cliffWall(-160, 430, 250, H, P.ramp(P.rockRed, 0.3), { seed: 'cs-left', cols: 9 }));
-    s.push(GEO.cliffWall(1490, W + 160, 220, H, P.ramp(P.rockRed, 0.26), { seed: 'cs-right', cols: 9 }));
-    s.push(GEO.mistBand(W, 460, 110, '#c6c3bb', { op: 0.4 }));
-    /* 渡口石阶 */
-    s.push(GEO.stairs(960, 820, 420, 130, 9, P.ramp(P.stone, 0.4)));
-    /* 木船与渡口 */
-    s.push(GEO.woodenBoat(660, 700, 150, P.ramp(P.wood, 0.3), { oars: true }));
-    s.push(GEO.woodenBoat(1320, 742, 130, P.ramp(P.wood, 0.24), { oars: true, mast: true, sail: P.ramp(P.cloth, 0.5) }));
-    s.push(GEO.groundBand(W, 816, H, P.ramp(P.earthRed, 0.24), { seed: 'cs-gnd', rows: 5, patches: 120 }));
-    var bs = GEO.RNG('cs-bd');
-    for (var b = 0; b < 26; b++) s.push(boulder(bs.range(-40, W + 40), bs.range(830, H), bs.range(14, 52), GEO.mul(P.ramp(P.rockRed, 0.36), 0.8 + bs() * 0.5), 'csb' + b));
-    s.push(GEO.shrubRow(W, 806, P.ramp(P.shrub, 0.3), 'cs-shrub', 26, 40));
-    s.push(GEO.crowd(26, { x0: 240, x1: 1700, y0: 880, y1: 1046, h: 250, color: '#6d5f52', seed: 'cs-ppl', stride: 0.7 }));
-    s.push(GEO.mistBand(W, 470, 130, '#b9c0c6', { op: 0.3 }));
-    s.push(GEO.vignette(W, H, 0.5));
-    return GEO.doc(W, H, s.join(''));
-  };
-
-  /* ------------------------------------------------------- 土城 */
-  ART.scenes['bg_tucheng'] = function () {
-    var s = [], rng = GEO.RNG('tc');
-    s.push(GEO.sky(W, H, P.sky.overcast, { horizon: 520 }));
-    s.push(GEO.cloudBank(W, 190, '#9aa2aa', { seed: 'tc-cl', count: 8, opacity: 0.5 }));
-    s.push(GEO.cliffWall(-80, W + 80, 500, 600, P.ramp(P.rockWarm, 0.3), { seed: 'tc-far', cols: 11 }));
-    s.push(GEO.groundBand(W, 566, H, P.ramp(P.earth, 0.28), { seed: 'tc-gnd', rows: 5, patches: 110 }));
-    /* 街心土路 */
-    s.push(GEO.facet([[700, 590], [1220, 590], [1720, H], [180, H]], P.ramp(P.earth, 0.4), { light: 0.08, hl: 0.24, dark: 0.08, dl: 0.2 }));
-    /* 两侧土墙房屋（近大远小） */
-    var hx = [120, 380, 1680, 1420];
-    for (var i = 0; i < 4; i++) {
-      var t = i < 2 ? i / 2 : (i - 2) / 2;
-      var near = i % 2 === 0;
-      var x = near ? (170 + t * -40) : (1750 - t * 40);
-      s.push(GEO.house(x, 780 + (near ? 90 : 60), 430 - t * 120, 380 - t * 130, 190, P.ramp(P.brick, 0.42), P.ramp(P.tileDark, 0.3),
-        { door: true, windows: 2, roofH: 86, eave: 26 }));
-    }
-    /* 硝烟 */
-    s.push(GEO.smokePlume(560, 560, 420, '#8f8880', 'tc-sm1'));
-    s.push(GEO.smokePlume(1420, 548, 460, '#867f78', 'tc-sm2'));
-    /* 断墙、门板、碎木 */
-    var d = GEO.RNG('tc-deb');
-    for (var k = 0; k < 22; k++) {
-      var dx = d.range(200, 1720), dy = d.range(760, H - 10), dw = d.range(30, 110);
-      s.push(GEO.facet([[dx, dy], [dx + dw, dy - 8], [dx + dw, dy + 10], [dx, dy + 18]],
-        GEO.mul(P.ramp(P.wood, 0.34), 0.8 + d() * 0.4), { light: 0.1, hl: 0.3, dark: 0.1, dl: 0.26, sw: 0.6 }));
-    }
-    s.push(GEO.crowd(30, { x0: 260, x1: 1660, y0: 860, y1: 1050, h: 250, color: '#66594c', seed: 'tc-ppl', stride: 0.8 }));
-    s.push(GEO.vignette(W, H, 0.56));
-    return GEO.doc(W, H, s.join(''));
-  };
-
-  /* ------------------------------------------------------- 娄山关 */
+    /* ------------------------------------------------------- 土城 */
+    /* ------------------------------------------------------- 娄山关 */
   ART.scenes['bg_loushanguan'] = function () {
     var s = [], rng = GEO.RNG('lsg');
     s.push(GEO.sky(W, H, P.sky.dusk, { horizon: 620, glow: P.ramp(P.flame, 0.7) }));
+    /* R1-Q13：远山与关隘之间的空隙（原来透舞台底色，洋红底重渲占 0.13%） */
+    s.push(GEO.groundBand(W, 620 - 16, H + 40, GEO.mix(P.ramp(P.rock, 0.28), '#6b5a6e', 0.30), { seed: 'lsg-v13', cols: 13, op: 0.62 }));
     s.push(GEO.sunDisc(1420, 300, 74, P.ramp(P.lamp, 0.86), { hr: 6 }));
     s.push(GEO.cloudBank(W, 250, '#c98f74', { seed: 'lsg-cl', count: 8, opacity: 0.42 }));
     /* 远山三重 */
@@ -158,6 +97,8 @@
   ART.scenes['bg_yihai'] = function () {
     var s = [], rng = GEO.RNG('yh');
     s.push(GEO.sky(W, H, P.sky.dusk, { horizon: 520, glow: P.ramp(P.lamp, 0.5) }));
+    /* R1-Q13：湖面与远山之间的空隙（原来透舞台底色，洋红底重渲占 4.13%） */
+    s.push(GEO.groundBand(W, 520 - 16, H + 40, GEO.mix(P.ramp(P.karst, 0.30), '#8a6a72', 0.30), { seed: 'yh-v13', cols: 13, op: 0.62 }));
     s.push(GEO.cloudBank(W, 190, '#c69a92', { seed: 'yh-cl', count: 6, opacity: 0.4 }));
     s.push(GEO.sunDisc(400, 210, 58, P.ramp(P.lamp, 0.8), { hr: 5 }));
     s.push(GEO.mountainRange(W, 500, P.ramp(P.karst, 0.28), { amp: 210, segs: 15, seed: 'yh-far', grad: '#5d5a70', light: 0.07 }));
