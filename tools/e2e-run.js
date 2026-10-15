@@ -121,7 +121,10 @@ const PROBE = `
          若不加这个判断就会把陈图误算成本章看过的图。 */
       if (!visEl.classList.contains('on')) return;
       if (!(parseFloat(getComputedStyle(visEl).opacity) > 0.5)) return;
-      var key = s.replace(/^.*\\/assets\\/generated\\//, '');
+      /* 归一化时不要假设 src 是哪种写法：setAttribute 出来的是相对路径
+         （assets/generated/cg/x.png），属性赋值/浏览器回读出来的是绝对 file:/// 路径，
+         两种都要能剥成 cg/x.png —— 否则统计会静默全灭（实测踩过一次）。 */
+      var key = s.replace(/^.*assets[\\/\\\\]generated[\\/\\\\]/, '');
       seenSrc[key] = 1;
     }
     function sampleBg() {

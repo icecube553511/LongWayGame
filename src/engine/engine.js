@@ -630,11 +630,17 @@
    *   ③ 图注逐字打出来，而不是整块淡入——玩家的视线有个落点；
    *   ④ 它是舞台底层，立绘/特效/暗角照旧叠在上面，直到下一次 bg 步骤才退场，
    *      所以 `cg` 后面紧跟的 `narr` / `say` 仍然停在这张插画上（老剧本的观感不变）。 */
-  var cgTimer = 0, cgTypeTimer = 0, cgHideTimer = 0;
+  var cgTimer = 0, cgTypeTimer = 0, cgHideTimer = 0, cgSeq = 0;
   var CG_MOTIONS = { 'zoom-in': 1, 'pan-left': 1, 'pan-right': 1, 'still': 1 };
 
   function hideCg(immediate) {
     if (!D.cgLayer) return;
+    /* 作废"在飞的"这一次插画：迟到的 onload 与迟到的 rAF 都不许再把图或 .on 贴回来。
+       没有这一步会出现两种真实的坏状态（都实测到过）：
+         · 位图解码比剧本推进慢时，paint() 的 rAF 在 hideCg() 之后才跑 ——
+           图层被"点亮"了，可 src 已被清掉，屏幕上是空的（探针读到 cg-layer:ON:-）。
+         · 更早一次 CG 的 onload 迟到，会把已经退场的旧插画重新按回台上。 */
+    cgSeq++;
     clearTimeout(cgHideTimer);
     clearInterval(cgTypeTimer);
     D.cgCaption.classList.remove('on');
@@ -669,27 +675,35 @@
     opts = opts || {};
     ms = ms || 4200;
     if (!D.cgLayer || !D.cgImg) { if (onEnd) setTimeout(onEnd, ms); return; }
+    var seq = ++cgSeq;
     var cands = cgCandidates(id);
     var motion = CG_MOTIONS[opts.motion] ? opts.motion : 'zoom-in';
     var i = 0;
-    function paint(src) {
-      clearTimeout(cgHideTimer);
-      D.cgImg.className = '';
-      D.cgImg.setAttribute('src', src);
-      void D.cgImg.offsetWidth;                 /* 强制回流，让同类运镜也能重新播一遍 */
-      D.cgImg.className = 'm-' + motion;
-      D.cgImg.style.animationDuration = Math.max(2600, ms) + 'ms';
+    function reveal() {
       D.cgLayer.classList.remove('hidden');
       void D.cgLayer.offsetWidth;
-      requestAnimationFrame(function () { D.cgLayer.classList.add('on'); });
+      requestAnimationFrame(function () { if (seq === cgSeq) D.cgLayer.classList.add('on'); });
     }
-    (function tryNext() {
+    /* 直接在可见的 <img> 上换源，借它的 onload / onerror 逐级回退 ——
+       不再用"替身探针"预加载：那是个游离的 Image，1.4MB 的位图解码要上百毫秒，
+       它可能在加载完成前就被回收，于是 onload 永不触发、插画永远不上屏
+       （实测：ch01 的 CG 列由 1 变 0，而 cg-layer 停在"亮了但没有图"的状态）。 */
+    function trySrc() {
+      if (seq !== cgSeq) return;
       if (i >= cands.length) { advise('CG 没有可用的图：' + id); hideCg(true); return; }
-      var probe = new Image();
-      probe.onload = function () { paint(probe.src); };
-      probe.onerror = function () { i++; tryNext(); };
-      probe.src = cands[i];
-    })();
+      D.cgImg.onload = function () {
+        if (seq !== cgSeq) return;
+        clearTimeout(cgHideTimer);
+        D.cgImg.className = '';
+        void D.cgImg.offsetWidth;               /* 强制回流，让同类运镜也能重新播一遍 */
+        D.cgImg.className = 'm-' + motion;
+        D.cgImg.style.animationDuration = Math.max(2600, ms) + 'ms';
+        reveal();
+      };
+      D.cgImg.onerror = function () { if (seq !== cgSeq) return; i++; trySrc(); };
+      D.cgImg.setAttribute('src', cands[i]);
+    }
+    trySrc();
     unlock('cgs', id);
     cgCaptionType(text, ms);
     clearTimeout(cgTimer);
