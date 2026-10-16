@@ -423,3 +423,14 @@ node tools/qa-consistency.js → 20 章 / 4452 句台词逐句核对、违规 0
    是否合回 `main`、是否推送，留给用户定；推送命令见下。
 3. **三张体积贴顶**：`cg_stretcher` 1534 KB、`cg_loushanguan` 1532 KB、`cg_maogong` 1528 KB
    距 1.5 MB 上限只剩个位数 KB，重出即越线，只能靠 `cg-post.py` 的量化兜底。
+
+## 同步到 GitHub（2026-10-16 08:4x，`/root`）
+
+用户指令：**上传到 GitHub，以后所有改动都要在 git 同步**（已写进 `docs/AGENT_WORKFLOW.md` §3 作为长期规则）。
+
+- `main` 与 `develop/Movie` 都已推送，远端同为 **`863f088`**（`git ls-remote` 实测）。
+- 推送长期失败在 `github.com:443` 的 TLS 握手（`schannel: failed to receive handshake`），
+  而同一时刻 `api.github.com` 走同一代理返回 200 —— 代理没坏。加上 HTTP/1.1 与大 postBuffer
+  后一次即过，参数已记进 `AGENT_WORKFLOW.md` §3。
+- 顺带：本轮在 `main` 上的最终闸门仍是 `node tools/check.js` **检查通过**；
+  ch03 炸桥那一步的真浏览器实拍 `tmp/e2e/final-ch03.png`（0 报错，插画与信息同一拍给出）。
