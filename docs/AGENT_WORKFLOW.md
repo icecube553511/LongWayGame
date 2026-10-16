@@ -1,9 +1,10 @@
 # 三组 Agent 流水线作业书（Round 1）
 
 > 由 `/root` 维护，任何 agent **不得修改本文件**。
-> 开工前必读：**`docs/issues/R1-INDEX.md`（本轮唯一工单，ID 与分工以它为准）** → 本文件
+> 开工前必读：**`AGENTS.md`（入口契约与铁律）** → **`docs/PRODUCTION_SPEC.md`（制作规范总纲）**
 > → `docs/SPEC.md`（硬性契约）→ `docs/ENGINE_CONTRACT.md`（引擎实际现状）
-> → `docs/AGENT_BRIEF.md`（目录所有权与 GEO 速查）。
+> → `docs/AGENT_BRIEF.md`（目录所有权与 GEO 速查）→ 本文件
+> → `docs/issues/R1-INDEX.md`（若本轮有工单，ID 与分工以它为准）。
 > 有疑问 → 发消息给 `/root`，不要自行改契约。
 
 > **R1 实况（root 收口时更正，2026-10-15）**：

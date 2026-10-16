@@ -3,6 +3,8 @@
 > 由 `/root` 维护，**冻结**。任何 agent 不得修改本文件；要改契约 → 找 `/root`。
 > 开工前必读：本文件 → `docs/ART_DIRECTION.md` §0/§2.3.1/§3/§3.2 → `docs/SPEC.md` §4 →
 > `tools/bg-art.js` 与 `tools/bg-post.py` 的注释。
+> 通用规矩（管线、提示词纪律、体积档、抠底、评审方法、git 纪律）见 **`docs/PRODUCTION_SPEC.md`**；
+> 本文件只写"场景背景位图"这一族特有的东西。
 
 ## 1. 这一轮在做什么
 

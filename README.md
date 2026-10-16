@@ -171,6 +171,7 @@ docs/                       技术契约、剧本圣经、美术总纲
 | 文件 | 内容 |
 |---|---|
 | `docs/SPEC.md` | 技术契约：目录、剧本 DSL、id 表、验收规则（**唯一契约来源**） |
+| `docs/PRODUCTION_SPEC.md` | **制作规范总纲**：资产管线、提示词纪律、体积档、抠底、评审方法、git 纪律、事故教训、契约同步清单 |
 | `docs/STORY_BIBLE.md` | 二十章史实主线 + 人物设定表 + 文风红线 |
 | `docs/ART_DIRECTION.md` | 立体几何美术总纲 + 35 人设计表 + 30 景特征表 |
 | `docs/ENGINE_CONTRACT.md` | 引擎 DOM 与 API 契约 |

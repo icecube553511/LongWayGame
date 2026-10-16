@@ -1,5 +1,8 @@
 # 剧本写作简报（所有剧本 agent 必读）
 
+> 动手前先读 `AGENTS.md`（入口契约与铁律）与 `docs/PRODUCTION_SPEC.md`（制作规范总纲）；
+> 改剧本时会用到的 cg/bg/noPortrait/动效 写法见 `docs/PRODUCTION_SPEC.md` §7 与 `docs/SPEC.md` §2.1。
+
 ## 0. 你只负责一件事
 
 把分配给你的章节写成 `src/story/chNN.js`。**除了你自己名下的文件，不要改动仓库里任何其他文件**

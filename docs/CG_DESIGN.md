@@ -3,6 +3,8 @@
 > 由 `/root` 维护，**冻结**。任何 agent 不得修改本文件；要改契约 → 找 `/root`。
 > 本轮参与者开工前必读：本文件 → `docs/SPEC.md` §2.1/§4.3 → `docs/ART_DIRECTION.md` §0
 > → `docs/STORY_BIBLE.md` → `tools/cg-art.js` 与 `tools/cg-post.py` 的注释。
+> 通用规矩（管线、提示词纪律、体积档、评审方法、git 纪律）见 **`docs/PRODUCTION_SPEC.md`**；
+> 本文件只写"重要事件插画"这一族特有的东西。
 
 ## 1. 这一轮在做什么
 

@@ -1,6 +1,8 @@
 # 并行 Agent 作业书（root 维护，只读）
 
-> 所有 agent 开工前先读：`docs/SPEC.md`（技术契约）、`docs/STORY_BIBLE.md`（史实与人物）、本文件。
+> 所有 agent 开工前先读：`AGENTS.md`（入口契约与铁律）→ `docs/SPEC.md`（技术契约）→
+> **`docs/PRODUCTION_SPEC.md`（制作规范总纲：资产怎么造、怎么审、怎么收口）** →
+> `docs/STORY_BIBLE.md`（史实与人物）→ 本文件。
 > 本文件由 root 维护，agent 不得修改。契约有疑问 → 发消息给 `/root`。
 
 ## 0. 铁律

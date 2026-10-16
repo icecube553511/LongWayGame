@@ -2,6 +2,7 @@
 
 > 由 root 维护。美术 agent 实现 `art/portraits.js` / `art/scenes.js` 时**以本文件为准**。
 > 若本文件与 `docs/SPEC.md` §4 冲突，以 SPEC 为准（尺寸、路径、id 表）。
+> 资产生产的通用规矩（管线、提示词纪律、体积档、抠底、评审）见 **`docs/PRODUCTION_SPEC.md`**。
 
 ## 0. 风格定义：立体几何（low-poly / faceted）
 
