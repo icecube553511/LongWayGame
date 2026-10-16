@@ -681,7 +681,16 @@
     var i = 0;
     function reveal() {
       D.cgLayer.classList.remove('hidden');
+      /* 强制回流，让 0 → 1 的淡入真的从 0 开始（与引擎其它地方同一手法）。
+         然后**同步**点亮。原来这里把 classList.add('on') 放在 requestAnimationFrame 里：
+         rAF 在两种真实场景下根本不跑 —— ①无头浏览器/探针里帧调度被饿死；
+         ②玩家把标签页切到后台时浏览器会暂停渲染。结果是「图已经拿到、src 也对，
+         但 cg-layer 永远停在 opacity:0」——插画整段消失，而引擎一切"正常"。
+         实测复现：ch15 的泸定桥插画，cg-img.src = cg/cg_luding_race.png、complete=true，
+         而 #cg-layer 的 className 为空、getComputedStyle().opacity = 0。
+         —— 由 root 改成同步点亮（rAF 保留为幂等的兜底）。 */
       void D.cgLayer.offsetWidth;
+      D.cgLayer.classList.add('on');
       requestAnimationFrame(function () { if (seq === cgSeq) D.cgLayer.classList.add('on'); });
     }
     /* 直接在可见的 <img> 上换源，借它的 onload / onerror 逐级回退 ——
