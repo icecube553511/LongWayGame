@@ -377,8 +377,8 @@
       var v = String(eggInput.value || '').trim().toLowerCase();
       if (!v) return;
       if (v !== EGG_PASSWORD) { VN.toast('口令不对'); return; }
-      VN.G.unlockAll = true;
-      VN.persist();
+      /* 章节、人物图鉴、史料档案、插画画廊一起解锁，并放开倒退播放。 */
+      VN.unlockEverything();
       eggInput.value = '';
       VN.toast('解锁全部章节');
     }

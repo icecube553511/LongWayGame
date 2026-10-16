@@ -358,6 +358,9 @@ html, body {
 }
 .qbtn:hover { color: var(--paper); border-color: var(--gold); }
 .qbtn.active { color: #101723; background: linear-gradient(180deg, #d7b148, #a5822f); border-color: #d7b148; }
+/* 「倒退」默认不在快捷条上，口令解锁后才出现（见 engine.js syncRewindUI） */
+#quickbar .qbtn[data-act="rewind"] { display: none; }
+#stage.rewind-on #quickbar .qbtn[data-act="rewind"] { display: inline-block; }
 
 /* ---------------- CG 图注 / 提示 ---------------- */
 #cg-caption {
