@@ -858,6 +858,136 @@
     readDirty = false;
     VN.persist();
   }
+
+  /* ===== 13.2 倒退播放 =====
+   * 口令解锁的能力：在游戏里往回退若干行，重新看一遍。
+   *
+   * 为什么是「快照 + 直接还原画面」而不是「回到前面再放一遍」：
+   * 剧本里的 set 大多是 += / -=，重放会把数值叠第二遍；所以只能把
+   * 那一刻的状态整份取回来。画面（背景 / 立绘 / 天气 / 插画）同样要一起还原，
+   * 因为倒退之后 run() 只会重新执行**当前这一行**，不会重跑它前面那些 bg/show。
+   *
+   * 记的是「步下标」而不是剧本数组的引用，章节文件被改过也不会把帧栈指飞。 */
+  var REWIND_MAX = 60;
+  var REWIND_KINDS = { say: 1, narr: 1, think: 1, cg: 1, title: 1 };
+  var rewindBuf = [];
+  var suppressRecord = false;             /* applyRewind 之后重放当前行，不许再记一遍 */
+  function copyMap(o) {
+    var r = {};
+    if (o) Object.keys(o).forEach(function (k) { r[k] = o[k]; });
+    return r;
+  }
+  function captureVisual() {
+    var front = bgFrontIsA ? D.bgA : D.bgB;
+    var chars = [];
+    Object.keys(D.slots).forEach(function (k) {
+      var s = D.slots[k];
+      if (!s || s.dataset.empty === '1' || !s.dataset.who) return;
+      chars.push({ slot: k, who: s.dataset.who, face: s.dataset.face || 'calm' });
+    });
+    return { bg: front ? (front.getAttribute('src') || '') : '', chars: chars };
+  }
+  function restoreVisual(v) {
+    if (!v) return;
+    hideCg(true);                          /* 插画是覆盖层；要显示的那一步会自己再点亮 */
+    var front = bgFrontIsA ? D.bgA : D.bgB;
+    var back = bgFrontIsA ? D.bgB : D.bgA;
+    if (front && v.bg) {
+      if (front.getAttribute('src') !== v.bg) front.setAttribute('src', v.bg);
+      front.style.transition = 'none';
+      front.classList.add('on');
+      front.classList.remove('slow-zoom');
+      void front.offsetWidth;
+      front.style.transition = '';
+    }
+    if (back) back.classList.remove('on', 'slow-zoom');
+    clearChars();
+    (v.chars || []).forEach(function (c) { showChar(c.who, c.face, c.slot, 'fadein'); });
+    setWeather(VN.state.weather || null);
+  }
+  function recordRewind(f, s) {
+    if (!VN.G.unlockAll || !REWIND_KINDS[s.t]) return;
+    if (suppressRecord) { suppressRecord = false; return; }
+    var path = VN.state.frames.map(function (fr) { return { i: fr.i, kind: fr.kind }; });
+    path[path.length - 1].i = f.i - 1;     /* run() 已经 f.i++ 过，当前这一步在 i-1 */
+    rewindBuf.push({
+      ch: VN.state.chapter,
+      path: path,
+      morale: VN.state.morale, trust: VN.state.trust, hope: VN.state.hope,
+      flags: copyMap(VN.state.flags),
+      records: copyMap(VN.state.records),
+      face: copyMap(charFace),
+      histLen: VN.state.history.length,
+      weather: VN.state.weather,
+      visual: captureVisual()
+    });
+    if (rewindBuf.length > REWIND_MAX) rewindBuf.shift();
+  }
+  /* 把「每帧的下标」还原成真正的帧栈。存档与倒退播放共用这一份实现。
+   * 越界一律丢弃该层，绝不夹取 —— 夹取会把玩家送进错误的分支。 */
+  function buildFrames(ch, m, path) {
+    var baseSteps = chapterSteps(ch, m);
+    var first = path && path[0] ? path[0].i : 0;
+    var bad = false;
+    if (!(first >= 0) || first >= baseSteps.length) { first = 0; bad = true; }
+    var frames = [{ steps: baseSteps, i: first, kind: 'then' }];
+    for (var d = 1; d < (path ? path.length : 0); d++) {
+      var prev = frames[d - 1];
+      var ifStep = prev.steps[prev.i - 1];
+      if (!ifStep || ifStep.t !== 'if') break;
+      var isElse = path[d].kind === 'else';
+      var arr = isElse ? ifStep.else : ifStep.then;
+      if (!arr) break;
+      var sub = path[d].i || 0;
+      if (!(sub >= 0) || sub >= arr.length) break;
+      frames.push({ steps: arr, i: sub, kind: isElse ? 'else' : 'then' });
+    }
+    return { frames: frames, bad: bad };
+  }
+  function applyRewind(e) {
+    var m = VN.manifest(e.ch);
+    var ch = window.STORY && window.STORY[e.ch];
+    if (!m || !ch || !ch.steps) return false;
+    if (VN.state.chapter !== e.ch) {
+      currentChapter = ch;
+      VN.state.chapter = e.ch;
+      VN.state.title = m.title;
+      setChapterTag(chapterTagText(m));
+      preloadChapter(ch);
+      if (VN.audio) { if (ch.bgm) VN.audio.bgm(ch.bgm, { ms: 400 }); else VN.audio.stopBgm({ ms: 400 }); }
+    }
+    VN.state.frames = buildFrames(ch, m, e.path).frames;
+    VN.state.morale = e.morale; VN.state.trust = e.trust; VN.state.hope = e.hope;
+    VN.state.flags = copyMap(e.flags);
+    VN.state.records = copyMap(e.records);
+    VN.state.history = VN.state.history.slice(0, e.histLen);
+    VN.state.weather = e.weather;
+    VN.state.running = true;
+    VN.state.choice = false;
+    VN.state.waiting = false;
+    VN.state.blockKind = null;
+    charFace = copyMap(e.face);
+    if (VN.state.typing) { clearTimeout(typeTimer); typeDone = null; VN.state.typing = false; D.dialogue.classList.remove('typing'); }
+    clearTimeout(autoTimer);
+    D.choiceLayer.classList.add('hidden');
+    setNote(null);
+    restoreVisual(e.visual);
+    syncMeters(false);
+    suppressRecord = true;
+    run();                                 /* 重新执行当前这一行，把它显示回来 */
+    return true;
+  }
+  VN.canRewind = function () { return !!(VN.G.unlockAll && rewindBuf.length > 1); };
+  VN.rewindDepth = function () { return VN.G.unlockAll ? rewindBuf.length : 0; };
+  VN.rewind = function (n) {
+    if (!VN.G.unlockAll) { toast('这一章没有开通倒退播放'); return false; }
+    if (!VN.state.running || VN.state.choice) return false;
+    n = Math.max(1, n | 0);
+    var moved = 0;
+    while (moved < n && rewindBuf.length > 1) { rewindBuf.pop(); moved++; }
+    if (!moved) { toast('已经退到这一章的开头了', 'warn', 2200); return false; }
+    return applyRewind(rewindBuf[rewindBuf.length - 1]);
+  };
   function topFrame() { return VN.state.frames[VN.state.frames.length - 1]; }
   function isTopLevel() { return VN.state.frames.length <= 1; }
   function block(kind, ms) {
@@ -926,8 +1056,11 @@
         else if (s.kind === 'archive') unlockArchive(findArchive(s.id));
         return false;
       case 'if': {
-        var branch = evalCond(s.cond) ? s.then : s.else;
-        if (branch && branch.length) VN.state.frames.push({ steps: branch, i: 0 });
+        /* kind 必须记下来：存档与倒退播放在还原帧栈时，要凭它决定回哪一支。
+           原先帧里没有这一位，于是"在 else 支里存档、读档后却进了 then 支"。 */
+        var chose = evalCond(s.cond);
+        var branch = chose ? s.then : s.else;
+        if (branch && branch.length) VN.state.frames.push({ steps: branch, i: 0, kind: chose ? 'then' : 'else' });
         return false;
       }
       case 'wait':
@@ -1000,6 +1133,9 @@
       var s = f.steps[f.i++];
       if (!s) continue;
       autosaveTick();
+      /* 记在 exec 之前：要的是「这一行显示之前」的状态，
+         以后退回来才能把它原样再显示一遍。 */
+      recordRewind(f, s);
       if (exec(s)) return;
     }
     advise('单帧执行步数超限，可能存在死循环');
@@ -1111,6 +1247,39 @@
     for (var i = 0; i < m.length; i++) { if (m[i].id === id) { prev = m[i - 1]; break; } }
     return !!(prev && VN.G.progress[prev.id] && VN.G.progress[prev.id].done);
   };
+  function syncRewindUI() {
+    if (D.stage) D.stage.classList.toggle('rewind-on', !!VN.G.unlockAll);
+  }
+  /* 口令解锁：把还没解锁的东西一次性全部打开 —— 章节、人物图鉴、史料档案、
+   * 插画画廊（背景 + 全屏插画），并放开倒退播放。
+   * 只写解锁位，不碰 progress：章节选择里不会冒出不存在的「已完成」，
+   * 终章结算页的「走过的章节」也不会被灌水。 */
+  VN.unlockEverything = function () {
+    VN.G.unlockAll = true;
+    var g = VN.G.unlocked;
+    Object.keys(VN.CHARACTERS || {}).forEach(function (id) { g.chars[id] = 1; });
+    var bgs = (window.ART && window.ART.backgroundsList) || [];
+    bgs.forEach(function (b) { g.bgs[b.id] = 1; });
+    /* CG 有自己的 id 体系（src/data/cg.js 的 ART.cgList，cg_* 前缀），
+     * 不是背景 id。按画廊真正列出的那份清单来填，否则会出现
+     * 「口令解了、画廊还是锁着」的空档。 */
+    var cgs = (window.ART && window.ART.cgList) || [];
+    cgs.forEach(function (c) { if (c && c.id) g.cgs[c.id] = 1; });
+    if (window.ART && window.ART.cgById) {
+      Object.keys(window.ART.cgById).forEach(function (id) { g.cgs[id] = 1; });
+    }
+    /* 老剧本里仍沿用背景 id 的 cg 步骤也一并留着，免得留下"解锁了却没有条目"的死键。 */
+    bgs.forEach(function (b) { g.cgs[b.id] = 1; });
+    var st = window.STORY || {};
+    Object.keys(st).forEach(function (k) {
+      var ch = st[k];
+      if (!ch || !ch.archive) return;
+      ch.archive.forEach(function (a) { if (a && a.id) g.archives[a.id] = 1; });
+    });
+    syncRewindUI();
+    VN.persist();
+    return true;
+  };
   function numCn(n) {
     var cn = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
     if (n <= 10) return cn[n] || String(n);
@@ -1163,6 +1332,8 @@
     clearChars();
     hideCg(true);                           /* 新章节开场不该残留上一章的插画 */
     charFace = {};                          /* 表情记忆按章重置 */
+    rewindBuf.length = 0;                   /* 倒退不跨章 */
+    suppressRecord = false;
     setNote(null);
     D.dialogue.classList.add('hidden');
     D.choiceLayer.classList.add('hidden');
@@ -1273,7 +1444,7 @@
       v: 1,
       chapter: VN.state.chapter,
       title: VN.state.title,
-      path: VN.state.frames.map(function (f) { return { i: f.i }; }),
+      path: VN.state.frames.map(function (f) { return { i: f.i, kind: f.kind }; }),
       morale: VN.state.morale, trust: VN.state.trust, hope: VN.state.hope,
       flags: VN.state.flags,
       records: VN.state.records,
@@ -1321,29 +1492,18 @@
     setWeather(VN.state.weather);
     syncMeters(false);
     setChapterTag(chapterTagText(m));
-    var baseSteps = chapterSteps(ch, m);
     var path = obj.path || [{ i: 0 }];
     /* R2-E01：越界存档兜底。存档里记的是**绝对步号**，而剧情编辑可能删掉步骤
        （例如 R1-Q05 从 8 章删了 27 个 note 步），于是旧存档的步号会越过本章末尾。
        run() 的语义是"某帧的 i 越界即该帧结束"，一旦越界就会把帧弹空并立即 endChapter，
-       读档的玩家于是被弹回章节结算而不是回到进度。这里先把越界进度落回本章开头，
-       并明确告诉玩家，避免静默损坏。 */
-    var badProgress = false;
-    var first = path[0] ? path[0].i : 0;
-    if (!(first >= 0) || first >= baseSteps.length) { first = 0; badProgress = true; }
-    var frames = [{ steps: baseSteps, i: first }];
-    for (var d = 1; d < path.length; d++) {
-      var prev = frames[d - 1];
-      var ifStep = prev.steps[prev.i - 1];
-      if (!ifStep || ifStep.t !== 'if') break;
-      var arr = path[d].kind === 'else' ? ifStep.else : ifStep.then;
-      if (!arr) break;
-      var sub = path[d].i || 0;
-      if (!(sub >= 0) || sub >= arr.length) break;      // 嵌套分支同样不夹取会越界，直接丢弃该层
-      frames.push({ steps: arr, i: sub });
-    }
-    if (badProgress) toast('这份存档的进度已经失效，已从本章开头继续');
-    VN.state.frames = frames;
+       读档的玩家于是被弹回章节结算而不是回到进度。buildFrames 把越界进度落回本章开头，
+       这里负责明确告诉玩家，避免静默损坏。
+       帧栈的构造与倒退播放共用 buildFrames（见 13.2）。 */
+    var built = buildFrames(ch, m, path);
+    if (built.bad) toast('这份存档的进度已经失效，已从本章开头继续');
+    VN.state.frames = built.frames;
+    rewindBuf.length = 0;
+    suppressRecord = false;
     VN.G.run = {
       morale: VN.state.morale, trust: VN.state.trust, hope: VN.state.hope,
       flags: VN.state.flags, records: VN.state.records
@@ -1461,6 +1621,7 @@
       var act = b.dataset.act;
       if (act === 'auto') setAuto(!autoOn);
       else if (act === 'skip') setSkip(!skipOn, 'all');
+      else if (act === 'rewind') VN.rewind(1);
       else if (act === 'history') VN.ui.showHistory();
       else if (act === 'save') VN.ui.showSlots('save');
       else if (act === 'settings') VN.ui.showSettings();
@@ -1492,6 +1653,9 @@
         case 'h': case 'H': toggleUI(); break;
         case 'a': case 'A': setAuto(!autoOn); break;
         case 's': case 'S': setSkip(!skipOn, 'all'); break;
+        /* 倒退播放（口令解锁）。菜单开着时上面已经 return，所以在口令输入框里
+           按退格仍然是正常删字，不会被这里抢走。 */
+        case 'Backspace': VN.rewind(1); e.preventDefault(); break;
         case 'l': case 'L': VN.ui.showHistory(); break;
         case 'Tab': VN.ui.showSettings(); e.preventDefault(); break;
       }
@@ -1542,6 +1706,10 @@
       if (!ok || !window.STORY[m[i].id]) missing.push(m[i].id);
     }
     VN.missingChapters = missing;
+    /* 口令已开过：补齐图鉴 / 档案 / 插画的解锁位（旧版本只解锁了章节），
+       并让「倒退」按钮出现在快捷条上。 */
+    if (VN.G.unlockAll) VN.unlockEverything();
+    syncRewindUI();
     if (D.loading) {
       D.loading.classList.add('gone');
       setTimeout(function () { D.loading.classList.add('hidden'); }, 640);
