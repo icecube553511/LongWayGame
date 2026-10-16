@@ -619,4 +619,14 @@ AI 出的整屏位图 —— 人群的差异由提示词里的硬要求 + 独立
 `RPC failed; curl 55 Send failure: Connection was reset`（老毛病：走本地代理时
 `github.com` 的传输会间歇性断），按 `AGENT_WORKFLOW.md` §3 的参数
 （`-c http.version=HTTP/1.1 -c http.postBuffer=524288000`）重试一次即过。
-`main` 未动（远端仍是 `9c0d809`）；是否合回 `main` 留给用户定。
+
+**合流到 main（2026-10-16 15:xx，用户指令「把现有分支内容全部合并到 main」）**：
+合流前先点清家底 —— `develop/Movie`（`9c0d809`）与 `origin/develop/ImproveWordsEffort`（`4b189d1`）
+**都已经是 `main` 的祖先**（`git merge-base --is-ancestor` 退出码 0、`main..<分支>` 为空），
+远端那条词句分支随后也被删除，所以「现有分支内容全部合并」实际只剩 `develop/Backbroad` 这一条。
+
+`main` 已**快进**到 `b564e6c`（= `develop/Backbroad` 的 tip，无冲突、无合并提交）并推送
+（`9c0d809..b564e6c`，`git ls-remote --heads origin` 实测 `refs/heads/main = b564e6c`）。
+合流后在 **`main` 的检出目录**上复验：`node tools/check.js` 检查通过（背景 34/34、位图 30/30、
+立绘 280/280、P0 插画 27/27）、体积自检 0 超档、`node tools/e2e-run.js` 20/20 章 / 24061 步 / 0 报错。
+`develop/Backbroad` 保留（与 `develop/Movie` 一样，作为这一轮的存档分支）。
