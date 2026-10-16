@@ -612,3 +612,11 @@ AI 出的整屏位图 —— 人群的差异由提示词里的硬要求 + 独立
 工作在一个独立 worktree（`~/.codex/worktrees/bg-redo/LongWayGame`）里做，
 原因是开工时发现**共享的检出目录被另一条线切到了 `develop/ImproveWordsEffort`**，
 在原目录里改分支会互相踩。
+
+**推送**：两个提交（`bbcf209` 位图 30 张、`99f64bd` 产线与契约）已推送到
+`origin/develop/Backbroad` —— `git ls-remote --heads origin develop/Backbroad`
+实测 = 本地 `HEAD` = `99f64bd`。第一次 `git push` 报
+`RPC failed; curl 55 Send failure: Connection was reset`（老毛病：走本地代理时
+`github.com` 的传输会间歇性断），按 `AGENT_WORKFLOW.md` §3 的参数
+（`-c http.version=HTTP/1.1 -c http.postBuffer=524288000`）重试一次即过。
+`main` 未动（远端仍是 `9c0d809`）；是否合回 `main` 留给用户定。
