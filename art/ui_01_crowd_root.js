@@ -136,7 +136,10 @@
     };
     var pool = map[o.pose] || GROUPS.stand;
     var rng = GEO.RNG(o.seed || ('hum' + (o.cx || 0) + (o.gy || 0)));
-    var name = pick(pool.length ? pool : GROUPS.stand, rng);
+    /* o.stamp 可以点名用哪一张印章：背景里并排站着的人物（担架队的四个人）
+       如果交给随机挑，两张池子里有一半概率挑到同一张 —— 玩家看到的就是"复制人"。
+       点名之后每个人必然是不同的一张（用户 2026-10-16 的反馈）。 */
+    var name = (o.stamp && S[o.stamp]) ? o.stamp : pick(pool.length ? pool : GROUPS.stand, rng);
     var st = S[name];
     var H = o.H || 900;
     var w = H * (st ? st.ar : 0.42);

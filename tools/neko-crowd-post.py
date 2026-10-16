@@ -46,7 +46,27 @@ def key_color(img: Image.Image) -> tuple[int, int, int]:
 
 
 def cutout(src: Path) -> Image.Image | None:
-    img = Image.open(src).convert("RGB")
+    """抠成带 alpha 的人物图。
+
+    两条来源都要支持（2026-10-16 实测）：
+      · 上游给的是**洋红底 RGB**（最早那批 13 张）：按四角键色把洋红扣掉；
+      · 上游直接给了 **RGBA 且四角透明**（这一批 6 张里 5 张）：它已经抠好了，
+        如果还按 RGB 处理，`.convert("RGB")` 会把透明压成黑色，再拿黑色当键色，
+        制服与靴子的暗部会被打出洞 —— 所以这里必须先认 alpha。
+    """
+    raw = Image.open(src)
+    if raw.mode in ("RGBA", "LA") or (raw.mode == "P" and "transparency" in raw.info):
+        rgba = raw.convert("RGBA")
+        w, h = rgba.size
+        a = rgba.getchannel("A")
+        corners = [a.getpixel(p) for p in ((2, 2), (w - 3, 2), (2, h - 3), (w - 3, h - 3))]
+        if min(corners) < 32:
+            box = a.getbbox()
+            if not box:
+                return None
+            return rgba.crop(box)
+        raw = rgba.convert("RGB")          # 有 alpha 但四角不透明 → 退回洋红键色流程
+    img = raw.convert("RGB")
     kr, kg, kb = key_color(img)
     px = img.load()
     w, h = img.size

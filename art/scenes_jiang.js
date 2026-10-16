@@ -400,22 +400,37 @@
         GEO.mul(P.ramp(P.earth, 0.44), 0.8 + peb() * 0.4), { opacity: GEO.lerp(0.8, 0.4, pt), stroke: null }));
     }
     s.push(GEO.grassTufts(W, 820, H, P.ramp(P.grass, 0.4), 'st-grass', 240));
-    /* 两副担架与抬担架的战士 */
+    /* 两副担架与抬担架的战士
+     *
+     * 2026-10-16 修两处（用户反馈）：
+     *  ① 原来这里还画了一副程序化的担架（GEO.stretcher）与担架上的伤员 —— 那是
+     *     "人物由 geosvg 程序画"的年代留下的坐标（y - 96*sc 大致是旧版人物的腰腿高度）。
+     *     人物改由 AI 印章渲染之后，印章自己肩上就扛着担架，这副本该在肩上的担架
+     *     于是落在四个人**小腿**的位置，在画面上表现为一块悬空的灰色板子 —— 移除。
+     *     （担架与伤员改由印章本身承载：carry_* 的提示词写明"肩上扛着担架的一头，
+     *      身后吊着折叠的帆布担架与毯子"。）
+     *  ② 四位担架员原来从 carry 池里随机挑（当时池里只有 2 张），必然出现"复制人"。
+     *     现在点名用四张不同的印章，并且身高、明度各不相同 —— 四个人一眼是四个人。 */
     var sceneG = '';
-    var pairs = [{ x: 470, y: 1000, sc: 1.0 }, { x: 1180, y: 928, sc: 0.82 }];
-    pairs.forEach(function (p, idx) {
+    var pairs = [
+      /* tone 由 P.tone 的颜色亮度决定（<0.30 → 38%，0.30–0.48 → 62%，≥0.48 → 100%）：
+         近的一对用满亮度，远的一对压到 62% —— 这是这一景里唯一的景深手段，
+         所以要显式选色（uniformGrn 无论取哪一档都落进 62%，用它两组会一样亮）。 */
+      { x: 470, y: 1000, sc: 1.0, near: true, back: { stamp: 'carry_5', k: 1.03 }, front: { stamp: 'carry_1', k: 0.98 } },
+      { x: 1180, y: 928, sc: 0.82, near: false, back: { stamp: 'carry_4', k: 1.05 }, front: { stamp: 'carry_3', k: 0.96 } }
+    ];
+    pairs.forEach(function (p) {
       var hh = 300 * p.sc;
-      /* 前后两位抬担架的战士 */
-      sceneG += GEO.humanoid({ H: hh * 1.42, gy: p.y + 4, cx: p.x - 150 * p.sc, build: 1.0, pose: 'carry',
-        cloth: P.ramp(P.uniformGrn, 0.3), pants: P.ramp(P.uniformGrn, 0.2), hat: 'cap', puttee: true, collar: false, face: 'stern' });
-      sceneG += GEO.humanoid({ H: hh * 1.42, gy: p.y - 16 * p.sc, cx: p.x + 150 * p.sc, build: 0.96, pose: 'carry',
-        cloth: P.ramp(P.uniformGrn, 0.26), pants: P.ramp(P.uniformGrn, 0.18), hat: 'cap', puttee: true, collar: false, face: 'worry' });
-      /* 担架 */
-      sceneG += GEO.stretcher(p.x, p.y - 96 * p.sc, 260 * p.sc, P.ramp(P.cloth, 0.36));
-      /* 伤员 */
-      sceneG += GEO.poly(GEO.ngon(p.x, p.y - 108 * p.sc, 26 * p.sc, 7, 0.3, 0.7), P.ramp(P.skinPale, 0.4));
-      sceneG += GEO.facet([[p.x - 84 * p.sc, p.y - 116 * p.sc], [p.x + 76 * p.sc, p.y - 112 * p.sc],
-        [p.x + 78 * p.sc, p.y - 88 * p.sc], [p.x - 82 * p.sc, p.y - 92 * p.sc]], P.ramp(P.cloth, 0.3), { light: 0.1, hl: 0.3, dark: 0.1, dl: 0.24 });
+      var toneN = P.ramp(P.cloth, 0.7);        /* lum≈0.62 → 满亮度（近） */
+      var toneF = P.ramp(P.uniformGrn, 0.3);   /* lum≈0.39 → 62%（远） */
+      var tone = p.near ? toneN : toneF;
+      /* 前后两位抬担架的战士：身高 k 与明度（cloth）都拉开一点，体态才不像同一个人 */
+      sceneG += GEO.humanoid({ H: hh * 1.42 * p.back.k, gy: p.y + 4, cx: p.x - 150 * p.sc, pose: 'carry',
+        stamp: p.back.stamp, cloth: tone, pants: tone,
+        hat: 'cap', puttee: true, collar: false, face: 'stern' });
+      sceneG += GEO.humanoid({ H: hh * 1.42 * p.front.k, gy: p.y - 16 * p.sc, cx: p.x + 150 * p.sc, pose: 'carry',
+        stamp: p.front.stamp, cloth: tone, pants: tone,
+        hat: 'cap', puttee: true, collar: false, face: 'worry' });
     });
     s.push(sceneG);
     /* 斑驳光影 */

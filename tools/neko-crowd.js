@@ -34,7 +34,10 @@ const KEY_COLOR = '#FF00FF';
 const POSES = [
   { id: 'stand',   n: 3, desc: 'a single Red Army soldier standing at ease, seen from the front, bolt-action rifle slung across the back, octagonal cloth cap with a red star, grey-green tunic with red collar tabs, puttees on the lower legs, cloth shoes' },
   { id: 'march',   n: 3, desc: 'a single Red Army soldier walking in profile facing left, mid-stride, rifle on the shoulder, pack and blanket roll, octagonal cap with red star, grey-green tunic, puttees, cloth shoes' },
-  { id: 'carry',   n: 2, desc: 'a single Red Army soldier carrying a stretcher pole on the shoulder, leaning forward, straining, simple tunic and cap with red star' },
+  /* carry 从 2 张扩到 6 张：担架队是一排并排的人，只有两张贴图时四个人必然长得一样
+     （用户 2026-10-16 的反馈："人物是复制出来的"）。同时把姿态写得更明确：
+     肩上扛的是担架的一头，身后吊着折叠的帆布担架与毯子。 */
+  { id: 'carry',   n: 6, desc: 'a single Red Army soldier carrying one end of a canvas stretcher on his shoulder, leaning forward under the weight and straining; a folded grey canvas litter and a rolled blanket hang from the pole behind his shoulder; simple tunic and octagonal cap with a red star' },
   { id: 'sit',     n: 2, desc: 'a single Red Army soldier sitting on the ground with knees drawn up, resting, tunic and octagonal cap, rifle laid across the knees' },
   { id: 'peasant', n: 3, desc: 'a single Chinese peasant of the 1930s standing, white cloth headscarf wound around the head, dark blue homespun jacket and loose trousers, carrying a carrying pole or a basket' },
   { id: 'flag',    n: 1, desc: 'a single Red Army soldier standing and holding a tall bamboo pole with a plain red flag, tunic and octagonal cap with red star' },
@@ -56,6 +59,19 @@ function promptFor(pose, variant) {
     'SUBJECT: ' + pose.desc + '.',
     'Variant ' + (variant + 1) + ' of several — vary the face, height, build and small details,',
     'but keep the same uniform, palette and rendering style.',
+    '',
+    /* 用户 2026-10-16 反馈：背景里的人物是"复制出来的"。一条硬要求：同一姿态的不同变体
+       必须是**看得出来的不同人** —— 体态、年龄、脸型、神态都要分开；军装的磨损程度也要分开。 */
+    'VARIETY (hard requirement): this variant must read as a visibly DIFFERENT PERSON from the',
+    'other variants of this pose. Vary the stature and build (tall and thin, short and stocky,',
+    'broad-shouldered, slightly stooped), the age (young recruit, weathered middle-aged veteran,',
+    'grey-stubbled older man), the face shape, and the expression (straining, grim, exhausted,',
+    'calm, teeth clenched).',
+    'UNIFORM WEAR (hard requirement): the clothing must show its own degree of damage, different',
+    'from the other variants — range from nearly new to badly worn: sun-bleached and faded cloth,',
+    'mismatched cloth patches sewn on the tunic, a torn sleeve or a torn hem, mud and dust',
+    'staining on the trousers and puttees, a missing button, a frayed collar, a strip of cloth',
+    'bandage wound around the forearm, a rope belt instead of a leather one.',
     '',
     'FRAMING: the complete figure from the top of the head down to the feet, standing on nothing,',
     'centered, filling most of the frame vertically, clearly readable as a small game sprite.',
