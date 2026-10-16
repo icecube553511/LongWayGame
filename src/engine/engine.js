@@ -960,13 +960,20 @@
         return true;
       case 'think':
         curGateStep = s; markRead(s);
-        ensureOnStage(s.who);
+        if (s.noPortrait) hideChar(s.who); else ensureOnStage(s.who);
         showDialogue('think', s.who, s.text, s.note);
         block('text');
         return true;
       case 'say':
         curGateStep = s; markRead(s);
-        if (s.face) showChar(s.who, s.face, s.slot);
+        /* noPortrait: 这一句不要立绘。
+         * 引擎有条不变式「说话的人必须在台上」（否则姓名条会配一张空舞台），
+         * 但有些叙事画面要的恰恰是「画面里只有那个东西」——
+         * 例：第三章「每人三发」那段，主体必须只是三颗子弹，不能被立绘压在中间。
+         * 这类写法必须显式声明（不是靠画面类型猜），所以给内容侧一个开关。
+         * —— 由 root 追加（SPEC §2.1 同步登记） */
+        if (s.noPortrait) hideChar(s.who);
+        else if (s.face) showChar(s.who, s.face, s.slot);
         /* 没写 face 时按 SPEC 的本意是"沿用上一次的表情"，但前提是人得在台上：
            这一幕没 show 过他，就兜底补上场，否则姓名条会配一张空舞台。 */
         else ensureOnStage(s.who);

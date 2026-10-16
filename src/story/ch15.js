@@ -278,7 +278,9 @@
       { t: 'narr', text: '他一头扎进了火里。' },
       { t: 'fx', kind: 'flash', ms: 400 },
 
-      { t: 'cg', id: 'cg_luding_bridge', text: '火里有人冲过去了。' },
+      /* 桥头火这一拍是强攻，配上 impact 运镜：进场先挨一下，与前面那句「他一头扎进了火里」
+         和紧随的 cheer 接成一击。（图沿用原有 cg_luding_bridge，只加动效） */
+      { t: 'cg', id: 'cg_luding_bridge', motion: 'impact', text: '火里有人冲过去了。' },
       { t: 'sfx', id: 'cheer' },
       { t: 'narr', text: '桥头堡被夺下了。' },
       { t: 'narr', text: '二十二个人冲进泸定城的街道，和守军短兵相接。' },

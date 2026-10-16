@@ -225,6 +225,9 @@
       { t: 'sfx', id: 'shell' },
       { t: 'narr', text: '石壁顶上，一捆手榴弹掉进了碉堡的射击孔。' },
       { t: 'narr', text: '轰的一声，火光从碉堡里冒出来。' },
+      /* 全屏插画：夜袭那一捆手榴弹在碉堡射击孔里炸开的这一下。
+         文字一字未改（原句成为图注），动效 impact —— 进场的抖动就是爆炸本身。 */
+      { t: 'cg', id: 'cg_lazikou_raid', motion: 'impact', text: '轰的一声，火光从碉堡里冒出来。' },
       { t: 'sfx', id: 'gunfire' },
       { t: 'fx', kind: 'shake', ms: 600 },
       { t: 'narr', text: '小满站了起来。' },

@@ -51,6 +51,8 @@ const BGS = [
   'bg_yihai', 'bg_dadu', 'bg_luding', 'bg_snow_mountain', 'bg_maogong',
   'bg_grassland', 'bg_lazikou', 'bg_hadapu', 'bg_wuqi', 'bg_huining',
   'bg_yanan_cave', 'bg_rain_march', 'bg_camp_fire', 'bg_map_table', 'bg_stretcher'
+  /* 第三章脚山铺的「三发子弹」叙事画面 + 全黑（画在 art/scenes_bullets.js） */
+  , 'bg_bullets_3', 'bg_bullets_2', 'bg_bullets_1', 'bg_black'
 ];
 
 const STEP_TYPES = ['bg', 'show', 'hide', 'clear', 'say', 'narr', 'think', 'title', 'fx', 'cg',

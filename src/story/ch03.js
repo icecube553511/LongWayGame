@@ -52,12 +52,28 @@
       { t: 'narr', text: '第一天，阵地没有动。第二天，阵地还在。第三天，阵地后面能听见江面上的水声。' },
       { t: 'show', who: 'soldiers', face: 'fierce', slot: 'right' },
       { t: 'say', who: 'soldiers', text: '连长，我们还有多少子弹？' },
-      { t: 'say', who: 'soldiers', text: '每人三发。' },
-      { t: 'say', who: 'soldiers', text: '三发？' },
-      { t: 'say', who: 'soldiers', face: 'stern', text: '三发。敌人上来的时候，第一排打一发，第二排打一发。' },
-      { t: 'say', who: 'soldiers', text: '第三发留着。' },
-      { t: 'say', who: 'soldiers', text: '留着做什么？' },
-      { t: 'say', who: 'soldiers', face: 'sad', text: '留着给自己。' },
+      /* 「三发子弹」这个会话一开始，画面就沉下去：立绘收掉，背景渐变到纯黑，
+         只剩三颗立着的步枪弹 —— 主体就是这三发（画在 art/scenes_bullets.js）。
+         此后每用掉一发，画面就少一颗，位置不变；最后一发「留给自己」时硬切全黑 + 眩晕音效。
+         —— 由 root 按用户要求加（对话一字未改，只拆了一行、插了画面步骤） */
+      { t: 'clear' },
+      { t: 'bg', id: 'bg_bullets_3', fx: 'fade', ms: 1200 },
+      /* 这七句一律带 noPortrait：画面里只留三颗子弹，
+         否则引擎的「说话人必须在台上」会把红军战士的立绘补到正中，正好压住中间那颗弹。 */
+      { t: 'say', who: 'soldiers', noPortrait: true, text: '每人三发。' },
+      { t: 'say', who: 'soldiers', noPortrait: true, text: '三发？' },
+      /* 原来这一句是一整行：「三发。敌人上来的时候，第一排打一发，第二排打一发。」
+         为了让「第一排打一发 / 第二排打一发」各带走一颗子弹，把它按原标点拆成两句，
+         字一个没改（本章汉字数因此不变）。 */
+      { t: 'say', who: 'soldiers', face: 'stern', noPortrait: true, text: '三发。敌人上来的时候，第一排打一发。' },
+      { t: 'bg', id: 'bg_bullets_2', fx: 'cut' },
+      { t: 'say', who: 'soldiers', face: 'stern', noPortrait: true, text: '第二排打一发。' },
+      { t: 'bg', id: 'bg_bullets_1', fx: 'cut' },
+      { t: 'say', who: 'soldiers', noPortrait: true, text: '第三发留着。' },
+      { t: 'say', who: 'soldiers', noPortrait: true, text: '留着做什么？' },
+      { t: 'say', who: 'soldiers', face: 'sad', noPortrait: true, text: '留着给自己。' },
+      { t: 'bg', id: 'bg_black', fx: 'black' },
+      { t: 'sfx', id: 'vertigo' },
       { t: 'narr', text: '没有人再问。' },
       { t: 'fx', kind: 'blood', ms: 180 },
       { t: 'narr', text: '那天下午的第七次冲锋，阵地丢了一半。晚上又夺了回来。' },

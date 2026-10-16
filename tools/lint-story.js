@@ -32,9 +32,10 @@ const BG = [
   'bg_snow_mountain', 'bg_maogong', 'bg_grassland', 'bg_lazikou', 'bg_hadapu',
   'bg_wuqi', 'bg_huining', 'bg_yanan_cave', 'bg_rain_march', 'bg_camp_fire',
   'bg_map_table', 'bg_stretcher'
+  , 'bg_bullets_3', 'bg_bullets_2', 'bg_bullets_1', 'bg_black'
 ];
 const SFX = ['gunfire', 'distant_gun', 'shell', 'horse', 'water', 'bell', 'paper',
-  'footsteps', 'wind', 'thunder', 'horn', 'cheer', 'click', 'page'];
+  'footsteps', 'wind', 'thunder', 'horn', 'cheer', 'click', 'page', 'vertigo'];
 /* 重要事件插画（CG）的 id 来自 src/data/cg.js —— 与引擎、画廊、check.js 同一个来源。
  * 只认 bg_* 的旧写法会让「cg 步改用 cg_* id」被误判成「未知背景 id」，所以这里读表。
  * 读不到表（文件缺失/语法坏）时退回只认背景 id，并明确告警，不静默放过。 */

@@ -157,7 +157,18 @@
     horn: function (w) { tone(w, 233, 1.1, 0.22, 'sawtooth'); tone(w + 0.02, 349, 1.0, 0.14, 'triangle'); tone(w + 0.04, 466, 0.8, 0.07, 'sine'); },
     cheer: function (w) { for (var i = 0; i < 5; i++) noise(0.36, w + i * 0.09, 0.14, 'bandpass', 900, 2400); },
     click: function (w) { tone(w, 880, 0.06, 0.14, 'square'); },
-    page: function (w) { noise(0.12, w, 0.1, 'highpass', 1800, 3400); }
+    page: function (w) { noise(0.12, w, 0.1, 'highpass', 1800, 3400); },
+    /* 眩晕：低频往下坠 + 一串逐渐走低的短音（听见自己在往下沉）+ 一丝耳鸣样的高频。
+       用在「三发子弹」那段最后一发「留着给自己」的硬切上（ch03）。
+       —— 由 root 按用户要求追加（SPEC §5 的 sfx 表同步加了这个 id） */
+    vertigo: function (w) {
+      tone(w, 196, 2.0, 0.26, 'sine', null, 58);                       /* 下坠的底 */
+      for (var i = 0; i < 7; i++) {                                    /* 一圈一圈转下去 */
+        tone(w + i * 0.27, 168 - i * 14, 0.34, 0.1, 'triangle', null, 104 - i * 9);
+      }
+      tone(w + 0.06, 3050, 1.7, 0.035, 'sine', null, 2400);            /* 耳鸣 */
+      noise(1.2, w + 0.1, 0.07, 'lowpass', 240, 90);                   /* 耳边的闷响 */
+    }
   };
 
   VN.audio = {

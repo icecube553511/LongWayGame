@@ -138,6 +138,14 @@
       prompt_cn: '一九三五年五月的上午，川西大渡河。白浪在河心的巨石上炸开，水雾浮在水面上。一条小木船朝对岸去，船上挤着伏低的身影，桨被压得弯；近岸的土坎里架着一挺机枪和一门迫击炮，炮口还飘着一缕烟。对岸的裸崖下是一座低矮的石碉堡。',
       must: ['violent white rapids and hanging spray','single small wooden boat packed with crouching soldiers','machine gun on a tripod and a single mortar in a cut in the near bank','low stone blockhouse under a bare cliff on the far bank'],
       avoid: ['modern boats','bridges','bright sunshine'] },
+    /* 赵章成的第三发炮弹 —— 强渡大渡河真正的关键一炮（ch14[186]「第三发，从碉堡的枪眼里进去了。」，
+       紧接着 187 就是 shake）。图注用原文，动效 impact。—— 由 root 按用户要求追加 */
+    { id: 'cg_dadu_third_shell', ch: 'ch14', title: '第三发炮弹',  anchor: 'bg_dadu',           motion: 'impact',   priority: 'P0',
+      caption: '第三发，从碉堡的枪眼里进去了。',
+      prompt_en: 'The Dadu River at Anshun Chang, Sichuan, China, May 1935, in the morning. On the near bank a single small mortar stands on an earth ledge with its muzzle smoke still drifting and the two-man crew crouched behind it looking across. Across the wide grey river, on the far cliff, sits a blockhouse with three dark embrasures; the third shell has just gone into the middle one, and a tight knot of smoke and dull orange fire is breaking out of that slit while the other two stay black. In midstream, small and low, a single wooden boat with a dozen and a half men crouched inside fights the current.',
+      prompt_cn: '一九三五年五月，上午，四川安顺场大渡河。近岸土坎上架着一门小迫击炮，炮口的烟还没散，两个炮手蹲在炮后朝对岸看。宽阔的灰江对岸、崖壁上有一座碉堡，三个枪眼黑着；第三发刚刚打进中间那一个，一股紧实的烟与暗橙火光正从那个枪眼里鼓出来，另两个仍然黑着。江心偏下，一条很小的木船逆着水，船里蹲着十几个人。',
+      must: ['small mortar with drifting muzzle smoke on the near bank','blockhouse on the far cliff with three dark embrasures','smoke and dull orange fire bursting from the middle embrasure','single small wooden boat fighting the current midstream','wide grey river'],
+      avoid: ['bright saturated colour','heroic close-up face','modern weapons','a bridge across the river'] },
     { id: 'cg_luding_race',     ch: 'ch15', title: '奔袭泸定',     anchor: 'bg_luding',          motion: 'pan-left', priority: 'P0',
       caption: '十三根铁索，横在一条发怒的河上。',
       prompt_en: 'An iron chain suspension bridge over a violent river in western Sichuan, China, in the morning of May 1935. Thirteen bare iron chains span the gorge and almost all of the wooden deck planks have been removed, leaving a few only near the eastern bridgehead; the chains sag over white water that breaks on rocks far below. A square stone bridge tower stands at each end beneath steep cliffs. In the foreground a few soldiers crouch behind a rock at the western bridgehead and look along the chains.',
@@ -174,6 +182,15 @@
       prompt_cn: '一九三五年九月的拂晓，甘肃腊子口。两侧竖直的裸岩把天挤成一条窄缝；谷底一条小木桥跨过白水，桥那面是一座带枪眼、把峡谷完全堵死的低矮石碉堡。上面岩壁上几个很小的人影正顺着石棱往上挪，几乎和石头分不出来；桥头下面有人伏在巨石后。',
       must: ['narrow slot canyon with vertical bare cliffs','thin strip of pale sky between the cliffs','small wooden bridge over a white stream','squat stone blockhouse blocking the gorge','tiny climbers working up the cliff face above the bridgehead'],
       avoid: ['wide open valley','trees inside the canyon','bright direct sunlight'] },
+    /* 腊子口夜袭炸碉堡 —— 全章真正的转折（ch18[184]「石壁顶上，一捆手榴弹掉进了碉堡的射击孔」，
+       紧随其后那句「轰的一声，火光从碉堡里冒出来」就是图注）。
+       动效 impact：进场那一抖就是爆炸本身。—— 由 root 按用户要求追加（其余爆炸/强攻场景配 impact） */
+    { id: 'cg_lazikou_raid',    ch: 'ch18', title: '夜袭碉堡',     anchor: 'bg_lazikou',         motion: 'impact',   priority: 'P0',
+      caption: '轰的一声，火光从碉堡里冒出来。',
+      prompt_en: 'A narrow limestone gorge at night in Gansu, China, September 1935. High on the right-hand cliff two tiny soldiers cling to the rock face, one leaning out to drop a bundled cluster of grenades straight down into the embrasure of a blockhouse built into the opposite wall. The bundle has just gone in: a hard burst of orange light and grey smoke blows out through the firing slit and lights the wet rock and the men above it. Far below on a wooden bridge a thin line of soldiers is still charging forward, their muzzle flashes small and white. Everything else is cold night blue.',
+      prompt_cn: '一九三五年九月，夜，一条石灰岩峡谷。右侧绝壁上，两个很小的战士扒着岩面，其中一个探出身，把一捆集束手榴弹直直丢进对面碉堡的射击孔。刚刚丢进去：射击孔里炸出一团硬邦邦的橙光与灰烟，照亮湿岩石和上方那两个人。谷底木桥上，一条细线似的队伍还在往上冲，枪口的白光是小小的点。其余都是冷的夜蓝。',
+      must: ['two tiny soldiers clinging to the cliff face above', 'bundled grenades dropping into the blockhouse embrasure', 'hard burst of orange light and grey smoke out of the firing slit', 'narrow limestone gorge at night', 'thin line of soldiers charging on the wooden bridge below'],
+      avoid: ['bright daylight','heroic close-up face','vivid saturated orange filling the frame','gore'] },
     { id: 'cg_wuqi',            ch: 'ch19', title: '吴起镇',       anchor: 'bg_wuqi',            motion: 'zoom-in',  priority: 'P0',
       caption: '窑洞的墙上写着红军的字。他们到家了。',
       prompt_en: 'A loess plateau in northern Shaanxi, China, in the late afternoon of October 1935. Rounded yellow-brown earth ridges and deep gullies stretch to the horizon, with rows of arched cave dwellings cut into a slope and a plain red flag on a pole standing among them; worn painted slogan marks cover the plastered wall beside one arched doorway, their brush strokes faded into illegible shapes. Along the rim of the plateau in the foreground a whole column of tiny soldiers has stopped and sat down, rifles across their knees and faces turned toward the dwellings, while a peasant with a white cloth around his head stands holding a willow basket. Low warm ochre light lies on the ridges and cold blue shadow fills the gullies.',

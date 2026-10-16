@@ -75,9 +75,9 @@ assets/generated/**         [生成物, 由 build-art.js 写入]
 | `show` | `who`, `face?`, `slot?`(`left`/`center`/`right`), `fx?`(`slidein`/`fadein`/`pop`) | 立绘登场（`who` 见 3.1） |
 | `hide` | `who`, `fx?` | 立绘退场 |
 | `clear` | – | 清空所有立绘 |
-| `say` | `who`, `face?`, `text`, `note?` | 有说话人的对白；`note` 为史料小注（可省略） |
+| `say` | `who`, `face?`, `text`, `note?`, `noPortrait?` | 有说话人的对白；`note` 为史料小注（可省略）；`noPortrait:true` = 这一句不要立绘（画面里只留背景，例：`ch03` 的「三发子弹」） |
 | `narr` | `text`, `note?` | 旁白（无名框、居中偏上排版） |
-| `think` | `who`, `text` | 内心独白（括号括起、斜体感） |
+| `think` | `who`, `text`, `noPortrait?` | 内心独白（括号括起、斜体感）；`noPortrait` 同上 |
 | `title` | `text`, `sub?` | 章节内小标题卡（如「一九三五年一月·遵义」） |
 | `fx` | `kind`(`flash`/`shake`/`fadeout`/`fadein`/`snow`/`rain`/`ash`/`blood`/`star`), `ms?` | 全屏特效 |
 | `cg` | `id`, `text?`, `ms?`, `motion?` | 全屏插画（重要事件 CG）。`id` 取 `src/data/cg.js` 的 `cg_*`；老写法（写背景 id）仍可用。`text` 省略时用表里的 `caption`；`ms` 默认 4400；`motion` ∈ `zoom-in`/`pan-left`/`pan-right`/`still`/`impact`（`impact` = 进场挨一下的抖动，给炮击/爆炸用） |

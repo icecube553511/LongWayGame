@@ -256,6 +256,8 @@
       { t: 'narr', text: '第一发，落在碉堡左侧。' },
       { t: 'narr', text: '第二发，落在碉堡前面。' },
       { t: 'narr', text: '第三发，从碉堡的枪眼里进去了。' },
+      /* 全屏插画：赵章成第三发炮弹打进枪眼（文字一字未改，原句成为图注），动效 impact。 */
+      { t: 'cg', id: 'cg_dadu_third_shell', motion: 'impact', text: '第三发，从碉堡的枪眼里进去了。' },
       { t: 'fx', kind: 'shake', ms: 700 },
       { t: 'narr', text: '对岸的机枪停了几秒钟。' },
       { t: 'narr', text: '就这几秒钟。' },

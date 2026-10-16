@@ -37,7 +37,14 @@
     { id: 'bg_rain_march',     name: '雨中行军',     usedIn: 'ch02', hint: '泥路、蓑衣、雨幕、队伍剪影' },
     { id: 'bg_camp_fire',      name: '篝火夜营',     usedIn: 'ch01', hint: '草地、火堆、围坐的剪影、星空' },
     { id: 'bg_map_table',      name: '指挥部·地图桌', usedIn: 'ch07', hint: '作战地图、蜡烛、铅笔、电话机、马灯' },
-    { id: 'bg_stretcher',      name: '担架队',       usedIn: 'ch01', hint: '竹林小径、两副担架、抬担架的战士' }
+    { id: 'bg_stretcher',      name: '担架队',       usedIn: 'ch01', hint: '竹林小径、两副担架、抬担架的战士' },
+    /* 叙事画面（不是景）：第三章脚山铺阵地上「每人三发」那段对话。
+       纯黑底 + 弹药；三张画面里子弹的位置完全一致，少的只是被打出去的那一发。
+       —— 由 root 按用户要求追加（画在 art/scenes_bullets.js） */
+    { id: 'bg_bullets_3',      name: '三发子弹',     usedIn: 'ch03', hint: '纯黑底、三颗立着的步枪弹，只有子弹是主体' },
+    { id: 'bg_bullets_2',      name: '三发子弹·二', usedIn: 'ch03', hint: '同上，左侧一发已打出去（位置不变，只是少一颗）' },
+    { id: 'bg_bullets_1',      name: '三发子弹·一', usedIn: 'ch03', hint: '只剩正中那一发：第三发，留给自己的那一发' },
+    { id: 'bg_black',          name: '全黑',         usedIn: 'ch03', hint: '纯黑一屏：最后一发「留给自己」时硬切到这里' }
   ];
 
   G.ART.backgrounds = {};
@@ -47,7 +54,8 @@
   /* 音频 id 表（SPEC 5） */
   G.ART.audioIds = {
     bgm: ['departure', 'march', 'tense', 'battle', 'grief', 'hope', 'victory', 'night', 'river', 'snow', 'grassland', 'council'],
-    sfx: ['gunfire', 'distant_gun', 'shell', 'horse', 'water', 'bell', 'paper', 'footsteps', 'wind', 'thunder', 'horn', 'cheer', 'click', 'page']
+    sfx: ['gunfire', 'distant_gun', 'shell', 'horse', 'water', 'bell', 'paper', 'footsteps', 'wind', 'thunder', 'horn', 'cheer', 'click', 'page',
+      'vertigo']
   };
 
   /* 表情枚举（SPEC 3.2） */
