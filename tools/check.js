@@ -42,7 +42,7 @@ const CG_LIST = (function () {
   return (sb.window.ART && sb.window.ART.cgList) || [];
 })();
 const CG_IDS = new Set(CG_LIST.map(c => c.id));
-const CG_MOTIONS = ['zoom-in', 'pan-left', 'pan-right', 'still'];
+const CG_MOTIONS = ['zoom-in', 'pan-left', 'pan-right', 'still', 'impact'];
 
 const BGS = [
   'bg_yudu_night', 'bg_yudu_village', 'bg_mountain_pass', 'bg_blockade', 'bg_xiangjiang_day',

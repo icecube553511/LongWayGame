@@ -61,6 +61,17 @@
       prompt_cn: '一九三四年十一月末的夜晚，广西湘江。对岸在烧：烟柱竖进黑天，火光一片片摊在水面上，把水波染成克制的暗红。用破门板拼成的浮桥上，一条细线似的队伍没有停，有人把小小的包袱按在胸前。空气里飘着灰。近岸很暗，挤着等待的人影。',
       must: ['night river crossing','tall smoke column rising from a burning far bank','restrained dull red firelight on dark ripples','pontoon bridge built from broken door panels','column of tiny soldiers still crossing without stopping'],
       avoid: ['bright daylight','blood covering the water','fire covering the whole frame'] },
+    /* 炸断浮桥这一刻专门要一张画（ch03，落点在 steps[135]「浮桥断了一节」）。
+       史料与本章档案 a_xiangjiang_bridge 都写着：浮桥被炸断后，站在船上的战士跳进初冬的江水，
+       **用手与肩膀托住桥板，让队伍从上面走过去**。画的就是这个「人托着人」。
+       动效用 impact（进场即爆炸冲击的那一下，再缓慢沉下来），与紧随其后的
+       「补桥！」「我托得住！」接成一拍。—— 由 root 按用户要求追加 */
+    { id: 'cg_xiangjiang_hands', ch: 'ch03', title: '人托着桥板', anchor: 'bg_xiangjiang_night', motion: 'impact', priority: 'P0',
+      caption: '浮桥断了一节。人站在水里，用手托着桥板。',
+      prompt_en: 'A broken pontoon bridge at night on a wide Chinese river in November 1934. A gap has been blown open in the middle of the span and the wrecked end sags into the black water, planks and ropes trailing. In the gap, chest-deep in the freezing river, a line of soldiers stands with hands and shoulders pressed up under the bridge planks, holding the roadway level so the column can keep walking across above their heads. Water streams off their caps and shoulders. Torchlight and the glow of a distant burning shore pick out the men in the water only as small dark shapes. The column above them keeps moving, bundles and stretchers included, without stopping.',
+      prompt_cn: '一九三四年十一月，夜，宽阔的江面上一条被炸断的浮桥：桥身中段炸开一个缺口，断口垂进黑水，木板与绳索漂着。缺口处，一排战士站在齐胸深的冷水中，用手与肩膀从下面顶住桥板，把桥面托平，让队伍从他们头顶上继续走。水从他们的帽檐和肩头往下淌。火把光与远处燃烧的岸只把水里这些人的脸和手照成小小的暗色形状。上面的人不停，挑着担子、抬着担架照样过。',
+      must: ['pontoon bridge with a blown gap in the middle','soldiers standing chest-deep in the cold river','hands and shoulders pressed up under the plank roadway','column still walking across above them','night, torchlight, black water'],
+      avoid: ['bright daylight','heroic close-up face','vivid orange fire','blood covering the water'] },
     { id: 'cg_tongdao',         ch: 'ch04', title: '通道转兵',     anchor: 'bg_tongdao',         motion: 'still',    priority: 'P0',
       caption: '两张地图，摊在同一张桌子上。',
       prompt_en: 'A small timber room inside an old Chinese academy in Hunan, in December 1934, in the evening. Two large military maps lie spread and slightly overlapping on one dark wooden table, their surfaces carrying hand-drawn river lines and arrows. A low stone fire pit in the corner gives weak orange light, and a paper lantern hangs from a rafter above. Through the lattice window, cold winter rain falls into the courtyard, where a cooking pot steams over wet firewood. Warm brown interior values sit against the cold blue-grey rain outside.',

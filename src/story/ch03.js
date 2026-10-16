@@ -156,7 +156,13 @@
       { t: 'think', who: 'xiaoman', text: '（上游是光华铺。是脚山铺。）' },
       { t: 'sfx', id: 'shell' },
       { t: 'fx', kind: 'shake', ms: 600 },
-      { t: 'narr', text: '炮弹落在渡口附近。浮桥断了一节。' },
+      /* 炸断浮桥这一刻的插画：把这一句从 narr 换成 CG —— 文字一字未改（原样做图注），
+         但玩家读到这句的同一拍，画面切到「人站在水里用手托着桥板」，并且带着
+         爆炸冲击的运镜（motion:'impact'）——信息与画面同时给出。
+         —— 由 root 按用户要求改（落点、动效、画面内容见 src/data/cg.js 的 cg_xiangjiang_hands） */
+      { t: 'fx', kind: 'flash', ms: 200 },
+      { t: 'cg', id: 'cg_xiangjiang_hands', motion: 'impact',
+        text: '炮弹落在渡口附近。浮桥断了一节。' },
       { t: 'say', who: 'wu_laoliu', face: 'fierce', text: '补桥！' },
       { t: 'narr', text: '桥上的人跳进水里，用手托住桥板。水冷，托住桥板的手很快就没感觉了。' },
       { t: 'narr', text: '队伍从这些手上走过去。' },

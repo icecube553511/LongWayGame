@@ -80,7 +80,7 @@ assets/generated/**         [生成物, 由 build-art.js 写入]
 | `think` | `who`, `text` | 内心独白（括号括起、斜体感） |
 | `title` | `text`, `sub?` | 章节内小标题卡（如「一九三五年一月·遵义」） |
 | `fx` | `kind`(`flash`/`shake`/`fadeout`/`fadein`/`snow`/`rain`/`ash`/`blood`/`star`), `ms?` | 全屏特效 |
-| `cg` | `id`, `text?`, `ms?`, `motion?` | 全屏插画（重要事件 CG）。`id` 取 `src/data/cg.js` 的 `cg_*`；老写法（写背景 id）仍可用。`text` 省略时用表里的 `caption`；`ms` 默认 4400；`motion` ∈ `zoom-in`/`pan-left`/`pan-right`/`still` |
+| `cg` | `id`, `text?`, `ms?`, `motion?` | 全屏插画（重要事件 CG）。`id` 取 `src/data/cg.js` 的 `cg_*`；老写法（写背景 id）仍可用。`text` 省略时用表里的 `caption`；`ms` 默认 4400；`motion` ∈ `zoom-in`/`pan-left`/`pan-right`/`still`/`impact`（`impact` = 进场挨一下的抖动，给炮击/爆炸用） |
 | `choice` | `prompt?`, `options[]`, `once?` | 选项分支 |
 | `set` | `var`, `op`(`=`/`+=`/`-=`/`max`/`min`), `value` | 修改状态 |
 | `if` | `cond`, `then[]`, `else?[]` | 条件分支（`steps` 可嵌套） |

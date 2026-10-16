@@ -631,7 +631,8 @@
    *   ④ 它是舞台底层，立绘/特效/暗角照旧叠在上面，直到下一次 bg 步骤才退场，
    *      所以 `cg` 后面紧跟的 `narr` / `say` 仍然停在这张插画上（老剧本的观感不变）。 */
   var cgTimer = 0, cgTypeTimer = 0, cgHideTimer = 0, cgSeq = 0;
-  var CG_MOTIONS = { 'zoom-in': 1, 'pan-left': 1, 'pan-right': 1, 'still': 1 };
+  /* 'impact' 是给炮击/爆炸/撞击那一刻用的：进场先抖一下再沉下来（见 css 的 cgImpact）。 */
+  var CG_MOTIONS = { 'zoom-in': 1, 'pan-left': 1, 'pan-right': 1, 'still': 1, 'impact': 1 };
 
   function hideCg(immediate) {
     if (!D.cgLayer) return;

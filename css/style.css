@@ -86,11 +86,23 @@ html, body {
 #cg-layer img.m-pan-left { animation-name: cgPanLeft; }
 #cg-layer img.m-pan-right { animation-name: cgPanRight; }
 #cg-layer img.m-still { animation-name: cgStill; }
+/* impact：给「炮击 / 爆炸 / 撞击」那一刻用 —— 进场先挨一下（快速抖动 + 近景推远），
+   再缓慢沉下来。与紧随其后的 sfx('shell') / fx shake 接成一拍。 */
+#cg-layer img.m-impact { animation-name: cgImpact; animation-timing-function: ease-out; }
 /* 全程只推 5%，恰好「看得出在动、又不会把人推出画外」 */
 @keyframes cgZoomIn  { from { transform: scale(1.005) translate3d(0, 0, 0); } to { transform: scale(1.055) translate3d(-0.6%, -0.4%, 0); } }
 @keyframes cgPanLeft { from { transform: scale(1.06) translate3d(1.6%, 0, 0); }    to { transform: scale(1.06) translate3d(-1.6%, -0.3%, 0); } }
 @keyframes cgPanRight { from { transform: scale(1.06) translate3d(-1.6%, 0, 0); }   to { transform: scale(1.06) translate3d(1.6%, -0.3%, 0); } }
 @keyframes cgStill   { from { transform: scale(1.02); } to { transform: scale(1.024); } }
+@keyframes cgImpact {
+  0%   { transform: scale(1.12) translate3d(0, 0, 0); }
+  5%   { transform: scale(1.10) translate3d(-1.6%, 0.5%, 0); }
+  11%  { transform: scale(1.09) translate3d(1.4%, -0.6%, 0); }
+  18%  { transform: scale(1.08) translate3d(-0.9%, 0.3%, 0); }
+  26%  { transform: scale(1.07) translate3d(0.5%, -0.2%, 0); }
+  38%  { transform: scale(1.06) translate3d(-0.2%, 0, 0); }
+  100% { transform: scale(1.02) translate3d(0, 0, 0); }
+}
 /* 图注是逐字打出来的，所以不留悬停光标，也不需要「▼」 */
 #stage.ui-hidden #cg-layer { opacity: 0 !important; }
 
