@@ -71,6 +71,65 @@ node tools/qa-consistency.js → exit 0，20 章 4473 句台词逐句核对，�
 4. `R2-E03` / `R2-E06` 的完成度、以及 `docs/issues/R3-INDEX.md` 里的可玩性条目，均**未经第三组验收**。
 5. 独立 `note` step 未写进 `docs/SPEC.md` §2.1（契约与实现不一致，需先动冻结文件）。
 
+## 并行线合流（2026-10-16）
+
+两条线在 `660f3e6` 上并行推进，各自只改了对方没碰的东西，唯一重叠文件是 `src/engine/engine.js`
+（自动合并成功，无冲突）：
+
+| 线 | 提交 | 内容 |
+|---|---|---|
+| CG 演出 | `3a4ca8b` | 「三发子弹」画面演出 + 爆炸/强攻场景配 `impact` 运镜；新增 `art/scenes_bullets.js`、`src/data/cg.js`、`docs/CG_DESIGN.md` |
+| 设置口令 | `660f3e6` → `f4057be` | 设置里的口令栏；口令从「解锁章节」扩成「解锁全部内容」+ 游戏中倒退播放（Backspace / 快捷条按钮，最多 60 行） |
+
+合流提交 `7b408da`：**没有**按提示直接 `push develop/settings-unlock:main` —— 那样会把本地未推送的
+`3a4ca8b` 从 `main` 上甩掉。取合并路径，两条线一并进 `main`，远端 `main` 由 `f4057be` 快进到合流点。
+
+### 合流后的复验（`/root` 亲自跑，输出原文）
+
+```
+node tools/check.js            → exit 0；背景 34/34、立绘 280/280、插画 P0 27/27、P1 6/6 已被剧本引用
+node tools/e2e-run.js          → exit 0；20 章 / 24061 步 / CG 33 张次 / 全部走完 / JS 报错 0
+node tools/qa-consistency.js   → 20 章 / 4449 句台词 / 违规 0（连跑 6 次全绿，见下）
+```
+
+新增功能的行为验证（探针 `tools/e2e-steps.js`，每次都带 `错误: 0 条`）：
+
+| 验证点 | 探针读数 |
+|---|---|
+| 倒退播放入口受口令控制 | 未解锁时 `VN.rewindDepth() = 0`；解锁后同一章 `rewindDepth() = 22` |
+| 倒退真的退行 | `VN.state.history.length` 20 →（`VN.rewind(1)`）→ 19 |
+| 全解锁覆盖面 | `chars 35 / archives 81 / bgs 34 / cgs 67`（`cgs` 是 `cg_*` + 老剧本沿用背景 id 的并集，比画廊列出的条目多，属有意的超集） |
+| **else 支存档读档不再串支** | 在 `ch07` 的 `else` 支内存档时活动帧 `,else`；`VN.save(1)` → 前进 3 行 → `VN.load(1)` 后帧栈 `then,else` —— **嵌套帧仍是 `else`**。`buildFrames` 在没有 kind 时会默认走 `then`（engine.js:938-943），所以这条正是缺陷修复的反证 |
+| 读档行位保真 | 存档瞬间 `history.length = 153`、末句「将来要是能回来，我们还给人家。」；前进 15 行后读档 → `history.length = 153`、末句同句，逐字一致 |
+
+顺带确认了两条口径变化，都不是回归：
+
+* 全剧台词数 4522 → 4449：章末卡不再自动跳下一章（`3d75184`）后，原先"上一章的定时器把下一章推着跑"造成的
+  污染值消失了；
+* `qa-consistency.js` 早期会随机报「不在台上」，其中一条成因同上。
+
+### 未闭环：`qa-consistency.js` 在 ch15 的偶发误报
+
+全 20 章串跑时偶发这一条，签名固定：
+
+```
+[ch15] 不在台上｜xiaoman 说话但台上没有他的立绘｜xiaoman：晓梅姐……
+```
+
+`ch15` 现场是第 61-62 步 `show xiaoman` / `show he_xiaomei` 紧跟第 63 步 `say`；
+引擎要等 `new Image().onload` 才写 `dataset.who`（engine.js:395），所以这条判定依赖"本地图片解码能否在窗口内完成"。
+已把 `settle()` 的上限从 1.2s 放宽到 4s（`tools/qa-consistency.js`）：**误报率下降但没有消除**
+（4s 下 9 次全章跑里仍出现 1 次）。查不出闭环的原因是我抓不到"正在违规"那一瞬的现场——
+`ch15` 单章 2 次、`ch14→ch15` 串章 1 次、加固后全章 6 连跑全部干净。
+下一次要查，得在违规瞬间 dump `#char-layer` 三个槽的 `dataset` 与 `img.complete`。
+
+### 一条需要玩家侧留意的产品决定（不是缺陷，是取舍）
+
+`src/engine/ui.js:307` 把彩蛋口令 `icecube is cute` 明文写在源码里，设置面板那一行标题是「冰冰冰」；
+输入后调 `VN.unlockEverything()`，**连人物图鉴、史料档案、插画画廊一起解锁**——
+等于一键跳过全部二十章的解锁进度（含剧透面）。作为私人彩蛋没问题，但如果这个仓库将来要公开，
+它就是一个明写在构建里的后门：任何人打开开发者工具都能读到这个字符串。
+
 ## 过程自省（如实记账，不美化）
 
 | 事项 | 实况 |

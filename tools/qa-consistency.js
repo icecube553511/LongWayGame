@@ -98,9 +98,28 @@ const PROBE = `
      引擎是 new Image() 再 onload 才把 src 挂到槽位上，所以在 onload 之前
      那个 Image 对象**不在 DOM 里**，光看"已挂载的 img 是否 complete"会提前返回。
      因此这里等到：说话人已经在台上（或超时），且已挂载的图片都解码完。
-     上限 1.2s，避免缺失图片（naturalWidth 永远为 0）或群众说话把循环卡死。 */
+
+     上限从 1.2s（48×25ms）放宽到 4s（160×25ms）—— 由 root 修改，原因是一次实证：
+     全 20 章串跑时偶发「[ch15] xiaoman 说话但台上没有他的立绘」，而
+     ch15 单章跑两次、ch14→ch15 串章跑一次都**干净**；现场是 ch15 第 61-62 步
+     的 show xiaoman / show he_xiaomei 紧跟第 63 步 say，引擎要等
+     new Image().onload（见 engine.js:395）才会写 dataset.who。
+     也就是说：这条判定依赖"本地图片解码能在上限内完成"，而 56MB 立绘 PNG 在
+     机器有负载（并行跑第二个探针 / 解码排队）时会越过 1.2s，于是**工具说谎**。
+     放宽上限不影响正常路径：正常情况第一轮就满足 onStage 且无 pending，直接提前返回，
+     只有"判定为不在台上"时才把等待烧满 —— 那正是需要给图片时间的情形。
+     另外：这条也和"群众说话时循环卡死"无关，群众 id 直接算进 onStage。
+
+     **没有闭环，别当已修**：放宽到 4s 后仍实测到 1 次同签名误报（4s 下 9 次全章跑里 1 次，
+     1.2s 下 3 次里 1 次），所以"等待不够"只是部分解释。剩下的部分我查不出来：
+     ch15 单章 2 次、ch14→ch15 串章 1 次、加固后全章 6 连跑都干净，
+     抓不到"正在违规"那一瞬的现场快照（工具只在判定后写 dump，违规那一刻的槽位状态没留住）。
+     可疑机制（未证实）：showChar 的簿记写在 image.onload 里，而 slotOf() 在
+     "请求的槽已被别人占了"时可能返回 null → show 被静默丢弃；两个背靠背 show
+     的簿记落点不同就可能在某一帧读到"没人"。要证实，需要在违规瞬间 dump
+     #char-layer 三个槽的 dataset + img.complete。 */
   async function settle(who) {
-    for (var i = 0; i < 48; i++) {
+    for (var i = 0; i < 160; i++) {
       var imgs = Array.prototype.slice.call(document.querySelectorAll('#char-layer .slot img'))
         .filter(function (im) { return im.getAttribute('src'); });
       var pending = imgs.filter(function (im) { return !im.complete; });
