@@ -131,6 +131,18 @@
 > 子 agent 仍然不许自己跑 git（见下）；由组长在每组收工与整轮收口时各推一次，
 > 推送失败要重试（本机代理间歇性报 `schannel: failed to receive handshake`，
 > 重试通常能过），并把失败原因与当时的 `git status` 写进报告，不许吞掉。
+>
+> **本机实测可用的推送方式（2026-10-16 补记，省得后来人白试五次）**：
+> 默认 `git push` 在本机常年卡在 `github.com:443` 的 TLS 握手（`schannel: failed to
+> receive handshake`），而同一时刻 `https://api.github.com` 走代理是 200 —— 代理没坏，
+> 是这条连接 + 大包不稳。加上 HTTP/1.1 与大 postBuffer 后一次就过：
+>
+> ```powershell
+> git -c http.version=HTTP/1.1 -c http.postBuffer=524288000 `
+>     -c http.lowSpeedLimit=0 -c http.lowSpeedTime=999999 push origin <分支>
+> ```
+>
+> 本轮 `develop/Movie` 与 `main` 都是用这条推上去的（`4b189d1..879e39c`）。
 
 - 仓库：`https://github.com/icecube553511/LongWayGame`，分支 `main`，远端名 `origin`。
 - **只有组长跑 git 命令**，子 agent 一律不许执行 `git`（避免多进程抢 `index.lock`）。
