@@ -1102,6 +1102,9 @@
   VN.isUnlockedChapter = function (id) {
     var m = manifestList();
     if (!m.length) return false;
+    /* 设置里的口令彩蛋：通关一次后仍想跳着看，或纯粹不想被章节锁挡住。
+     * 只影响「能不能进」，不伪造 progress，所以结算页的「走过的章节」不会被灌水。 */
+    if (VN.G.unlockAll) return true;
     if (m[0].id === id) return true;
     if (VN.G.progress[id]) return true;
     var prev = null;

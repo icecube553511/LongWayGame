@@ -303,6 +303,8 @@
   }
 
   /* ---------- 设置 ---------- */
+  /* 设置里的彩蛋口令：输入正确并确认，解锁全部章节。 */
+  var EGG_PASSWORD = 'icecube is cute';
   function showSettings() {
     var e = open({ title: '设置', sub: '' });
     var b = e.body;
@@ -361,6 +363,37 @@
     });
     rowFs.appendChild(fsBtn);
     b.appendChild(rowFs);
+
+    var rowEgg = make('div', 'set-row');
+    rowEgg.appendChild(make('div', 'set-label', '冰冰冰'));
+    var eggBox = make('div', 'set-egg');
+    var eggInput = document.createElement('input');
+    eggInput.type = 'text';
+    eggInput.className = 'set-input';
+    eggInput.setAttribute('autocomplete', 'off');
+    eggInput.setAttribute('spellcheck', 'false');
+    eggInput.setAttribute('placeholder', '口令');
+    function tryEgg() {
+      var v = String(eggInput.value || '').trim().toLowerCase();
+      if (!v) return;
+      if (v !== EGG_PASSWORD) { VN.toast('口令不对'); return; }
+      VN.G.unlockAll = true;
+      VN.persist();
+      eggInput.value = '';
+      VN.toast('解锁全部章节');
+    }
+    eggInput.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Enter') return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      tryEgg();
+    });
+    var eggBtn = make('button', 'ov-close', '确认');
+    eggBtn.addEventListener('click', tryEgg);
+    eggBox.appendChild(eggInput);
+    eggBox.appendChild(eggBtn);
+    rowEgg.appendChild(eggBox);
+    b.appendChild(rowEgg);
 
     var row2 = make('div', 'set-row');
     row2.appendChild(make('div', 'set-label', '重置全部进度'));

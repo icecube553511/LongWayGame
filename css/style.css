@@ -566,6 +566,19 @@ html, body {
 .seg button { font: inherit; font-size: calc(15 * var(--u)); letter-spacing: .1em; color: var(--paper-dim); background: rgba(14,20,31,.8); border: 1px solid rgba(191,154,56,.25); padding: calc(6 * var(--u)) calc(14 * var(--u)); cursor: pointer; }
 .seg button.on { color: #101723; background: linear-gradient(180deg, #d7b148, #a5822f); border-color: #d7b148; }
 .set-hint { font-size: calc(13 * var(--u)); color: #7f8899; }
+/* 设置里的口令栏（彩蛋）。样式沿用 .seg button 的观感，保证与左右行同高。 */
+.set-egg { display: flex; align-items: center; gap: calc(10 * var(--u)); }
+.set-input {
+  font: inherit; font-size: calc(15 * var(--u)); letter-spacing: .12em;
+  color: var(--paper); background: rgba(14, 20, 31, .8);
+  border: 1px solid rgba(191, 154, 56, .25);
+  padding: calc(7 * var(--u)) calc(14 * var(--u));
+  width: calc(320 * var(--u));
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.set-input:focus { border-color: var(--gold); background: rgba(14, 20, 31, .95); }
+.set-input::placeholder { color: #6f7887; letter-spacing: .2em; }
 .btn-danger { font: inherit; font-size: calc(15 * var(--u)); letter-spacing: .16em; color: #f0d7d7; background: rgba(107,26,30,.85); border: 1px solid var(--red-bright); padding: calc(8 * var(--u)) calc(20 * var(--u)); cursor: pointer; }
 .btn-danger:hover { background: var(--red); }
 
