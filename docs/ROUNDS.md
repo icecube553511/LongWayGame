@@ -563,3 +563,52 @@ node tools/qa-consistency.js → 20 章 / 4452 句台词逐句核对、违规 0
 体积自检 = 0 超档（`bg_stretcher.svg` 由 325 KB → **467 KB**，仍在"含内嵌位图 ≤640 KB"档内）；
 `node tools/e2e-run.js` 20/20、24061 步、0 报错；`qa-consistency` 4449 句台词、违规 0；
 实拍 `tmp/one_bg_stretcher.png`（单张）与 `tmp/e2e/stretcher-ingame.png`（游戏内）。
+
+## 用户指令：30 张场景背景整体重出为 AI 位图（2026-10-16 13:xx，`/root`）
+
+用户原话（要点）：用 CCswitch 里的 **NekoGptImage**（内含 `gpt-image-2.5-sunburst`）与
+**Gugu-gpt-QQ**（内含 `gpt-6.1-sol` / `gpt-6-astra` 等 gpt 系列）两个分组，
+把项目里**所有「场景背景」全部重新生成**；**群像中的个人都要有不同的形象**；
+要有**全屏插画级**的质量；美术风格与项目整体一致；画面内容与对应剧情一致；
+所有改动提交到 GitHub 对应分支。
+
+这是上一条「担架队四个人是复制品」反馈的正面解法：不再逐张补印章，而是把整张背景换成
+AI 出的整屏位图 —— 人群的差异由提示词里的硬要求 + 独立看图复核来保证。
+
+**两个分组的真实分工（实测，不是假设）**：`NekoGptImage` 的 `/v1/models` 返回
+`gpt-image-2` / `gpt-image-2.5` / `gpt-image-2.5-flare` / `gpt-image-2.5-sunburst` 且能出图；
+`Gugu-gpt-QQ` 返回 `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-6-astra` / `gpt-6-sol` / `gpt-6.1-sol`，
+是文本+视觉模型，对 `/v1/images/generations` 一律 `404 not available for this group`。
+所以：**出图走 Neko，看图验收走 Gugu**（`tools/bg-judge.py` 把每张图连同 `must`/`crowd` 清单
+送进它的视觉通道逐条核对）。
+
+| 层 | 产物 |
+|---|---|
+| 清单 | `src/data/bgart.js`（34 条 = 30 张场景 + 4 张 `svgOnly` 叙事画面；每条含中英文描述 / `must` / `crowd` / `avoid`） |
+| 出图 | `tools/bg-art.js` —— 风格头 + 构图 + **群像硬要求**（沿用 `neko-crowd.js` 已验收的 VARIETY / UNIFORM WEAR 措辞）+ 光照纪律 + AVOID |
+| 烘焙 | `tools/bg-post.py` —— 裁 16:9 → 1920×1080 → 低饱和暖调 → 椭圆暗角（**不压黑边、不压金框**：那是插画的语言）→ 超档则量化 |
+| 呈现 | `engine.js` `bgCandidates()`：`bg/{id}.png` → `bg/{id}.svg` 逐级回退；`gallery.js` 同回退 |
+| 验收 | `check.js` 新增「背景位图自检」：30/30 必须有完整 PNG、`must` 非空、`svgOnly` 与 `noBitmap` 必须一致 |
+| 看图复核 | `tools/bg-judge.py`（Gugu-gpt-QQ 视觉模型） |
+| 契约 | `docs/BG_DESIGN.md`（新增）、`docs/ART_DIRECTION.md` §3.2 + §4.4 体积分档新增「背景 PNG ≤1280 KB」 |
+
+**不出位图的四张**：`bg_bullets_3` / `bg_bullets_2` / `bg_bullets_1` / `bg_black`。
+它们的硬要求是「三张里子弹位置完全一致、纯黑底、只有子弹」这种**跨图不变式**，
+生成式出图给不了；`backgrounds.js` 标 `noBitmap:true`、`bgart.js` 标 `svgOnly:true`，两处由 check.js 核对。
+
+**实测读数**
+
+| 项 | 读数 |
+|---|---|
+| 出图 | 30/30（`gpt-image-2.5-sunburst`，并发 4，单张 25–170s，总用时 502s） |
+| 出图尺寸 | 请求 `1920x1080` → 上游返回 **1672×941（真 16:9）**，烘焙时等比放大到 1920×1080，无需裁切 |
+| 体积 | 30/30 落在 1280 KB 档内（750–1181 KB）；体积自检 0 超档 |
+| 返工 | `bg_wuqi` 第一版把墙上的白灰标语画成了**像字的东西**（违反「不画任何文字」）→ 改提示词（墙面只留抽象痕迹）+ 把「像字/字形的痕迹、书法、带字的招牌」加进公共 AVOID，重出合格 |
+| 引擎回退 | 真浏览器实测：位图在时 `#bg-b.src = bg_yudu_village.png (w1920)`；把 PNG 移走后自动改用 `bg_yudu_village.svg (w1920)`，JS 报错 0；`bg_black`/`bg_bullets_*` 直接解析成 `.svg`（不白请求 404） |
+| 全剧回归 | `node tools/e2e-run.js` → 20/20 章走完、24061 步、**0 JS 报错**、CG 33 张次；`node tools/check.js` 检查通过（背景 34/34、位图 30/30、立绘 280/280、P0 插画 27/27） |
+| 看图复核 | `tools/bg-judge.py` 提交 30 张，但 **Gugu-gpt-QQ 当天上游持续 502 `模型服务暂时不可用`**（连纯文本请求也 502；同一分组在 12:5x 还能正常应答），全数拿不到判定 → 本轮逐张验收以 **root 肉眼复核**（2 张拼版 + 关键张原图）为准，`bg-judge.py` 留在仓库，上游恢复后 `python tools/bg-judge.py --all` 即可补齐第二意见 |
+
+**分支**：`develop/Backbroad`（本地既有分支，起点 = `main` 的 `9c0d809`）。
+工作在一个独立 worktree（`~/.codex/worktrees/bg-redo/LongWayGame`）里做，
+原因是开工时发现**共享的检出目录被另一条线切到了 `develop/ImproveWordsEffort`**，
+在原目录里改分支会互相踩。

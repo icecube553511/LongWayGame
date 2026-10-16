@@ -40,11 +40,17 @@
     { id: 'bg_stretcher',      name: '担架队',       usedIn: 'ch01', hint: '竹林小径、两副担架、抬担架的战士' },
     /* 叙事画面（不是景）：第三章脚山铺阵地上「每人三发」那段对话。
        纯黑底 + 弹药；三张画面里子弹的位置完全一致，少的只是被打出去的那一发。
-       —— 由 root 按用户要求追加（画在 art/scenes_bullets.js） */
-    { id: 'bg_bullets_3',      name: '三发子弹',     usedIn: 'ch03', hint: '纯黑底、三颗立着的步枪弹，只有子弹是主体' },
-    { id: 'bg_bullets_2',      name: '三发子弹·二', usedIn: 'ch03', hint: '同上，左侧一发已打出去（位置不变，只是少一颗）' },
-    { id: 'bg_bullets_1',      name: '三发子弹·一', usedIn: 'ch03', hint: '只剩正中那一发：第三发，留给自己的那一发' },
-    { id: 'bg_black',          name: '全黑',         usedIn: 'ch03', hint: '纯黑一屏：最后一发「留给自己」时硬切到这里' }
+       —— 由 root 按用户要求追加（画在 art/scenes_bullets.js）
+
+       noBitmap:true —— 这四张**不出 AI 位图**，只用 art/scenes_bullets.js 的程序化 SVG。
+       理由：它们的三条硬要求（三张里子弹位置完全一致、纯黑底、画面里只有子弹）是
+       跨图不变式，生成式出图保证不了「位置不变、只少一颗」；`bg_black` 更是一整片纯黑，
+       出图没有意义。引擎的 bgCandidates() 按这个字段跳过 .png，直接走 .svg，
+       避免每次切到这几张都白请求一次 404。清单的对应条目见 src/data/bgart.js。 */
+    { id: 'bg_bullets_3',      name: '三发子弹',     usedIn: 'ch03', noBitmap: true, hint: '纯黑底、三颗立着的步枪弹，只有子弹是主体' },
+    { id: 'bg_bullets_2',      name: '三发子弹·二', usedIn: 'ch03', noBitmap: true, hint: '同上，左侧一发已打出去（位置不变，只是少一颗）' },
+    { id: 'bg_bullets_1',      name: '三发子弹·一', usedIn: 'ch03', noBitmap: true, hint: '只剩正中那一发：第三发，留给自己的那一发' },
+    { id: 'bg_black',          name: '全黑',         usedIn: 'ch03', noBitmap: true, hint: '纯黑一屏：最后一发「留给自己」时硬切到这里' }
   ];
 
   G.ART.backgrounds = {};

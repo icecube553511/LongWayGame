@@ -22,7 +22,23 @@
   function nowMs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
   function manifestList() { return (window.STORY && window.STORY.__manifest) || []; }
   function asset(kind, name) { return 'assets/generated/' + (FOLDER[kind] || kind) + '/' + name + '.svg'; }
-  function bgPath(id) { return id ? asset('bg', id) : ''; }
+  /* 背景两种来源（与立绘、插画同一套思路）：
+   *   ① assets/generated/bg/{id}.png  —— AI 出的整屏位图（首选，见 src/data/bgart.js 与 tools/bg-art.js）
+   *   ② assets/generated/bg/{id}.svg  —— art/scenes*.js 烘焙的矢量背景（兜底）
+   * src/data/backgrounds.js 里标了 noBitmap 的四张叙事画面（三发子弹×3、全黑）不出位图，
+   * 直接走 ② —— 否则每次切到它们都要白请求一次 404。
+   * 逐级回退在 setBg() 里用 probe.onerror 走：png 加载失败就换 svg，两个都没有才保留上一张。 */
+  function bgNoBitmap(id) {
+    var b = window.ART && window.ART.backgrounds && window.ART.backgrounds[id];
+    return !!(b && b.noBitmap);
+  }
+  function bgCandidates(id) {
+    if (!id) return [];
+    var base = 'assets/generated/' + FOLDER.bg + '/' + id;
+    var exts = bgNoBitmap(id) ? ['.svg'] : ['.png', '.svg'];
+    return exts.map(function (e) { return base + e; });
+  }
+  function bgPath(id) { return bgCandidates(id)[0] || ''; }
   /* 全屏插画（CG）的路径解析。三种来源按顺序尝试：
    *   ① assets/generated/cg/{cgId}.png  —— NekoGptImage 出的位图（SPEC §4.3，首选）
    *   ② assets/generated/cg/{cgId}.svg  —— 同名的矢量插画（若有人手工补）
@@ -285,16 +301,17 @@
     if (!D.bgA) return;
     /* 新的背景一上来，舞台上的插画就该退场了（它是舞台底层，不是常驻图层）。 */
     if (D.cgLayer && !D.cgLayer.classList.contains('hidden')) hideCg(false);
-    var path = opts.full ? cgPath(id) : bgPath(id);
+    var cands = opts.full ? cgCandidates(id) : bgCandidates(id);
     var front = bgFrontIsA ? D.bgA : D.bgB;
     var back = bgFrontIsA ? D.bgB : D.bgA;
-    if (!path) {
+    if (!cands.length) {
       front.classList.remove('on');
       D.bgA.classList.remove('on');
       D.bgB.classList.remove('on');
       return;
     }
-    if (front.getAttribute('src') === path && front.classList.contains('on')) return;
+    /* 前台那层已经显示的就是这个 id 的某一条候选（位图或矢量），不用再切一次。 */
+    if (front.classList.contains('on') && cands.indexOf(front.getAttribute('src')) >= 0) return;
     clearTimeout(bgCleanupTimer);
     bgCleanupTimer = 0;
     /* 转场时长：优先用剧本给的 ms，其次按 fx 给默认值。
@@ -330,8 +347,13 @@
       }, (fx === 'cut' || fx === 'black') ? 0 : dur + 60);
       unlock('bgs', id);
     };
-    probe.onerror = function () { /* 静默降级：保留上一张背景 */ };
-    probe.src = path;
+    /* 候选逐级回退：位图缺失/加载失败 → 同名矢量；全部失败才静默保留上一张背景。 */
+    var ci = 0;
+    probe.onerror = function () {
+      ci++;
+      if (ci < cands.length) probe.src = cands[ci];
+    };
+    probe.src = cands[0];
   }
 
   /* ===== 6. 立绘 ===== */
@@ -1728,6 +1750,8 @@
 
   VN.uiPath = uiPath;
   VN.bgPath = bgPath;
+  /* 画廊与探针要按候选列表逐级回退地取背景（见 gallery.js 的 artTile） */
+  VN.bgCandidates = bgCandidates;
   VN.cgPath = cgPath;
   VN.cgCandidates = cgCandidates;
   VN.charPath = charPath;

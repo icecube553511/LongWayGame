@@ -175,6 +175,23 @@ CG（`assets/generated/cg/{bgId}.svg`）= 同 id 背景的**加强版**：保留
 | `bg_bullets_3` / `bg_bullets_2` / `bg_bullets_1` | 纯黑底（`#05070a`，与插画黑边同色）、立着的步枪弹（黄铜弹壳三段竖面 + 斜肩 + 弹颈 + 铅灰弹头）；**三张画面里子弹的位置完全一致**，只是分别少掉两侧那两颗，最后剩正中那一颗 —— 看起来必须是「被打掉了一发」，不是「图排重新居中」。`art/scenes_bullets.js` |
 | `bg_black` | 纯黑一屏，什么都不画。用于把画面硬切掉（例：第三卷最后一发「留给自己」） |
 
+### 3.2 场景背景的位图化（2026-10-16 起，由 root 执行）
+
+上面 §3 那 30 张场景背景，**画面已由 AI 出图的整屏位图承担**：
+
+- 生成物：`assets/generated/bg/<id>.png`（1920×1080），逐张对应 `src/data/bgart.js` 里的一条提示词；
+- 兜底：`assets/generated/bg/<id>.svg`（`art/scenes_*.js` 烘焙的程序化背景）**保留不动**，
+  引擎按 位图 → 矢量 逐级回退（`engine.js` 的 `bgCandidates()`），任何一张位图缺失都不会黑屏；
+- 三张「三发子弹」与「全黑」**继续用程序化 SVG**（`backgrounds.js` 里标 `noBitmap:true`）：
+  它们的硬要求是「三张里子弹位置完全一致」这种跨图不变式，生成式出图给不了；
+- 风格仍然是 §0 的五条，构图额外多一条**舞台约束**：立绘（600×900）与对话框压在中下部，
+  所以画面正中不放大特写、不出现正脸朝向观众的人，人群走中景与远景；
+- **群像里的个人必须看得出是不同的人**（体态、年龄、脸型、神态、军装磨损各不同）——
+  这是 §2.3.1 对背景印章立的两条要求，在位图时代同样适用，且由
+  `tools/bg-judge.py`（Gugu-gpt-QQ 分组的视觉模型）逐张核对。
+
+工程说明与命令见 `docs/BG_DESIGN.md`；验收闸门见 `tools/check.js` 的「背景位图自检」一节。
+
 ## 4. 验收（美术 agent 自检清单）
 
 1. `node tools/build-art.js` 后：`assets/generated/bg` 29 个、`chars` 260 个、`cg` 29 个，
@@ -195,11 +212,12 @@ CG（`assets/generated/cg/{bgId}.svg`）= 同 id 背景的**加强版**：保留
    | 含内嵌位图素材的 SVG | **640 KB** | 贴图字节另算；实测最大 `cg/bg_xiangjiang_day.svg` = 583 KB |
    | 立绘 PNG（AI 出图 600×900 RGBA） | **512 KB** | 自检实测最大 435 KB（`wu_laoliu_smile.png`） |
    | 插画 PNG（AI 出图 1920×1080，`cg/cg_*.png`） | **1536 KB** | 细节量比立绘高一个量级；`tools/cg-post.py` 每次烘焙都会打印实际体积 |
+   | 背景 PNG（AI 出图 1920×1080，`bg/bg_*.png`） | **1280 KB** | 2026-10-16 背景改 AI 位图时新增的一档：背景每章都在场、30 张一起加载，比插画更该克制；`tools/bg-post.py` 每次烘焙都会打印实际体积 |
 
    自检命令（四条目录一起过，按上表分档比对；末行必须是 `超过本档上限的文件数 = 0`）：
 
    ```powershell
-   node -e "const fs=require('fs'),p=require('path');let bad=0;for(const d of ['bg','cg','ui','chars']){for(const f of fs.readdirSync(p.join('assets/generated',d)).sort()){const fp=p.join('assets/generated',d,f);const s=fs.statSync(fp).size;let lim,why;if(/\.png$/.test(f)){if(d==='cg'){lim=1536*1024;why='插画 PNG';}else{lim=512*1024;why='立绘 PNG';}}else if(/\.svg$/.test(f)){const emb=fs.readFileSync(fp,'utf8').indexOf('data:image')>=0;lim=(emb?640:400)*1024;why=emb?'含内嵌位图':'纯矢量';}else continue;if(s>lim){bad++;console.log('超档 '+(s/1024).toFixed(0)+' KB  assets/generated/'+d+'/'+f+'（'+why+'）');}}}console.log('超过本档上限的文件数 = '+bad);"
+   node -e "const fs=require('fs'),p=require('path');let bad=0;for(const d of ['bg','cg','ui','chars']){for(const f of fs.readdirSync(p.join('assets/generated',d)).sort()){const fp=p.join('assets/generated',d,f);const s=fs.statSync(fp).size;let lim,why;if(/\.png$/.test(f)){if(d==='cg'){lim=1536*1024;why='插画 PNG';}else if(d==='bg'){lim=1280*1024;why='背景 PNG';}else{lim=512*1024;why='立绘 PNG';}}else if(/\.svg$/.test(f)){const emb=fs.readFileSync(fp,'utf8').indexOf('data:image')>=0;lim=(emb?640:400)*1024;why=emb?'含内嵌位图':'纯矢量';}else continue;if(s>lim){bad++;console.log('超档 '+(s/1024).toFixed(0)+' KB  assets/generated/'+d+'/'+f+'（'+why+'）');}}}console.log('超过本档上限的文件数 = '+bad);"
    ```
 
    超档时才动手（减贴图段数 / 降每段像素），不要为了数字去删画面里的行军队伍。

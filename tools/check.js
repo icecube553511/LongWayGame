@@ -42,6 +42,23 @@ const CG_LIST = (function () {
   return (sb.window.ART && sb.window.ART.cgList) || [];
 })();
 const CG_IDS = new Set(CG_LIST.map(c => c.id));
+
+/* ---------------- 背景提示词表 / 背景元数据 ----------------
+ * 背景这一轮从程序化 SVG 换成 AI 出图的整屏位图，清单在 src/data/bgart.js；
+ * 「哪些背景不出位图」写两处：生成期的 bgart.svgOnly 与运行时的 backgrounds.js noBitmap，
+ * 这里把两份都读进来，专门核对它们一致（见下面的背景位图自检）。 */
+const BGART_LIST = (function () {
+  const sb = { window: {} };
+  sb.globalThis = sb;
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'bgart.js'), 'utf8'), sb);
+  return (sb.window.ART || {}).bgArtList || [];
+})();
+const BACKGROUNDS = (function () {
+  const sb = { window: {} };
+  sb.globalThis = sb;
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'backgrounds.js'), 'utf8'), sb);
+  return (sb.window.ART || {}).backgrounds || {};
+})();
 const CG_MOTIONS = ['zoom-in', 'pan-left', 'pan-right', 'still', 'impact'];
 
 const BGS = [
@@ -349,6 +366,68 @@ CG_LIST.forEach(c => {
 });
 
 /* ---------------- 输出 ---------------- */
+/* ---------------- 背景位图（AI 出图）自检 ----------------
+ * 本轮把 30 个场景背景从程序化 SVG 换成 AI 出的整屏位图（tools/bg-art.js + tools/bg-post.py），
+ * 引擎按 位图→矢量 逐级回退（engine.js 的 bgCandidates）。这一节的判据：
+ *   · src/data/bgart.js 的 id 必须都在 src/data/backgrounds.js 里（id 表冻结，不得新增改名）；
+ *   · 场景背景（非 svgOnly）必须已生成 assets/generated/bg/<id>.png，且是一张完整的 PNG；
+ *   · 三发子弹×3 与全黑这四张叙事画面不出位图：bgart.svgOnly 与 backgrounds.noBitmap 必须一致
+ *     —— 少了 noBitmap 游戏每次切到它们都白请求一次 404；少了 svgOnly 清单说"要出图"却永远出不来。
+ * 判定用命令：node tools/check.js */
+const PNG_SIG_BG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const BG_MAX_KB = 1280;   /* 与 tools/bg-post.py 的 BG_MAX_KB 同一档（背景每章在场，比插画克制） */
+function bgBitmapProblem(id) {
+  const f = path.join(ASSET_BG, id + '.png');
+  if (!fs.existsSync(f)) return 'missing';
+  const size = fs.statSync(f).size;
+  if (size < 50 * 1024) return 'too-small(' + size + 'B)';
+  if (!fs.readFileSync(f).subarray(0, 8).equals(PNG_SIG_BG)) return 'not-a-png';
+  if (size > BG_MAX_KB * 1024) return 'over-limit(' + Math.round(size / 1024) + 'KB>' + BG_MAX_KB + 'KB)';
+  return null;
+}
+const bgArtReport = { want: 0, have: 0, missing: [], svgOnly: 0 };
+{
+  const seen = new Set();
+  BGART_LIST.forEach(b => {
+    const where = 'src/data/bgart.js(' + b.id + ')';
+    if (seen.has(b.id)) err(where, 'id 重复');
+    seen.add(b.id);
+    if (!BACKGROUNDS[b.id]) err(where, 'id 不在 src/data/backgrounds.js 里（背景 id 表冻结，不得新增）');
+    if (!b.name) warn(where, '缺少 name');
+    if (!b.prompt_cn) warn(where, '缺少 prompt_cn');
+    if (!b.prompt_en || String(b.prompt_en).trim().length < 120) {
+      err(where, '缺少 prompt_en（英文场景描述，至少 120 字符）');
+    }
+    if (!(b.must || []).length) warn(where, 'must 为空：验收时没有可核对的必现元素');
+    const noBitmap = !!(BACKGROUNDS[b.id] && BACKGROUNDS[b.id].noBitmap);
+    if (!!b.svgOnly !== noBitmap) {
+      err(where, 'svgOnly 与 backgrounds.js 的 noBitmap 不一致（bgart.svgOnly=' + !!b.svgOnly
+        + '，backgrounds.noBitmap=' + noBitmap + '）—— 两处必须同改');
+    }
+    if (b.svgOnly) { bgArtReport.svgOnly++; return; }
+    bgArtReport.want++;
+    const bad = bgBitmapProblem(b.id);
+    if (!bad) bgArtReport.have++;
+    else if (bad === 'missing') {
+      bgArtReport.missing.push(b.id);
+      err(where, '背景位图还没生成：assets/generated/bg/' + b.id + '.png'
+        + '（node tools/bg-art.js --only ' + b.id + '）');
+    } else if (bad.indexOf('over-limit') === 0) {
+      bgArtReport.have++;
+      warn(where, '背景位图超过 ' + BG_MAX_KB + ' KB 上限：' + bad
+        + '（用 python tools/bg-post.py --id ' + b.id + ' 重烘焙）');
+    } else {
+      err(where, '背景位图不完整：assets/generated/bg/' + b.id + '.png ' + bad);
+    }
+  });
+  /* 反向：backgrounds.js 里的每个场景背景都必须有提示词条目（否则那一张没人负责出图）。 */
+  BGS.forEach(id => {
+    if (!seen.has(id) && !(BACKGROUNDS[id] && BACKGROUNDS[id].noBitmap)) {
+      err('src/data/bgart.js', '背景 ' + id + ' 没有提示词条目：它不会出现在出图清单里');
+    }
+  });
+}
+
 function pad(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
 function padL(s, n) { s = String(s); while (s.length < n) s = ' ' + s; return s; }
 
@@ -366,6 +445,10 @@ console.log(pad('合计', 8) + pad(report.length + ' 章', 18) + padL(T.steps, 7
 
 console.log('\n=== 资源统计 ===');
 console.log('背景   ' + assetReport.bg + ' / ' + assetReport.bgWant);
+console.log('背景位图 ' + bgArtReport.have + ' / ' + bgArtReport.want + ' 已生成'
+  + '（程序化叙事画面 ' + bgArtReport.svgOnly + ' 张不出位图）'
+  + (bgArtReport.missing.length ? '（缺 ' + bgArtReport.missing.length + ' 张：'
+    + bgArtReport.missing.join(', ') + '）' : ''));
 console.log('立绘   ' + assetReport.chars + ' / ' + assetReport.charsWant);
 console.log('插画   P0 ' + cgReport.p0have + ' / ' + cgReport.p0 + ' 已生成'
   + (cgReport.missing.length ? '（缺 ' + cgReport.missing.length + ' 张：' + cgReport.missing.join(', ') + '）' : ''));

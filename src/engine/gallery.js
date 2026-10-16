@@ -159,7 +159,10 @@
     e.body.appendChild(make('div', 'sec-head', '场景背景'));
     var grid = make('div', 'gallery-grid');
     BG_ORDER.forEach(function (id) {
-      grid.appendChild(artTile('bgs', id, BG_LABEL[id], VN.bgPath(id)));
+      /* 背景与插画同样按候选列表回退：位图（AI 出图）→ 同名矢量背景。
+         只给单条路径的话，没有位图的四张叙事画面在画廊里会变成空格子。 */
+      grid.appendChild(artTile('bgs', id, BG_LABEL[id],
+        VN.bgCandidates ? VN.bgCandidates(id) : VN.bgPath(id)));
     });
     e.body.appendChild(grid);
     e.body.appendChild(make('div', 'sec-head', '全屏插画（重要事件）'));
