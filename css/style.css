@@ -103,11 +103,10 @@ html, body {
   38%  { transform: scale(1.06) translate3d(-0.2%, 0, 0); }
   100% { transform: scale(1.02) translate3d(0, 0, 0); }
 }
-/* 图注是逐字打出来的，所以不留悬停光标，也不需要「▼」 */
-#stage.ui-hidden #cg-layer { opacity: 0 !important; }
-
 /* ---------------- 立绘层 ---------------- */
-#char-layer { position: absolute; inset: 0; pointer-events: none; }
+/* 立绘层整体可以变透明：H 键「隐藏」要藏的就是它（见文末「隐藏 UI」一节）。
+   这里加过渡，让整层和单张立绘的进出都同样是淡的。 */
+#char-layer { position: absolute; inset: 0; pointer-events: none; transition: opacity 260ms ease; }
 #char-layer .slot {
   position: absolute;
   bottom: 0;
@@ -615,13 +614,18 @@ html, body {
 #modal-wrap { position: absolute; inset: 0; z-index: 70; background: rgba(5,8,14,.82); }
 .empty-tip { color: #6b7482; font-size: calc(16 * var(--u)); padding: calc(30 * var(--u)) 0; }
 
-/* 隐藏 UI（H 键） */
+/* 隐藏 UI（H 键）：藏起**立绘与对话栏**，保留背景。
+   正在放全屏插画时，屏幕上就只剩那张插画 —— 所以插画层不再跟着一起熄灭
+   （旧写法把 #cg-layer 也 opacity:0，于是 CG 场景下按 H 会变成"插画没了、
+   立绘还在、只剩一块空背景"，正好是要的反面）。 */
+#stage.ui-hidden #char-layer,
 #stage.ui-hidden #dialogue,
 #stage.ui-hidden #quickbar,
 #stage.ui-hidden #hud,
 #stage.ui-hidden #note-layer,
 #stage.ui-hidden #cg-caption { opacity: 0 !important; }
-#stage.ui-hidden #dialogue { pointer-events: none; }
+#stage.ui-hidden #dialogue,
+#stage.ui-hidden #char-layer { pointer-events: none; }
 
 /* 覆盖层打开时（标题/菜单/回想/存档/图鉴）隐藏游戏内 HUD 与快捷条 */
 #stage.overlay-open #hud,
