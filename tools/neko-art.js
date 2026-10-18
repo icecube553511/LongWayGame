@@ -17,7 +17,11 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
-const { loadProvider } = require('../tmp/devkit/neko.js');
+/* provider 只在真正出图时加载，--dry-run 不依赖 tmp/devkit/neko.js。 */
+function getProvider() {
+  const { loadProvider } = require('../tmp/devkit/neko.js');
+  return loadProvider();
+}
 
 const ROOT = path.resolve(__dirname, '..');
 const RAW = path.join(ROOT, 'tmp', 'neko-raw');
@@ -34,8 +38,18 @@ const only = argOf('--only', '').split(',').map(s => s.trim()).filter(Boolean);
 const faceFilter = argOf('--faces', '').split(',').map(s => s.trim()).filter(Boolean);
 const CONC = Math.max(1, Math.min(8, parseInt(argOf('--concurrency', '5'), 10)));
 const SIZE = argOf('--size', '1024x1536');
+/* high 档在这家 provider 上会拖到服务端断开（2026-10-18 实测单张 >300s），
+   medium 同样能出低多边形立绘，且 1024x1536 约 25s 返回。 */
+const QUALITY = argOf('--quality', process.env.NEKO_QUALITY || 'medium');
 const NEEDED = argv.includes('--needed');
 const SKIP_DONE = argv.includes('--skip-existing') || NEEDED;
+const DRY_RUN = argv.includes('--dry-run');
+const REFERENCE = argOf('--reference', '');
+const REFERENCE_PATH = REFERENCE ? path.resolve(ROOT, REFERENCE) : '';
+if (!DRY_RUN && REFERENCE && !fs.existsSync(REFERENCE_PATH)) {
+  console.error('参考图不存在：' + REFERENCE_PATH);
+  process.exit(1);
+}
 
 /* ---------------- 人物表 ---------------- */
 const CHAR_SRC = fs.readFileSync(path.join(ROOT, 'src', 'data', 'characters.js'), 'utf8');
@@ -94,11 +108,30 @@ const FACEDESC = {
   dawn: 'quiet hope and relief, eyebrows lifted, eyes bright and open, a faint upward curve of the mouth'
 };
 
+/* 本轮剧情专用的局部形象：id 不进冻结人物表，只由剧本的 portraitId 指向。 */
+const SPECIAL_SUBJECTS = {
+  white_pow: {
+    name: 'a captured Nationalist soldier',
+    role: 'Guizhou provincial infantry, winter 1934-1935',
+    look: 'a twenty-four-year-old Chinese Nationalist (Guomindang) infantry conscript from a Guizhou provincial unit. Lean, weather-beaten face, hollow cheeks, short cropped black hair, faint dark stubble, guarded and tired eyes. He wears a worn ochre-grey padded cotton winter tunic and trousers with an old soft cloth field cap. The cap badge has been torn away, leaving a pale rectangular cloth mark with loose stitch holes and one small repair. No red collar tabs, no red star, no armband and no weapon. The shabby but intact winter uniform must be historically plausible for Chinese provincial infantry in 1934-1936.',
+    avoid: 'red star, red collar tabs, Red Army uniform, blue-white sun emblem, Kuomintang roundel, armband, rifle, firearm, sword, rope, handcuffs, blood, bruises, theatrical suffering, Japanese uniform, German uniform, Soviet uniform, modern clothing, propaganda poster'
+  }
+};
+
+const SPECIAL_FACE = {
+  white_pow: {
+    calm: 'guarded and tired, level eyebrows, eyes open but not hostile, mouth closed in a thin straight line, no smile',
+    worry: 'puzzled and questioning, inner ends of the eyebrows raised and drawn together, eyes slightly widened, mouth slightly open as if he is about to ask a question'
+  }
+};
+
 const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
 
 function promptFor(id, face) {
-  const c = ALL[id];
-  const look = LOOK[id] || 'a Chinese Red Army figure';
+  const sp = SPECIAL_SUBJECTS[id];
+  const c = ALL[id] || {};
+  const look = sp ? sp.look : (LOOK[id] || 'a Chinese Red Army figure');
+  const faceText = (SPECIAL_FACE[id] && SPECIAL_FACE[id][face]) || FACEDESC[face] || FACEDESC.calm;
   return [
     'Low-poly faceted 3D character art, flat-shaded polygons with hard angular facets,',
     'one strong directional light from the upper left, matte surfaces, thin dark edges only at',
@@ -106,42 +139,86 @@ function promptFor(id, face) {
     'faded grey-green, ochre and dull brick red. Style must match a low-poly isometric historical',
     'game set in 1934-1936 China.',
     '',
-    'SUBJECT: half-body bust portrait of one Chinese Red Army figure from the Long March.',
-    'Name: ' + c.name + '. Role: ' + c.role + '.',
-    'Appearance: ' + look + '.',
+    sp
+      ? 'SUBJECT: head-to-waist portrait of one captured Nationalist soldier from the Long March.'
+      : 'SUBJECT: half-body bust portrait of one Chinese Red Army figure from the Long March.',
+    'Name: ' + (sp ? sp.name : c.name) + '. Role: ' + (sp ? sp.role : c.role) + '.',
+    'Appearance: ' + look.replace(/\.$/, '') + '.',
     'Framing: head to waist, head occupying about one quarter of the image height, figure centred,',
     'facing the viewer with a slight three-quarter turn, shoulders square, arms resting naturally',
     'at the sides. Exactly one person. No other people, no floating objects.',
     '',
-    'EXPRESSION: ' + (FACEDESC[face] || FACEDESC.calm) + '.',
+    'EXPRESSION: ' + faceText + '.',
     '',
     'BACKGROUND: a perfectly flat solid uniform pure magenta ' + KEY_COLOR + ' filling every pixel',
     'behind the figure. Single flat colour only - no gradient, no texture, no shadow, no floor,',
     'no horizon, no props, no scenery. The figure stands on nothing.',
     '',
     'AVOID: text, letters, watermark, signature, frame, border, photographic realism,',
-    'anime line art, smooth airbrushed shading, glossy highlights, high saturation.'
+    'anime line art, smooth airbrushed shading, glossy highlights, high saturation' +
+      (sp && sp.avoid ? ', ' + sp.avoid : '') + '.'
+  ].join('\n');
+}
+
+function editPromptFor(id, face) {
+  const faceText = (SPECIAL_FACE[id] && SPECIAL_FACE[id][face]) || FACEDESC[face] || FACEDESC.calm;
+  return [
+    'Edit the supplied reference image. This is the same single person and the same character design.',
+    'Preserve exactly: facial identity and proportions, hair, cap, torn-away cap badge mark, clothing,',
+    'collar, belt, body pose, framing, camera angle, upper-left hard light and the flat pure magenta',
+    'background. Do not redesign the uniform. Do not add anyone or anything else.',
+    'Change only the facial expression: ' + faceText + '.',
+    'Keep the background perfectly flat solid magenta ' + KEY_COLOR + ' in every pixel behind the figure.',
+    'AVOID: text, watermark, frame, border, extra people, weapons, red star, red collar tabs,',
+    'emblem, armband, blood, bruises, photographic realism, anime line art, glossy highlights.'
   ].join('\n');
 }
 
 /* ---------------- 调用 ---------------- */
-const P = loadProvider();
 
 async function gen(id, face, attempt) {
-  const body = {
-    model: process.env.NEKO_MODEL || P.model,
-    prompt: promptFor(id, face),
-    n: 1,
-    size: SIZE,
-    quality: 'high'
-  };
-  const r = await fetch(P.base + '/v1/images/generations', {
-    method: 'POST',
-    headers: { 'authorization': 'Bearer ' + P.key, 'content-type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  const text = await r.text();
-  if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + text.slice(0, 200));
+  const P = getProvider();
+  const model = process.env.NEKO_MODEL || P.model;
+  let r;
+  let text = '';
+
+  if (REFERENCE_PATH) {
+    const image = fs.readFileSync(REFERENCE_PATH);
+    /* 兼容 OpenAI Images edits 的单图字段：先 image，再 image[]。 */
+    for (const field of ['image', 'image[]']) {
+      const fd = new FormData();
+      fd.append('model', model);
+      fd.append('prompt', editPromptFor(id, face));
+      fd.append(field, new Blob([image], { type: 'image/png' }), path.basename(REFERENCE_PATH));
+      fd.append('n', '1');
+      fd.append('size', SIZE);
+      fd.append('quality', QUALITY);
+      r = await fetch(P.base + '/v1/images/edits', {
+        method: 'POST',
+        headers: { 'authorization': 'Bearer ' + P.key },
+        body: fd
+      });
+      text = await r.text();
+      if (r.ok) break;
+      if (field === 'image[]' || (r.status !== 400 && r.status !== 404 && r.status !== 422)) break;
+    }
+  } else {
+    const body = {
+      model: model,
+      prompt: promptFor(id, face),
+      n: 1,
+      size: SIZE,
+      quality: QUALITY
+    };
+    r = await fetch(P.base + '/v1/images/generations', {
+      method: 'POST',
+      headers: { 'authorization': 'Bearer ' + P.key, 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    text = await r.text();
+  }
+
+  if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + text.slice(0, 240));
   let j;
   try { j = JSON.parse(text); } catch (e) { throw new Error('非 JSON 响应：' + text.slice(0, 160)); }
   const b64 = j.data && j.data[0] && (j.data[0].b64_json || j.data[0].b64);
@@ -201,9 +278,20 @@ async function pool(tasks, n) {
     ? tasks.filter(([id, f]) => !fs.existsSync(path.join(RAW, id + '_' + f + '.png')))
     : tasks;
   console.log('目标：' + label + '；已有 ' + (tasks.length - pending.length) + ' 张，待生成 ' + pending.length + ' 张');
-  console.log('模型：' + (process.env.NEKO_MODEL || P.model) + '   尺寸：' + SIZE + '   并发：' + CONC);
+  console.log('参考图：' + (REFERENCE_PATH || '无') + '   尺寸：' + SIZE + '   并发：' + CONC);
+  if (DRY_RUN) {
+    console.log('【dry-run】只打印提示词，不读取 provider、不调用接口。');
+    pending.forEach(function (t) {
+      console.log('\n===== ' + t[0] + '/' + t[1] + ' =====');
+      console.log(REFERENCE_PATH ? editPromptFor(t[0], t[1]) : promptFor(t[0], t[1]));
+    });
+    return;
+  }
+  const P = getProvider();
+  console.log('模型：' + (process.env.NEKO_MODEL || P.model));
   const t0 = Date.now();
   const { ok, fail } = await pool(pending, CONC);
   console.log('原始图完成：成功 ' + ok + '，失败 ' + fail + '，用时 ' + Math.round((Date.now() - t0) / 1000) + 's');
   console.log('原始图目录：' + RAW);
 })();
+

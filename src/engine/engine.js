@@ -389,6 +389,10 @@
    * —— 由 root 修复 */
   var CROWD_IDS = { soldiers: 1, villagers: 1, yi_people: 1, narrator: 1 };
   var charFace = {};                       /* 本章每个角色最近一次用过的表情 */
+  /* 局部形象覆盖：逻辑 id 仍是人物表里的 id，但这一幕可以换用别的立绘与姓名。
+   * 只由 show/say/think 的 portraitId、displayName 字段写入，hide/clear 时清除。
+   * 用途：ch06 的台词人是白军俘虏，剧情逻辑仍沿用群众 id soldiers。 */
+  var charScene = {};                      /* who -> { portraitId, displayName } */
   function onStageSlotOf(who) {
     var hit = null;
     Object.keys(D.slots).forEach(function (k) {
@@ -403,21 +407,43 @@
     if (onStageSlotOf(who)) return;
     showChar(who, charFace[who] || 'calm', null, 'fadein');
   }
-  function showChar(who, face, slot, fx) {
+  function sceneMetaOf(who, step) {
+    if (step && (step.portraitId || step.displayName)) {
+      var cur = charScene[who] || {};
+      charScene[who] = {
+        portraitId: step.portraitId || cur.portraitId || '',
+        displayName: step.displayName || cur.displayName || ''
+      };
+    }
+    return charScene[who] || {};
+  }
+  function showChar(who, face, slot, fx, step) {
     if (!who) return;
     face = FACES.indexOf(face) >= 0 ? face : 'calm';
     charFace[who] = face;
     var s = slotOf(who, slot);
     if (!s) return;
+    var info = sceneMetaOf(who, step);
+    /* 只有槽位里坐着的仍是同一逻辑 id 时才继承它的局部覆盖；
+       否则换人上同一个槽会把上一位的立绘/姓名带过来。 */
+    var same = s.dataset.who === who;
+    var portraitId = info.portraitId || (same ? s.dataset.portraitId : '') || who;
+    var displayName = info.displayName || (same ? s.dataset.displayName : '') || '';
     var img = s.querySelector('img');
-    var paths = charPaths(who, face);
-    if (s.dataset.who === who && s.dataset.face === face && s.classList.contains('on')) return;
+    var paths = charPaths(portraitId, face);
+    if (s.dataset.who === who && s.dataset.portraitId === portraitId &&
+        s.dataset.face === face && s.classList.contains('on')) {
+      s.dataset.displayName = displayName;
+      return;
+    }
     var probe = new Image();
     var tryIndex = 0;
     probe.onload = function () {
       img.setAttribute('src', probe.src);
       hideChar(who, s);                    /* 同一个人只留一个槽 */
       s.dataset.who = who;
+      s.dataset.portraitId = portraitId;
+      s.dataset.displayName = displayName;
       s.dataset.face = face;
       s.dataset.empty = '0';
       s.classList.remove('leaving');
@@ -442,6 +468,8 @@
       s.classList.remove('on');
       s.dataset.empty = '1';
       s.dataset.who = '';
+      s.dataset.portraitId = '';
+      s.dataset.displayName = '';
       setTimeout(function () { s.classList.remove('leaving'); }, 420);
     });
   }
@@ -593,9 +621,10 @@
   }
 
   /* ===== 9. 对白 ===== */
-  function showDialogue(kind, who, text, note) {
+  function showDialogue(kind, who, text, note, displayName) {
     var speed = SPEED[VN.settings.textSpeed];
     if (speed === undefined) speed = SPEED.normal;
+    var speakerName = displayName || charName(who);
     D.dialogue.classList.remove('hidden', 'narr', 'think');
     if (kind === 'narr') {
       D.dialogue.classList.add('narr');
@@ -603,16 +632,16 @@
     } else if (kind === 'think') {
       D.dialogue.classList.add('think');
       D.namePlate.classList.remove('hidden', 'narr');
-      D.nameText.textContent = charName(who) + '（心）';
+      D.nameText.textContent = speakerName + '（心）';
       text = '（' + text + '）';
     } else {
       D.namePlate.classList.remove('hidden', 'narr');
-      D.nameText.textContent = charName(who);
+      D.nameText.textContent = speakerName;
     }
     setNote(note);
     highlight(kind === 'narr' ? null : who);
     if (kind !== 'narr' && who) unlock('chars', who);
-    VN.state.history.push({ kind: kind, who: who || '', name: kind === 'narr' ? '' : charName(who), text: text });
+    VN.state.history.push({ kind: kind, who: who || '', name: kind === 'narr' ? '' : speakerName, text: text });
     if (VN.state.history.length > 800) VN.state.history.shift();
     D.nextArrow.classList.remove('on');
     typeText(D.textMain, text, speed, function () {
@@ -905,9 +934,10 @@
     Object.keys(D.slots).forEach(function (k) {
       var s = D.slots[k];
       if (!s || s.dataset.empty === '1' || !s.dataset.who) return;
-      chars.push({ slot: k, who: s.dataset.who, face: s.dataset.face || 'calm' });
+      chars.push({ slot: k, who: s.dataset.who, face: s.dataset.face || 'calm',
+        portraitId: s.dataset.portraitId || '', displayName: s.dataset.displayName || '' });
     });
-    return { bg: front ? (front.getAttribute('src') || '') : '', chars: chars };
+    return { bg: front ? (front.getAttribute('src') || '') : '', chars: chars, scene: copyMap(charScene) };
   }
   function restoreVisual(v) {
     if (!v) return;
@@ -924,7 +954,9 @@
     }
     if (back) back.classList.remove('on', 'slow-zoom');
     clearChars();
-    (v.chars || []).forEach(function (c) { showChar(c.who, c.face, c.slot, 'fadein'); });
+    charScene = {};
+    if (v.scene) Object.keys(v.scene).forEach(function (k) { charScene[k] = v.scene[k]; });
+    (v.chars || []).forEach(function (c) { showChar(c.who, c.face, c.slot, 'fadein', c); });
     setWeather(VN.state.weather || null);
   }
   function recordRewind(f, s) {
@@ -1050,9 +1082,9 @@
          取值 600–1400ms），但引擎原先直接把 ms 丢掉，所有转场一律 620ms。
          —— 由 root 修复（tools/e2e-steps.js 可复现） */
       case 'bg': setBg(s.id, s.fx || 'fade', { ms: s.ms }); return false;
-      case 'show': showChar(s.who, s.face, s.slot, s.fx); return false;
-      case 'hide': hideChar(s.who); return false;
-      case 'clear': clearChars(); return false;
+      case 'show': showChar(s.who, s.face, s.slot, s.fx, s); return false;
+      case 'hide': delete charScene[s.who]; hideChar(s.who); return false;
+      case 'clear': charScene = {}; clearChars(); return false;
       case 'fx':
         if (s.kind === 'rain' || s.kind === 'snow' || s.kind === 'ash' || s.kind === 'star') VN.state.weather = s.kind;
         applyFx(s.kind, s.ms);
@@ -1115,8 +1147,9 @@
         return true;
       case 'think':
         curGateStep = s; markRead(s);
+        var thinkMeta = sceneMetaOf(s.who, s);
         if (s.noPortrait) hideChar(s.who); else ensureOnStage(s.who);
-        showDialogue('think', s.who, s.text, s.note);
+        showDialogue('think', s.who, s.text, s.note, thinkMeta.displayName);
         block('text');
         return true;
       case 'say':
@@ -1127,12 +1160,13 @@
          * 例：第三章「每人三发」那段，主体必须只是三颗子弹，不能被立绘压在中间。
          * 这类写法必须显式声明（不是靠画面类型猜），所以给内容侧一个开关。
          * —— 由 root 追加（SPEC §2.1 同步登记） */
+        var sayMeta = sceneMetaOf(s.who, s);
         if (s.noPortrait) hideChar(s.who);
-        else if (s.face) showChar(s.who, s.face, s.slot);
+        else if (s.face) showChar(s.who, s.face, s.slot, undefined, s);
         /* 没写 face 时按 SPEC 的本意是"沿用上一次的表情"，但前提是人得在台上：
            这一幕没 show 过他，就兜底补上场，否则姓名条会配一张空舞台。 */
         else ensureOnStage(s.who);
-        showDialogue('say', s.who, s.text, s.note);
+        showDialogue('say', s.who, s.text, s.note, sayMeta.displayName);
         block('text');
         return true;
       case 'choice':
@@ -1361,6 +1395,7 @@
     clearChars();
     hideCg(true);                           /* 新章节开场不该残留上一章的插画 */
     charFace = {};                          /* 表情记忆按章重置 */
+    charScene = {};                         /* 局部形象覆盖按章重置 */
     rewindBuf.length = 0;                   /* 倒退不跨章 */
     suppressRecord = false;
     setNote(null);
@@ -1460,8 +1495,8 @@
         /* 插画按候选链逐张预载：位图命中时后面的矢量不会真的去取（浏览器只在
            真正赋值给 <img> 时才会请求），所以这里只预载「最可能出现的两级」。 */
         if (s.t === 'cg') cgCandidates(s.id).slice(0, 2).forEach(grab);
-        if (s.t === 'show') grab(charPath(s.who, s.face || 'calm'));
-        if (s.t === 'say' && s.face) grab(charPath(s.who, s.face));
+        if (s.t === 'show') grab(charPath(s.portraitId || s.who, s.face || 'calm'));
+        if (s.t === 'say' && s.face) grab(charPath(s.portraitId || s.who, s.face));
         if (s.t === 'if') { walk(s.then); walk(s.else); }
       });
     })(ch.steps);
@@ -1513,6 +1548,7 @@
     VN.state.hideUI = false;
     VN.state.weather = obj.weather || null;
     clearChars();
+    charScene = {};
     hideCg(true);
     D.choiceLayer.classList.add('hidden');
     D.dialogue.classList.add('hidden');

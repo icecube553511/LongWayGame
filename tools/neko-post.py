@@ -72,32 +72,50 @@ def key_color(img: Image.Image) -> tuple[int, int, int]:
     return (sorted(rs)[1], sorted(gs)[1], sorted(bs)[1])
 
 
+def has_useful_alpha(img: Image.Image) -> bool:
+    """上游若已经返回透明底，必须先认 alpha。
+    历史事故：把 RGBA 强制转 RGB 后再按洋红键色抠图，会把透明区压成的黑色
+    当成人物暗部，打出窟窿（PRODUCTION_SPEC §10.4）。"""
+    if img.mode not in ("RGBA", "LA") and "transparency" not in img.info:
+        return False
+    alpha = img.convert("RGBA").getchannel("A")
+    return alpha.getextrema()[0] < 250
+
+
 def process(src: Path, dst: Path) -> str:
-    img = Image.open(src).convert("RGB")
-    kr, kg, kb = key_color(img)
+    source = Image.open(src)
+    source.load()
+    mode = "alpha" if has_useful_alpha(source) else "key"
 
-    # 只对「洋红味」的像素做透明处理：R 高、G 低、B 高，避免误伤人物
-    px = img.load()
-    w, h = img.size
-    alpha = Image.new("L", (w, h), 255)
-    ap = alpha.load()
-    for y in range(h):
-        for x in range(w):
-            r, g, b = px[x, y]
-            d = ((r - kr) ** 2 + (g - kg) ** 2 + (b - kb) ** 2) ** 0.5
-            if d <= NEAR:
-                ap[x, y] = 0
-            elif d < FAR:
-                ap[x, y] = int(255 * (d - NEAR) / (FAR - NEAR))
-            # 额外的洋红抑制：绿色明显低于红蓝时也算背景
-            elif g + 40 < r and g + 40 < b and d < 260:
-                ap[x, y] = 0
+    if mode == "alpha":
+        out = source.convert("RGBA")
+        alpha = out.getchannel("A")
+        kr = kg = kb = -1
+    else:
+        img = source.convert("RGB")
+        kr, kg, kb = key_color(img)
 
-    # 收缩一圈去掉残留底色，再轻微羽化
-    alpha = alpha.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
+        # 只对「洋红味」的像素做透明处理：R 高、G 低、B 高，避免误伤人物
+        px = img.load()
+        w, h = img.size
+        alpha = Image.new("L", (w, h), 255)
+        ap = alpha.load()
+        for y in range(h):
+            for x in range(w):
+                r, g, b = px[x, y]
+                d = ((r - kr) ** 2 + (g - kg) ** 2 + (b - kb) ** 2) ** 0.5
+                if d <= NEAR:
+                    ap[x, y] = 0
+                elif d < FAR:
+                    ap[x, y] = int(255 * (d - NEAR) / (FAR - NEAR))
+                # 额外的洋红抑制：绿色明显低于红蓝时也算背景
+                elif g + 40 < r and g + 40 < b and d < 260:
+                    ap[x, y] = 0
 
-    out = img.convert("RGBA")
-    out.putalpha(alpha)
+        # 收缩一圈去掉残留底色，再轻微羽化
+        alpha = alpha.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
+        out = img.convert("RGBA")
+        out.putalpha(alpha)
 
     # ---- 按人物包围盒归一化取景 ----
     box = alpha.getbbox()
@@ -125,7 +143,8 @@ def process(src: Path, dst: Path) -> str:
     dst.parent.mkdir(parents=True, exist_ok=True)
     out.save(dst, "PNG", optimize=True)
     cov = sum(1 for a in out.getchannel("A").getdata() if a > 8) / (TARGET[0] * TARGET[1])
-    return f"{dst.name:28s} key=#{kr:02X}{kg:02X}{kb:02X}  实心占比={cov:5.1%}  {dst.stat().st_size // 1024}KB"
+    key_text = "alpha" if mode == "alpha" else f"key=#{kr:02X}{kg:02X}{kb:02X}"
+    return f"{dst.name:28s} {key_text:18s} 实心占比={cov:5.1%}  {dst.stat().st_size // 1024}KB"
 
 
 def main() -> int:
