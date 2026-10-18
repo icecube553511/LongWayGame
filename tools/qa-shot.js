@@ -17,7 +17,8 @@ function shot(html, outPng, w, h, virtualMs) {
   const tmpHtml = path.join(ROOT, 'tmp', 'qa.html');
   fs.mkdirSync(path.dirname(tmpHtml), { recursive: true });
   fs.writeFileSync(tmpHtml, html, 'utf8');
-  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  const args = ['--headless=new', '--edge-skip-compat-layer-relaunch',
+    '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     `--window-size=${w},${h}`, `--screenshot=${outPng}`, '--default-background-color=00000000',
     /* 让页面里的 setTimeout / 动画先跑完再截图（用于标题画面、淡入淡出） */
     `--virtual-time-budget=${virtualMs || 1500}`,

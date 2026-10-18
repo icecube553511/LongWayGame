@@ -310,7 +310,8 @@ try {
 } catch (e) { /* 清扫失败不影响探针本身 */ }
 
 function runEdge(extraArgs, opts) {
-  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  const args = ['--headless=new', '--edge-skip-compat-layer-relaunch',
+    '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     '--disable-extensions', '--force-device-scale-factor=1',
     `--window-size=${WINW},${WINH}`, `--virtual-time-budget=${budget}`, ...extraArgs, pageUrl];
   return cp.execFileSync(EDGE, args, { timeout: 300000, maxBuffer: 256 * 1024 * 1024, ...(opts || {}) });

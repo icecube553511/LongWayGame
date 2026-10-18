@@ -32,7 +32,8 @@ function shot(html, outPng, w, h, virtualMs) {
   const tmpHtml = path.join(TMP, `_shot_${tag}.html`);
   fs.mkdirSync(path.dirname(outPng), { recursive: true });
   fs.writeFileSync(tmpHtml, html, 'utf8');
-  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  const args = ['--headless=new', '--edge-skip-compat-layer-relaunch',
+    '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     '--disable-extensions', '--force-device-scale-factor=1',
     `--window-size=${w},${h}`, `--screenshot=${outPng}`,
     '--default-background-color=00000000',

@@ -233,7 +233,8 @@ const pageUrl = 'file:///' + pagePath.replace(/\\/g, '/');
 console.log(`通关验证：每章自动点第 ${pickIndex} 个选项，步间隔 ${stepMs}ms，虚拟时间上限 ${budget}ms`);
 let out = '';
 try {
-  out = cp.execFileSync(EDGE, ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
+  out = cp.execFileSync(EDGE, ['--headless=new', '--edge-skip-compat-layer-relaunch',
+    '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
     '--disable-extensions', '--window-size=1600,900',
     `--virtual-time-budget=${budget}`, '--dump-dom', pageUrl],
     { encoding: 'utf8', timeout: 900000, maxBuffer: 512 * 1024 * 1024 });
