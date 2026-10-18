@@ -13,3 +13,11 @@ desktop.ini
 *.log
 .vscode/
 .idea/
+
+# Android 构建产物与签名文件（构建脚本可重新生成，不进版本库）
+android/build/
+dist/
+*.apk
+*.aab
+*.keystore
+*.jks
