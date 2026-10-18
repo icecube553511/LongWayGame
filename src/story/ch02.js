@@ -80,6 +80,7 @@
       { t: 'say', who: 'li_tiezhu', text: '人只要心里记得热是什么样子，就还能走。' },
       { t: 'hide', who: 'li_tiezhu' },
       { t: 'title', text: '敌机', sub: '' },
+      { t: 'bg', id: 'bg_air_raid_paddy', fx: 'dissolve', ms: 900 },
       { t: 'sfx', id: 'shell' },
       { t: 'fx', kind: 'shake', ms: 460 },
       { t: 'narr', text: '飞机来的时候，队伍正在过一片开阔的稻田。' },

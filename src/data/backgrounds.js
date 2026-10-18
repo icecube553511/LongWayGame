@@ -38,6 +38,18 @@
     { id: 'bg_camp_fire',      name: '篝火夜营',     usedIn: 'ch01', hint: '草地、火堆、围坐的剪影、星空' },
     { id: 'bg_map_table',      name: '指挥部·地图桌', usedIn: 'ch07', hint: '作战地图、蜡烛、铅笔、电话机、马灯' },
     { id: 'bg_stretcher',      name: '担架队',       usedIn: 'ch01', hint: '竹林小径、两副担架、抬担架的战士' },
+    { id: 'bg_houchang_street', name: '猴场镇口', usedIn: 'ch06', hint: '矮石台戏台、粗布幕、两盏油灯、穿被单戏服的年轻宣传员、被按在台边的胖老财、薄雪中穿补丁棉袄的乡亲' },
+    { id: 'bg_wujiang', name: '江界河强渡乌江', usedIn: 'ch06', hint: '深切峡谷、两岸深色绝壁、青黑急流、三只载满战士的竹排、炮弹水柱、对岸碉堡枪口火光、近岸石滩与待渡队伍' },
+    { id: 'bg_zunyi_street', name: '遵义街头', usedIn: 'ch07', hint: '石板街、两层木铺面、药铺小抽屉墙、布店靛蓝布匹、米行敞口麻袋、布棚下的剃头摊' },
+    { id: 'bg_mianning_yamen', name: '冕宁县政府·土牢', usedIn: 'ch13', hint: '低矮瓦房围成的石院、被撞开的木门、三间土牢、铁链与挂锁、湿稻草与脚镣' },
+    { id: 'bg_lazikou_cliff_night', name: '夜攀腊子口绝壁', usedIn: 'ch18', hint: '占满画面的破碎石壁、绑腿接成的长绳、贴壁攀爬的战士、谷底木桥与远处枪口火光' },
+    { id: 'bg_gannan_loess', name: '甘南黄土坡', usedIn: 'ch18', hint: '赭黄与浅黄的黄土坡、干沟、枯草与光秃灌木、梯田、中景山路上蜿蜒的行军队伍' },
+    { id: 'bg_hadapu_school', name: '哈达铺读报会议', usedIn: 'ch19', hint: '白灰土墙、夯土地面、后墙长黑板、八仙桌上摊开的旧报纸、围着桌子的四五名灰绿军装干部' },
+    { id: 'bg_bangluo_school', name: '榜罗镇小学会议', usedIn: 'ch19', hint: '粗糙白灰墙、夯土地面、擦净的长黑板、拼起的两张深色长木桌与长凳、沿桌而坐的灰绿军装干部' },
+    { id: 'bg_huining_confucian_temple', name: '会宁文庙大成殿', usedIn: 'ch20', hint: '深瓦顶红木柱的大殿、探过殿顶的老柏树、挤满战士的石板院、摆着纸张电报的木桌' },
+    { id: 'bg_jiangtaibao', name: '将台堡会师', usedIn: 'ch20', hint: '赭黄夯土堡墙、矮堡门与角楼、堡内土院、两列会合的战士、从篮子里分发毛衣毛袜的妇女' },
+    { id: 'bg_air_raid_paddy', name: '敌机·开阔稻田', usedIn: 'ch02', hint: '开阔的收割后稻田、积水与泥埂、无树无沟、低空敌机、炸弹溅起的泥水柱、趴伏在泥里的战士' },
+    { id: 'bg_liupan_mountain', name: '六盘山', usedIn: 'ch19', hint: '天高云淡、南飞雁、南侧层叠群山、北侧空旷发黄的黄土高原、山脊枯草与风中行军队伍' },
     /* 叙事画面（不是景）：第三章脚山铺阵地上「每人三发」那段对话。
        纯黑底 + 弹药；三张画面里子弹的位置完全一致，少的只是被打出去的那一发。
        —— 由 root 按用户要求追加（画在 art/scenes_bullets.js）

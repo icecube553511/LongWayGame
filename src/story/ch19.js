@@ -11,7 +11,6 @@
     summary: '一张旧报纸，一座黄土塬，一年零两万里，终于有了落脚的地方。',
     titleCard: { text: '第十九章', sub: '吴起镇·落脚陕北', date: '1935年10月', place: '陕西·吴起镇' },
     steps: [
-      { t: 'bg', id: 'bg_wuqi', fx: 'fade', ms: 1000 },
       { t: 'title', text: '九月十八日 · 哈达铺' },
       { t: 'bg', id: 'bg_hadapu', fx: 'fade', ms: 1000 },
 
@@ -41,7 +40,7 @@
       { t: 'narr', text: '但都是纸。纸上都有字。' },
       { t: 'narr', text: '报纸上的字有大有小，认不全也没关系，认得出的那几行最要紧。' },
 
-      { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 900 },
+      { t: 'bg', id: 'bg_hadapu_school', fx: 'dissolve', ms: 900 },
       { t: 'narr', text: '那一摞报纸摊在一张八仙桌上。' },
       { t: 'narr', text: '几个领导人围着桌子，一张一张地看。' },
       /* 全屏插画：这张画的就是「一摞报纸摊在桌上、几个人围着看」这一刻，
@@ -158,7 +157,7 @@
       { t: 'hide', who: 'xiaoman' },
 
       { t: 'narr', text: '离开哈达铺之前，还有一件事。' },
-      { t: 'bg', id: 'bg_mountain_pass', fx: 'dissolve', ms: 700 },
+      { t: 'bg', id: 'bg_hadapu_school', fx: 'dissolve', ms: 700 },
       { t: 'show', who: 'xu_teli', face: 'smile', slot: 'center', fx: 'slidein' },
       { t: 'narr', text: '徐特立把小学里的黑板擦干净了。' },
       { t: 'narr', text: '他用半截粉笔在上面写了四个字，让红小鬼们认。' },
@@ -173,7 +172,7 @@
       { t: 'set', var: 'morale', op: '+=', value: 3 },
 
       { t: 'title', text: '九月二十七日 · 榜罗镇' },
-      { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 900 },
+      { t: 'bg', id: 'bg_bangluo_school', fx: 'dissolve', ms: 900 },
       { t: 'narr', text: '榜罗镇的一所小学里，开了一次会。' },
       { t: 'narr', text: '会议开得很短。' },
       { t: 'narr', text: '结论只有一句，但这一句话，把一年来的行军画上了一个句号：' },
@@ -192,7 +191,7 @@
       { t: 'set', var: 'morale', op: '+=', value: 6 },
 
       { t: 'title', text: '十月 · 六盘山' },
-      { t: 'bg', id: 'bg_mountain_pass', fx: 'dissolve', ms: 1000 },
+      { t: 'bg', id: 'bg_liupan_mountain', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '十月，过了六盘山。' },
       { t: 'narr', text: '山上的风比草地上的风还硬，吹得人睁不开眼。' },
       { t: 'narr', text: '站在山脊上，能看见很远的地方。' },
@@ -220,6 +219,7 @@
       { t: 'hide', who: 'wu_laoliu' },
 
       { t: 'title', text: '十月十九日 · 吴起镇' },
+      { t: 'bg', id: 'bg_wuqi', fx: 'dissolve', ms: 1200 },
 
       { t: 'show', who: 'he_xiaomei', face: 'calm', slot: 'center', fx: 'fadein' },
       { t: 'show', who: 'xiaoman', face: 'calm', slot: 'left', fx: 'slidein' },
@@ -253,7 +253,6 @@
           record: 'ch19_mei_silent' }
       ] },
 
-      { t: 'bg', id: 'bg_wuqi', fx: 'dissolve', ms: 1200 },
       { t: 'narr', text: '十月十九日的下午，队伍翻过最后一道塬。' },
       { t: 'narr', text: '塬下是一道沟。沟对面，是一排窑洞。' },
       { t: 'narr', text: '窑洞的墙上，刷着几个很大的字：' },
@@ -352,7 +351,6 @@
       ] },
 
       { t: 'title', text: '十月二十一日 · 切尾巴' },
-      { t: 'bg', id: 'bg_wuqi', fx: 'cut' },
       { t: 'narr', text: '追兵还是来了。' },
       { t: 'narr', text: '是马家军的骑兵。从草地一路追到陕北，追了整整一个月。' },
       { t: 'narr', text: '他们进了吴起镇的那条沟。' },
@@ -395,7 +393,7 @@
       { t: 'narr', text: '平均每天走七十里。每三百米，就有一个人倒下。' },
       { t: 'narr', text: '这些数字后来被人一遍一遍写进书里。当时没有人数，也数不动。' },
 
-      { t: 'bg', id: 'bg_camp_fire', fx: 'dissolve', ms: 1000 },
+      { t: 'bg', id: 'bg_wuqi', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '第二天早上，小满在窑洞外面看见了那口铜锅。', note: '中央红军（红一方面军）长征历时一年，途经11个省，行程二万五千里。出发时8.6万余人，到达陕北时约7000余人。' },
       { t: 'narr', text: '锅还是那口锅。锅底又薄了一层。' },
       { t: 'narr', text: '背锅的人换过了。' },

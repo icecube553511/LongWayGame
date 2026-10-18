@@ -8,7 +8,7 @@
 
 ## 1. 这一轮在做什么
 
-原先把 30 个场景背景画成程序化 SVG（`art/scenes_*.js` + `tools/build-art.js`）。
+原先把 42 个场景背景画成程序化 SVG（`art/scenes_*.js` + `tools/build-art.js`）。
 几何干净，但只有骨架：块面数量少、没有可辨认的人群、同屏十几张背景彼此区分度靠「特征物」硬撑。
 本轮把**场景背景整体换成 AI 出的整屏位图**，要求三条：
 
@@ -22,7 +22,7 @@ src/data/bgart.js（提示词，唯一的清单）
    └─ node tools/bg-art.js      调 NekoGptImage 出图 → tmp/bg-raw/<id>.png
         └─ python tools/bg-post.py   裁 16:9 → 1920×1080 → 调色 → 暗角 → assets/generated/bg/<id>.png
              └─ src/engine/engine.js  bgCandidates(): 位图优先，矢量兜底
-                  └─ node tools/check.js  30/30 必须都有位图（闸门）
+                  └─ node tools/check.js  42/42 必须都有位图（闸门）
                        └─ python tools/bg-judge.py  Gugu-gpt-QQ 的视觉模型逐张核对（人复核用的初判）
 ```
 
@@ -30,11 +30,11 @@ src/data/bgart.js（提示词，唯一的清单）
 
 | 层 | 文件 | 所有权 | 说明 |
 |---|---|---|---|
-| 清单 | `src/data/bgart.js` | root | 30 条场景 + 4 条叙事画面的 id / 中英文描述 / `must` / `crowd` / `avoid`。**提示词的唯一来源** |
+| 清单 | `src/data/bgart.js` | root | 42 条场景 + 4 条叙事画面的 id / 中英文描述 / `must` / `crowd` / `avoid`。**提示词的唯一来源** |
 | 生成 | `tools/bg-art.js` | root | 拼提示词（风格头 / 构图 / 群像硬要求 / 光照纪律 / AVOID）→ 调 cc-switch 的 NekoGptImage → 落原始图 → 自动接烘焙 |
 | 烘焙 | `tools/bg-post.py` | root | 裁 16:9 → 1920×1080 → 低饱和暖调 → 椭圆暗角 → 体积超档则量化 |
 | 呈现 | `src/engine/engine.js`、`src/engine/gallery.js` | root | `bgCandidates(id)`：`bg/{id}.png` → `bg/{id}.svg` 逐级回退；画廊同样按候选列表回退 |
-| 验收 | `tools/check.js` | root | 背景位图自检：id 归属、`must` 非空、30 张位图必须存在且是完整 PNG、`svgOnly` 与 `noBitmap` 必须一致 |
+| 验收 | `tools/check.js` | root | 背景位图自检：id 归属、`must` 非空、42 张位图必须存在且是完整 PNG、`svgOnly` 与 `noBitmap` 必须一致 |
 | 看图复核 | `tools/bg-judge.py` | root | 用 Gugu-gpt-QQ 分组的视觉模型（gpt-6.1-sol / gpt-6-astra）逐张核对必现元素与人群差异，落 `tmp/bg/review/*.md` |
 | 兜底 | `art/scenes_*.js`、`assets/generated/bg/*.svg` | root | **保留不动**：位图缺失时引擎回退到矢量背景，任何时候都不会黑屏 |
 
@@ -79,12 +79,12 @@ node tools/bg-art.js --list                       # 看清单与提示词是否�
 node tools/bg-art.js --json  > tmp/bg/prompts.json   # 给 bg-judge.py 用的同一份清单
 node tools/bg-art.js --only bg_luding             # 单张（自动接烘焙）
 node tools/bg-art.js --ch ch15 --concurrency 2    # 一章
-node tools/bg-art.js --all --concurrency 4        # 全部 30 张（自动跳过 4 张 svgOnly）
+node tools/bg-art.js --all --concurrency 4        # 全部 42 张（自动跳过 4 张 svgOnly）
 node tools/bg-art.js --only bg_wuqi --force       # 重出（旧的原始图自动存 tmp/bg-raw/prev/）
 node tools/bg-art.js --only bg_dadu --dry-run     # 只看最终提示词
 python tools/bg-post.py --all                     # 只重烘焙（改了调色/暗角参数时）
 python tools/bg-judge.py --all                    # 视觉模型逐张核对（--model / --concurrency / --force）
-node tools/check.js                               # 总闸门（含背景位图 30/30）
+node tools/check.js                               # 总闸门（含背景位图 42/42）
 python tmp/devkit/bg-sheet.py tmp/bg/sheet.png 15 5   # 拼对比版，供肉眼验收
 ```
 

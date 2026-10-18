@@ -13,7 +13,6 @@
     steps: [
       { t: 'bg', id: 'bg_mountain_pass', fx: 'fade', ms: 900 },
       { t: 'title', text: '五月二十一日 · 进入彝区' },
-      { t: 'bg', id: 'bg_mountain_pass', fx: 'fade', ms: 900 },
 
       { t: 'narr', text: '过了会理，往北是大凉山。' },
       { t: 'narr', text: '山很高，路很窄，树林密得看不见天。' },
@@ -110,7 +109,7 @@
       { t: 'hide', who: 'he_xiaomei' },
 
       { t: 'title', text: '五月二十二日 · 冕宁' },
-      { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 800 },
+      { t: 'bg', id: 'bg_mianning_yamen', fx: 'dissolve', ms: 800 },
       { t: 'narr', text: '先遣队路过冕宁县城。' },
       { t: 'narr', text: '县城很小，一条街，县政府是一排瓦房。' },
       { t: 'narr', text: '大门是锁着的，锁是新的。' },
@@ -267,7 +266,7 @@
       { t: 'cg', id: 'cg_yihai', text: '彝海的水面很静。两个人分喝了一碗酒。' },
 
       { t: 'title', text: '中国夷民红军沽鸡支队' },
-      { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 900 },
+      { t: 'bg', id: 'bg_yihai', fx: 'dissolve', ms: 900 },
       { t: 'narr', text: '结盟以后，红军做了一件事。' },
       { t: 'narr', text: '他们把一面旗送给小叶丹。' },
       { t: 'narr', text: '旗是新的，红布上写着十一个字：' },
