@@ -108,13 +108,28 @@ const FACEDESC = {
   dawn: 'quiet hope and relief, eyebrows lifted, eyes bright and open, a faint upward curve of the mouth'
 };
 
-/* 本轮剧情专用的局部形象：id 不进冻结人物表，只由剧本的 portraitId 指向。 */
+/* 不进冻结人物表的局部/候选形象：可由剧本 portraitId 指向，或用于主角造型试片。 */
 const SPECIAL_SUBJECTS = {
   white_pow: {
+    subject: 'head-to-waist portrait of one captured Nationalist soldier from the Long March',
     name: 'a captured Nationalist soldier',
     role: 'Guizhou provincial infantry, winter 1934-1935',
     look: 'a twenty-four-year-old Chinese Nationalist (Guomindang) infantry conscript from a Guizhou provincial unit. Lean, weather-beaten face, hollow cheeks, short cropped black hair, faint dark stubble, guarded and tired eyes. He wears a worn ochre-grey padded cotton winter tunic and trousers with an old soft cloth field cap. The cap badge has been torn away, leaving a pale rectangular cloth mark with loose stitch holes and one small repair. No red collar tabs, no red star, no armband and no weapon. The shabby but intact winter uniform must be historically plausible for Chinese provincial infantry in 1934-1936.',
     avoid: 'red star, red collar tabs, Red Army uniform, blue-white sun emblem, Kuomintang roundel, armband, rifle, firearm, sword, rope, handcuffs, blood, bruises, theatrical suffering, Japanese uniform, German uniform, Soviet uniform, modern clothing, propaganda poster'
+  },
+  xiaoman_departure: {
+    subject: 'half-body bust portrait of one fifteen-year-old Chinese Red Army bugler at the start of the Long March',
+    name: 'Xiaoman, at the start of the Long March',
+    role: 'fifteen-year-old bugler of the Central Red Army, autumn 1934',
+    look: 'a fifteen-year-old Chinese boy, small and slightly undernourished, round childish face with soft cheeks, large clear eyes, thin brows, short black hair barely visible under an octagonal Red Army cap that is one size too large and sits low over his eyebrows. He wears a faded blue-grey Red Army tunic that is too long in the sleeves and body, cinched with a worn brown leather belt, with dull red collar tabs and a small red star on the cap. The cloth is clean but worn, with one neat square patch on the left sleeve, loose puttees, and a brass bugle hanging from a frayed olive canvas strap across his chest. Shoulders slightly narrow, posture upright but hesitant. Historically plausible 1930s Chinese Red Army uniform, no weapon.',
+    avoid: 'adult man, older face, muscular build, modern clothing, fantasy armor, red scarf, extra people, rifle, pistol, sword, text, letters, watermark, glossy anime eyes, smooth airbrushed shading, bright saturated colors, clean new uniform'
+  },
+  xiaoman_huining: {
+    subject: 'half-body bust portrait of one seventeen-year-old Chinese Red Army bugler after two years on the Long March',
+    name: 'Xiaoman, at the Huining rendezvous',
+    role: 'seventeen-year-old bugle leader of the Red Army, autumn 1936',
+    look: 'a seventeen-year-old Chinese young man, still lean and slightly built but taller and more weathered than a boy, gaunt cheeks, clear steady eyes, short black hair under a faded, repaired octagonal Red Army cap with a dull red star. He wears a worn grey-green Red Army tunic that now fits him, with faded red collar tabs, a scuffed leather belt, one repaired tear at the shoulder, dust and faint mud stains on the cloth, and a brass bugle hanging from a worn strap across his chest, its metal dented but polished. Posture straight and calm, hands resting naturally. Historically plausible 1930s Chinese Red Army uniform, no weapon.',
+    avoid: 'child face, adult soldier in his twenties, muscular build, victory medal, modern insignia, modern clothing, fantasy armor, extra people, rifle, pistol, sword, text, letters, watermark, glossy anime eyes, smooth airbrushed shading, bright saturated colors, clean new uniform'
   }
 };
 
@@ -140,7 +155,7 @@ function promptFor(id, face) {
     'game set in 1934-1936 China.',
     '',
     sp
-      ? 'SUBJECT: head-to-waist portrait of one captured Nationalist soldier from the Long March.'
+      ? 'SUBJECT: ' + (sp.subject || 'head-to-waist portrait of one Chinese Red Army figure from the Long March') + '.'
       : 'SUBJECT: half-body bust portrait of one Chinese Red Army figure from the Long March.',
     'Name: ' + (sp ? sp.name : c.name) + '. Role: ' + (sp ? sp.role : c.role) + '.',
     'Appearance: ' + look.replace(/\.$/, '') + '.',
