@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var G = (typeof window !== 'undefined') ? window : globalThis;
-  var GEO = G.GEO, P = GEO.P;
+  var GEO = G.GEO, P = GEO.P, R = P.ramp, A = GEO.alpha;
   var ART = G.ART = G.ART || {};
   ART.scenes = ART.scenes || {};
   var W = 1920, H = 1080;
@@ -162,4 +162,102 @@
     return GEO.doc(W, H, s.join(''));
   };
 
+  /* ------------------------------------------------------- 乌江·江界河强渡 */
+  function wjRaft(cx, cy, L, color, seed) {
+    var s = GEO.raft(cx, cy, L, color, seed);
+    var rng = GEO.RNG(seed + '-p'), i;
+    for (i = 0; i < 6; i++) {
+      var px = cx - L * 0.34 + i * L * 0.135;
+      var fy = cy - L * 0.30 + (i % 3) * 4;
+      s += GEO.silhouette(px, fy, L * 0.52 + (i % 2) * 10, R(P.uniform, 0.26), rng, 0.32, 'cap');
+    }
+    for (i = 0; i < 3; i++) {
+      s += GEO.ln(cx - L * 0.30 + i * L * 0.26, cy - L * 0.18, cx - L * 0.42 + i * L * 0.30, cy + 26, R(P.wood, 0.30), { sw: 3.4, cap: 'round' });
+    }
+    return s;
+  }
+  function wjGlow(cx, cy, r, color, op, tag) {
+    var id = 'wjg_' + (tag || 'x') + Math.round(cx);
+    return GEO.defs(GEO.radialGrad(id, [[0, GEO.alpha(color, op)], [0.45, GEO.alpha(color, op * 0.34)], [1, GEO.alpha(color, 0)]])) +
+      GEO.circle(cx, cy, r, 'url(#' + id + ')');
+  }
+  function wjSplash(cx, cy, h, seed) {
+    var rng = GEO.RNG(seed || 'spl'), s = '', i;
+    s += GEO.poly([[cx - h * 0.09, cy], [cx + h * 0.09, cy], [cx + h * 0.13, cy - h * 0.58], [cx, cy - h],
+      [cx - h * 0.13, cy - h * 0.58]], A('#e9f2f4', 0.60), {});
+    s += GEO.poly([[cx - h * 0.04, cy], [cx + h * 0.04, cy], [cx + h * 0.05, cy - h * 0.52], [cx, cy - h * 0.78],
+      [cx - h * 0.05, cy - h * 0.52]], A('#f7fbfc', 0.48), {});
+    for (i = 0; i < 8; i++) {
+      s += GEO.circle(cx + rng.range(-h * 0.20, h * 0.20), cy - h * rng.range(0.72, 1.24), rng.range(2, 6),
+        A('#eef6f7', 0.62), {});
+    }
+    return s;
+  }
+
+  ART.scenes['bg_wujiang'] = function () {
+    var s = [], rng = GEO.RNG('wj'), i;
+    s.push(GEO.sky(W, H, ['#8d9aa8', '#b9bdbd', '#ddd6c6'], { horizon: H * 0.18 }));
+    s.push(GEO.cloudBank(W, H * 0.12, '#d8d4c8', { seed: 'wj-cl', count: 8, opacity: 0.34 }));
+    /* 对岸一线灰白的峡谷 */
+    s.push(GEO.mountainRange(W, H * 0.195, R(P.rock, 0.22), { amp: 110, segs: 11, seed: 'wj-ridge', grad: '#7f8896' }));
+    s.push(GEO.cliffWall(180, 1740, H * 0.170, H * 0.560, R(P.rock, 0.26), { seed: 'wj-far', cols: 15 }));
+    /* 近岸两侧的绝壁，把峡谷夹成一线 */
+    s.push(GEO.cliffWall(-80, 430, H * 0.040, H + 40, R(P.rock, 0.18), { seed: 'wj-left', cols: 8 }));
+    s.push(GEO.cliffWall(1490, 2000, H * 0.040, H + 40, R(P.rock, 0.14), { seed: 'wj-right', cols: 8 }));
+    for (i = 0; i < 26; i++) {
+      var side = i % 2 ? 1 : -1;
+      var bx = side > 0 ? rng.range(1500, 1920) : rng.range(-40, 420);
+      var by = rng.range(H * 0.06, H * 0.96);
+      s.push(GEO.facet([[bx, by], [bx + side * rng.range(30, 110), by + rng.range(-24, 24)],
+        [bx + side * rng.range(24, 96), by + rng.range(38, 120)]],
+        GEO.mul(R(P.rock, 0.22), 0.80 + rng() * 0.42), { light: 0.10, hl: 0.30, dark: 0.10, dl: 0.26, sw: 0.8 }));
+    }
+    /* 青黑色的急流 */
+    s.push(GEO.waterBand(W, H * 0.500, H * 0.900, [R(P.water, 0.04), R(P.water, 0.16), R(P.water, 0.34)], { seed: 'wj-w', streaks: 300 }));
+    for (i = 0; i < 90; i++) {
+      var wx = rng.range(0, W), wy = rng.range(H * 0.52, H * 0.89);
+      s.push(GEO.poly([[wx, wy], [wx + rng.range(30, 140), wy], [wx + rng.range(20, 120), wy + 4], [wx - 10, wy + 4]],
+        '#e4eef2', { opacity: rng.range(0.18, 0.52) }));
+    }
+    /* 横过峡谷的竹缆 */
+    s.push(GEO.pth('M 400 ' + (H * 0.500) + ' Q ' + (W * 0.5) + ' ' + (H * 0.585) + ' 1520 ' + (H * 0.470),
+      'none', { stroke: A('#6b5a3d', 0.78), sw: 5 }));
+    s.push(GEO.pth('M 400 ' + (H * 0.508) + ' Q ' + (W * 0.5) + ' ' + (H * 0.594) + ' 1520 ' + (H * 0.478),
+      'none', { stroke: A('#4a3d2b', 0.45), sw: 2 }));
+    /* 对岸崖根的碉堡、战壕与枪口火光 */
+    s.push(GEO.groundBand(W, H * 0.455, H * 0.535, GEO.mix(R(P.earth, 0.30), '#5b5547', 0.32), { seed: 'wj-farbank', cols: 13, op: 0.82 }));
+    s.push(GEO.bunker(1348, H * 0.442, 250, 136, R(P.concrete, 0.24)));
+    for (i = 0; i < 5; i++) {
+      var fx = 1250 + i * 58, fy = H * (0.468 + (i % 2) * 0.008);
+      s.push(GEO.poly([[fx, fy], [fx + 28, fy - 12], [fx + 12, fy + 8]], '#f0b463', { opacity: 0.95 }));
+      s.push(GEO.poly([[fx + 4, fy - 2], [fx + 22, fy - 9], [fx + 12, fy + 3]], '#fbe0a6', { opacity: 0.9 }));
+    }
+    s.push(wjGlow(1390, H * 0.455, 320, '#e09a48', 0.18, 'wj-far'));
+    s.push(GEO.smokePlume(1390, H * 0.360, 330, A('#b9b3a7', 0.30), 'wj-smk'));
+    /* 三只竹排载着战士冲向对岸 */
+    s.push(wjSplash(530, H * 0.700, 130, 'wj-sp1'));
+    s.push(wjSplash(760, H * 0.778, 150, 'wj-sp2'));
+    s.push(wjSplash(1120, H * 0.632, 118, 'wj-sp3'));
+    s.push(wjSplash(1280, H * 0.735, 106, 'wj-sp4'));
+    s.push(wjRaft(620, H * 0.708, 190, R(P.bamboo, 0.34), 'wj-r1'));
+    s.push(wjRaft(930, H * 0.782, 210, R(P.bamboo, 0.30), 'wj-r2'));
+    s.push(wjRaft(1180, H * 0.650, 170, R(P.bamboo, 0.38), 'wj-r3'));
+    /* 近岸窄石滩：待渡的战士与叠放的竹排 */
+    s.push(GEO.groundBand(W, H * 0.865, H + 30, R(P.rockWarm, 0.24), { seed: 'wj-beach', cols: 14, rows: 5 }));
+    for (i = 0; i < 22; i++) {
+      s.push(boulder(rng.range(-40, W + 40), rng.range(H * 0.880, H + 20), rng.range(18, 62),
+        GEO.mul(R(P.rock, 0.36), 0.78 + rng() * 0.50), 'wjb' + i));
+    }
+    s.push(GEO.raft(300, H * 0.940, 230, R(P.bamboo, 0.28), 'wj-st1'));
+    s.push(GEO.raft(430, H * 0.958, 230, R(P.bamboo, 0.24), 'wj-st2'));
+    s.push(GEO.raft(1570, H * 0.942, 220, R(P.bamboo, 0.26), 'wj-st3'));
+    s.push(GEO.crowd(18, { x0: 40, x1: 700, y0: H * 0.870, y1: H * 0.995, h: 250, color: R(P.uniform, 0.26), seed: 'wj-c1', opacity: 0.96, hat: 'cap' }));
+    s.push(GEO.crowd(12, { x0: 1240, x1: 1900, y0: H * 0.872, y1: H * 0.995, h: 250, color: R(P.uniform, 0.24), seed: 'wj-c2', opacity: 0.96, hat: 'cap' }));
+    /* 岩缝里的冬季枯草 */
+    s.push(GEO.shrubRow(W, H * 0.860, R(P.grassDry, 0.30), 'wj-shrub', 28, 24));
+    s.push(GEO.grassTufts(W, H * 0.855, H * 0.980, R(P.grassDry, 0.28), 'wj-grass', 180));
+    s.push(GEO.mistBand(W, H * 0.495, 130, '#c7cdd0', { op: 0.26 }));
+    s.push(GEO.vignette(W, H, 0.52, '#0c1118'));
+    return GEO.doc(W, H, s.join(''));
+  };
 })();

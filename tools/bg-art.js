@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* ==========================================================================
- * tools/bg-art.js —— 生成「场景背景」整屏位图（把 30 个 bg_* 从程序化 SVG 换成 AI 出图）
+ * tools/bg-art.js —— 生成「场景背景」整屏位图（把 42 个 bg_* 从程序化 SVG 换成 AI 出图）
  *
  *   node tools/bg-art.js --list                        # 看 id / 章节 / 提示词是否已填
  *   node tools/bg-art.js --only bg_luding              # 生成一张
  *   node tools/bg-art.js --ch ch15 --concurrency 2     # 生成一章的场景
- *   node tools/bg-art.js --all --concurrency 4         # 全部 30 张（跳过 svgOnly 的四张）
+ *   node tools/bg-art.js --all --concurrency 4         # 全部 42 张（跳过 svgOnly 的四张）
  *   node tools/bg-art.js --only bg_dadu --provider gugu    # 换额度池（图像模型只有 Neko 组有）
  *   node tools/bg-art.js --only bg_dadu --dry-run      # 只打印最终提示词，不发请求
  *   node tools/bg-art.js --only bg_dadu --extra "add drifting smoke" --tag b
@@ -15,7 +15,7 @@
  *      → 自动跑 python tools/bg-post.py 烘焙成 assets/generated/bg/{id}.png
  *
  * 引擎侧的回退链：bg/{id}.png（本工具产出）→ bg/{id}.svg（art/scenes*.js 烘焙的矢量兜底）。
- * 因此本工具产不出图也不会让游戏黑屏，但 tools/check.js 会要求 30 张场景背景都有位图。
+ * 因此本工具产不出图也不会让游戏黑屏，但 tools/check.js 会要求 42 张场景背景都有位图。
  *
  * 密钥从 cc-switch 数据库读取，不落盘、不打印。
  * ========================================================================== */

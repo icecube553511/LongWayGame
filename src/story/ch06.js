@@ -206,7 +206,7 @@
       { t: 'set', var: 'hope', op: '+=', value: 5 },
 
       { t: 'title', text: '元月一日 · 乌江边上' },
-      { t: 'bg', id: 'bg_camp_fire', fx: 'dissolve', ms: 800 },
+      { t: 'bg', id: 'bg_houchang_street', fx: 'dissolve', ms: 800 },
       { t: 'narr', text: '晚上，宣传队在镇口的空地上搭了个台子演戏。' },
       { t: 'narr', text: '戏很短，演的是一个长工被地主逼租、最后参加了红军。' },
       { t: 'narr', text: '演长工的是个十七岁的宣传员，戏服是用被单改的。' },
@@ -366,7 +366,7 @@
       ] },
 
       { t: 'title', text: '元月三日 · 强渡乌江' },
-      { t: 'bg', id: 'bg_jinsha', fx: 'dissolve', ms: 1100 },
+      { t: 'bg', id: 'bg_wujiang', fx: 'dissolve', ms: 1100 },
       { t: 'narr', text: '元月三日，红军在江界河渡口强渡乌江。' },
       { t: 'narr', text: '第一批过江的人乘竹排，在敌人的炮火下冲上对岸。' },
       { t: 'sfx', id: 'gunfire' },

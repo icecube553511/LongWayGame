@@ -24,7 +24,6 @@
       { t: 'hide', who: 'xiaoman' },
 
       { t: 'title', text: '一九三六年十月 · 会宁' },
-      { t: 'bg', id: 'bg_huining', fx: 'fade', ms: 1200 },
       { t: 'narr', text: '十月，甘肃会宁。' },
       { t: 'narr', text: '这是一座土城。城墙是夯土打的，城门上有一座两层的小楼，楼顶长着草。' },
       { t: 'narr', text: '红一方面军的人先到了。他们把城里的房子腾出来一半，把街扫干净，把水缸挑满。' },
@@ -139,7 +138,7 @@
       ] },
 
       { t: 'title', text: '十月十日 · 文庙大成殿' },
-      { t: 'bg', id: 'bg_council_hall', fx: 'dissolve', ms: 1000 },
+      { t: 'bg', id: 'bg_huining_confucian_temple', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '会宁文庙的大成殿前，摆了几张桌子。' },
       { t: 'narr', text: '这是会师联欢大会。' },
       { t: 'narr', text: '桌上放着两封电报和一封贺电。读贺电的时候，底下的人坐着，站着，蹲着，把整个院子填满了。' },
@@ -183,7 +182,7 @@
       { t: 'hide', who: 'zhang_guotao' },
 
       { t: 'title', text: '十月二十二日 · 将台堡' },
-      { t: 'bg', id: 'bg_huining', fx: 'dissolve', ms: 1000 },
+      { t: 'bg', id: 'bg_jiangtaibao', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '十月二十二日，在将台堡，红二方面军与红一方面军会师。' },
       { t: 'narr', text: '红二方面军走的路最长：从湖南桑植出发，走了整整一年，一万五千里。' },
       { t: 'narr', text: '他们到的时候，队伍已经走得只剩下骨头和眼睛。' },

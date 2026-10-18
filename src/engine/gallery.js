@@ -14,7 +14,19 @@
     bg_luding: '泸定桥', bg_snow_mountain: '夹金山', bg_maogong: '懋功会师', bg_grassland: '松潘草地',
     bg_lazikou: '腊子口', bg_hadapu: '哈达铺', bg_wuqi: '吴起镇', bg_huining: '会宁会师',
     bg_yanan_cave: '延安窑洞', bg_rain_march: '雨中行军', bg_camp_fire: '篝火夜营',
-    bg_map_table: '指挥部 · 地图桌', bg_stretcher: '担架队'
+    bg_map_table: '指挥部 · 地图桌', bg_stretcher: '担架队',
+    bg_houchang_street: '猴场镇口',
+    bg_wujiang: '江界河强渡乌江',
+    bg_zunyi_street: '遵义街头',
+    bg_mianning_yamen: '冕宁县政府·土牢',
+    bg_lazikou_cliff_night: '夜攀腊子口绝壁',
+    bg_gannan_loess: '甘南黄土坡',
+    bg_hadapu_school: '哈达铺读报会议',
+    bg_bangluo_school: '榜罗镇小学会议',
+    bg_huining_confucian_temple: '会宁文庙大成殿',
+    bg_jiangtaibao: '将台堡会师',
+    bg_air_raid_paddy: '敌机 · 开阔稻田',
+    bg_liupan_mountain: '六盘山',
   };
   var BG_ORDER = Object.keys(BG_LABEL);
   /* 插画（重要事件 CG）的清单一律从 window.ART.cgList 来（src/data/cg.js）：

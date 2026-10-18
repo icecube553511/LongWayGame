@@ -67,7 +67,19 @@ const BGS = [
   'bg_zunyi', 'bg_chishui', 'bg_tucheng', 'bg_loushanguan', 'bg_jinsha',
   'bg_yihai', 'bg_dadu', 'bg_luding', 'bg_snow_mountain', 'bg_maogong',
   'bg_grassland', 'bg_lazikou', 'bg_hadapu', 'bg_wuqi', 'bg_huining',
-  'bg_yanan_cave', 'bg_rain_march', 'bg_camp_fire', 'bg_map_table', 'bg_stretcher'
+  'bg_yanan_cave', 'bg_rain_march', 'bg_camp_fire', 'bg_map_table', 'bg_stretcher',
+  'bg_houchang_street',
+  'bg_wujiang',
+  'bg_zunyi_street',
+  'bg_mianning_yamen',
+  'bg_lazikou_cliff_night',
+  'bg_gannan_loess',
+  'bg_hadapu_school',
+  'bg_bangluo_school',
+  'bg_huining_confucian_temple',
+  'bg_jiangtaibao',
+  'bg_air_raid_paddy',
+  'bg_liupan_mountain'
   /* 第三章脚山铺的「三发子弹」叙事画面 + 全黑（画在 art/scenes_bullets.js） */
   , 'bg_bullets_3', 'bg_bullets_2', 'bg_bullets_1', 'bg_black'
 ];

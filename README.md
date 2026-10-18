@@ -36,12 +36,12 @@ art/                        美术：绘制库 + 素材定义（构建期使用�
   geosvg.js                 立体几何 SVG 渲染库（冻结）
   palette.js                配色（冻结）
   portraits_root.js         35 人立绘设计表
-  scenes.js                 30 个背景
+  scenes.js                 42 个背景
   scenes_*.js               背景分册（按地区）
 
 assets/generated/           烘焙产物（游戏实际读取的图片）
-  bg/     30 张背景   1920×1080
-          · bg_*.png   AI 出图后烘焙（首选）—— 30 张场景背景，逐条对应 src/data/bgart.js 的提示词
+  bg/     42 张背景   1920×1080
+          · bg_*.png   AI 出图后烘焙（首选）—— 42 张场景背景，逐条对应 src/data/bgart.js 的提示词
           · bg_*.svg   程序化背景（兜底，PNG 缺失时自动回退；另 4 张叙事画面只用 SVG）
   chars/  立绘 600×900 透明
           · {id}_{face}.png  AI 生成（首选）—— 174 张，覆盖剧本实际用到的全部 164 个
@@ -82,7 +82,7 @@ docs/                       技术契约、剧本圣经、美术总纲
 | `python tools/neko-post.py` | 把原始图抠掉洋红底、缩放到 600×900 透明 PNG → `assets/generated/chars/` |
 | `node tools/cg-art.js --list` | 列出**重要事件插画（CG）**的 id / 优先级 / 提示词是否已填（清单在 `src/data/cg.js`） |
 | `node tools/cg-art.js --all-p0 --concurrency 2` | 生成全剧 P0 插画的原始图 → `tmp/cg-raw/`（自动接上烘焙）。`--ch ch15` 整章、`--only cg_luding_bridge` 单张、`--dry-run` 只看提示词、`--provider gugu` 换额度池 |
-| `node tools/bg-art.js --all --concurrency 4` | 生成 **30 张场景背景**的整屏位图（提示词在 `src/data/bgart.js`）→ `tmp/bg-raw/`（自动接上烘焙）。`--list` 看清单、`--only bg_luding` 单张、`--ch ch15` 一章、`--force` 重出、`--dry-run` 只看提示词；标了 `svgOnly` 的 4 张叙事画面自动跳过 |
+| `node tools/bg-art.js --all --concurrency 4` | 生成 **42 张场景背景**的整屏位图（提示词在 `src/data/bgart.js`）→ `tmp/bg-raw/`（自动接上烘焙）。`--list` 看清单、`--only bg_luding` 单张、`--ch ch15` 一章、`--force` 重出、`--dry-run` 只看提示词；标了 `svgOnly` 的 4 张叙事画面自动跳过 |
 | `python tools/bg-post.py --all` | 把 `tmp/bg-raw/` 的原始图裁成 16:9、缩到 1920×1080、按立体几何调色并压上暗角（**不压黑边与金框**）→ `assets/generated/bg/<id>.png` |
 | `python tools/bg-judge.py --all` | 用 **Gugu-gpt-QQ 分组**的视觉模型逐张核对背景：必现元素在不在、群像是不是不同的人、有没有画上文字 → `tmp/bg/review/*.md`（给人复核的初判） |
 | `python tools/cg-post.py --all` | 把 `tmp/cg-raw/` 的原始图裁成 16:9、缩到 1920×1080、按立体几何调色并压上电影画框 → `assets/generated/cg/<id>.png` |
@@ -118,8 +118,8 @@ docs/                       技术契约、剧本圣经、美术总纲
 - **二十章**，每章正文 ≥3000 汉字、≥90 个分镜步、≥2 个选择、≥3 条史料档案。
 - **35 个角色**：23 位历史人物 + 8 位贯穿全剧的虚构人物（小满、李铁柱、何晓梅、
   郭大娘、石柱、阿月、吴老六、三娃）+ 4 组群众。
-- **30 个背景**、**280 张立绘**（每人 8 种表情）。
-  30 张背景的**画面本身是 AI 出的 1920×1080 整屏位图**（`assets/generated/bg/bg_*.png`，
+- **42 个背景**、**280 张立绘**（每人 8 种表情）。
+  42 张背景的**画面本身是 AI 出的 1920×1080 整屏位图**（`assets/generated/bg/bg_*.png`，
   2026-10-16 起由 `tools/bg-art.js` + `tools/bg-post.py` 产出，清单在 `src/data/bgart.js`）；
   同名的程序化 SVG 背景保留为兜底，引擎按 位图 → 矢量 逐级回退。工程说明见 `docs/BG_DESIGN.md`。
   其中 `bg_bullets_3/2/1`（每人三发）与 `bg_black` 这四张叙事画面**继续用程序化 SVG**：
@@ -173,7 +173,7 @@ docs/                       技术契约、剧本圣经、美术总纲
 | `docs/SPEC.md` | 技术契约：目录、剧本 DSL、id 表、验收规则（**唯一契约来源**） |
 | `docs/PRODUCTION_SPEC.md` | **制作规范总纲**：资产管线、提示词纪律、体积档、抠底、评审方法、git 纪律、事故教训、契约同步清单 |
 | `docs/STORY_BIBLE.md` | 二十章史实主线 + 人物设定表 + 文风红线 |
-| `docs/ART_DIRECTION.md` | 立体几何美术总纲 + 35 人设计表 + 30 景特征表 |
+| `docs/ART_DIRECTION.md` | 立体几何美术总纲 + 35 人设计表 + 42 景特征表 |
 | `docs/ENGINE_CONTRACT.md` | 引擎 DOM 与 API 契约 |
 
 ---

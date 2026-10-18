@@ -441,7 +441,105 @@
         'stretchers carrying the wounded and villagers watching from the side'],
       crowd: 'thousands of soldiers of two armies packing the ground in front of the gate, mixed with stretcher parties and villagers',
       avoid: ['modern city', 'vehicles', 'aircraft', 'concrete buildings']
-    }
+    },
+
+    /* ================= 2026-10 剧情换景补画：十二张新场景 ================= */
+    {
+      id: 'bg_houchang_street', ch: 'ch06', name: '猴场镇口',
+      prompt_en: 'The open ground at the entrance of a small town in Guizhou on a cold January evening in 1935. A low stone platform serves as a makeshift stage at one side of the square, with a rough cloth backdrop and two oil lamps hanging at its corners throwing the only warm light. On the stage a young propaganda soldier in a costume cut from a bedsheet plays a long-term labourer, while a stout landlord in a padded gown is made to sit at the edge of the platform. A crowd of villagers in patched cotton jackets stands in the thin snow watching, some with children on their shoulders, an old woman wiping her eyes. Behind them are mud-brick houses with dark tile roofs, a wooden town gate and bare trees under a deep blue winter sky.',
+      prompt_cn: '一九三五年一月，贵州猴场镇口，寒冷的傍晚。广场一侧用矮石台搭了个戏台，台后挂一块粗布幕，台角吊着两盏油灯，这是画面里唯一的暖光。台上一个年轻宣传员穿着用被单改的戏服演长工，一个穿棉袍的胖老财被按在台边坐着。台下站满穿补丁棉袄的乡亲，薄雪盖着地面，有人把孩子扛在肩上，一个老妇人正在抹眼泪。他们身后是土坯墙、黑瓦顶的房屋、一座木镇门和光秃的树，天是深蓝的冬夜。',
+      must: ['low stone platform stage with a rough cloth backdrop and two oil lamps', 'young propaganda soldier in a bedsheet costume playing a labourer on stage', 'stout landlord in a padded gown seated at the edge of the platform', 'crowd of villagers in patched cotton jackets standing in thin snow', 'mud-brick houses, a wooden town gate and bare trees behind the square'],
+      crowd: 'villagers of different ages in patched padded jackets, some carrying children, an old woman wiping her eyes',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'modern stage lighting', 'electric lights']
+    },
+    {
+      id: 'bg_wujiang', ch: 'ch06', name: '江界河强渡乌江',
+      prompt_en: 'The Jiangjie River crossing on the Wu River in Guizhou at dawn in early January 1935, seen from the near bank across a deep gorge. Sheer dark cliffs drop on both sides into a fast black-green river, and three bamboo rafts crowded with soldiers in grey-green uniforms are poling and paddling toward the far bank. Water columns from falling shells rise around the rafts, muzzle flashes and powder smoke mark the enemy blockhouse and trenches on the far cliff, and a woven bamboo cable runs across the gorge. The near bank is a narrow stone beach crowded with waiting soldiers and stacked rafts, with bare winter scrub on the rocks and a pale cold sky above the gorge.',
+      prompt_cn: '一九三五年一月初，贵州江界河渡口，清晨，从近岸看整条乌江峡谷。两岸陡直的深色崖壁落进湍急的青黑色江水，三只竹排载满穿灰绿军装的战士，正撑着竹竿向对岸冲。竹排周围竖起炮弹落水的白色水柱，对岸崖根处的碉堡和战壕闪着枪口火光、腾着硝烟，一条竹缆横过峡谷。近岸是一片窄石滩，挤着待渡的战士和叠放的竹排，岩石上只有冬天的枯草，峡谷上方是一线灰白的冷天。',
+      must: ['deep narrow gorge with sheer dark cliffs on both banks', 'fast black-green river filling the gorge floor', 'three bamboo rafts crowded with soldiers crossing under fire', 'shell splashes around the rafts and muzzle flashes from the far bank', 'narrow stone beach on the near bank with waiting soldiers and stacked rafts'],
+      crowd: 'soldiers packed on the bamboo rafts and a column waiting on the near stone beach',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'modern bridge', 'motor road']
+    },
+    {
+      id: 'bg_zunyi_street', ch: 'ch07', name: '遵义街头',
+      prompt_en: 'A busy old street in Zunyi, Guizhou, in January 1935, seen along its length in clear winter daylight. Two-storey timber shopfronts with dark tiled roofs and whitewashed walls line a stone-paved street: a medicine shop with a wall of small wooden drawers, a cloth shop with bolts of indigo and grey fabric stacked in its doorway, a rice shop with open sacks, and a barber stall with a basin and a stool under a cloth awning. Red paper lanterns hang under the eaves, all of them blank, and townspeople in padded cotton coats bargain with soldiers in faded grey-green uniforms. Porters with carrying poles and baskets fill the middle distance, and low hills close the far end of the street.',
+      prompt_cn: '一九三五年一月，贵州遵义，清亮的冬日，顺着街看清整条老街。石板街两边是两层木结构铺面，黑瓦顶、白粉墙：药铺里有一整面小木抽屉的药柜，布店门口堆着一匹匹靛蓝和灰色的布，米行的口袋敞着口，剃头摊在布棚下摆着一张凳子和一只铜盆。屋檐下挂着红纸灯笼，灯笼全是空白的；穿棉袍的市民正和穿褪色灰绿军装的战士讨价还价。中景里有挑担子的脚夫和提篮的人，街的远端是一列低矮的山。',
+      must: ['stone-paved street lined with two-storey timber shopfronts', 'medicine shop with a wall of small wooden drawers', 'cloth shop with bolts of indigo and grey fabric and a rice shop with open sacks', 'barber stall with a basin and stool under a cloth awning', 'red paper lanterns under the eaves left blank and unreadable'],
+      crowd: 'townspeople in padded coats bargaining with soldiers, porters with carrying poles and baskets',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'motor vehicles', 'electric wires']
+    },
+    {
+      id: 'bg_mianning_yamen', ch: 'ch13', name: '冕宁县政府·土牢',
+      prompt_en: 'The courtyard of a small county government office in Mianning, Sichuan, in May 1935, seen from the broken main gate. A single row of low tile-roofed timber offices faces a stone-paved courtyard, and the heavy wooden gate hangs splintered and forced open. Along the far side are three low earthen jail cells with iron chains and heavy padlocks on their doors, one door standing open to show wet straw on the floor, iron shackles on the wall, a wooden yoke and a small barred window. Puddles and a few gnawed corn cobs lie against the cell wall, and a group of released Yi prisoners in dark homespun clothing stands in the courtyard, an old man clutching a stone.',
+      prompt_cn: '一九三五年五月，四川冕宁，从小衙门被砸开的大门往里看县政府院子。一排低矮的瓦顶木构办公房围着一块石板院坝，厚重的木门裂开、歪挂在门框上。院子对面是三间低矮的土牢，牢门上着铁链和大锁，其中一扇敞着，能看见地上的湿稻草、墙上的铁镣、一副木枷和一扇很小的带栏木窗。牢墙根积着水，水里泡着几根啃剩的玉米芯；院里站着一群被放出来的彝族百姓，穿着深色土布衣服，一个老人抱着一块石头。',
+      must: ['low single-storey tile-roofed county office row around a stone courtyard', 'splintered wooden gate forced open', 'three low earthen jail cells with iron chains and padlocks', 'open cell showing wet straw, iron shackles and a small barred window', 'released Yi prisoners in dark homespun clothing in the courtyard'],
+      crowd: 'released Yi prisoners of different ages standing in the courtyard, an old man holding a stone',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'modern prison bars', 'concrete buildings']
+    },
+    {
+      id: 'bg_lazikou_cliff_night', ch: 'ch18', name: '夜攀腊子口绝壁',
+      prompt_en: 'The cliff above Lazikou Pass in Gansu at night in September 1935, seen from the rock face itself. A sheer wall of dark fractured rock rises out of the frame, broken by narrow ledges, roots and cracks, with a rope made of many grey cloth puttees tied end to end hanging down its face. Several soldiers in faded uniforms cling to the rock and haul themselves upward, one of them reaching for the rope with a rifle slung across his back, while far below at the bottom of the gorge a wooden bridge and the tiny muzzle flashes of the bridgehead are visible. Cold starlight picks out the upper edges of the rock, and the valley is filled with blue-black shadow.',
+      prompt_cn: '一九三五年九月，甘肃腊子口，夜里，从绝壁本身的角度看。整幅画面是一面深色碎裂的陡岩，岩面上只有窄石棱、树根和裂缝，一条由许多条灰色绑腿首尾接成的长绳从上方垂下来。几个穿褪色军装的战士贴在岩壁上往上攀，其中一个背着步枪伸手去抓绳子；峡谷深处能看见一座木桥和桥头极小的枪口火光。清冷的星光只勾出岩石上缘的轮廓，山谷里全是蓝黑的阴影。',
+      must: ['sheer fractured rock wall filling the frame', 'rope made of many cloth puttees tied end to end hanging down the cliff', 'soldiers clinging to the rock and climbing', 'wooden bridge and tiny muzzle flashes far below in the gorge', 'cold starlight on the upper edges with blue-black shadow below'],
+      crowd: 'several climbers spread across the cliff face at different heights',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'daylight', 'moon disc']
+    },
+    {
+      id: 'bg_gannan_loess', ch: 'ch18', name: '甘南黄土坡',
+      prompt_en: 'An open loess plateau in southern Gansu in September 1935, seen from a low ridge in clear morning light. Broad rolling slopes of ochre and pale yellow earth stretch away in wide folds, cut by deep dry gullies, with sparse dry grass, a few bare shrubs and terraced fields on the farther slopes. A long column of soldiers in faded grey-green uniforms winds down a footpath toward the foreground, small at middle distance, and thin morning haze lies in the bottoms of the gullies. There is no town, no gate and no city wall anywhere in the picture, only empty highland and a pale blue sky.',
+      prompt_cn: '一九三五年九月，甘南，清亮的晨光里从一道低梁上看开阔的黄土坡。赭黄和浅黄的土坡一层层铺开，被深深的干沟切开，坡上只有稀疏的枯草、几丛光秃的灌木和远处几块梯田。一长列穿褪色灰绿军装的战士沿一条土路向近处蜿蜒下行，人在中景里很小；沟底浮着薄薄的晨雾。画面里没有镇子、没有城门、也没有城墙，只有空阔的高原和淡蓝的天。',
+      must: ['broad rolling loess slopes in ochre and pale yellow', 'deep dry gullies cutting the plateau', 'sparse dry grass, bare shrubs and terraced fields', 'long column of soldiers winding down a footpath at middle distance', 'empty highland with no town or city wall'],
+      crowd: 'a long column of soldiers descending the footpath, small at middle distance',
+      avoid: ['town', 'city wall', 'gate tower', 'readable characters', 'letter-like marks', 'painted slogans']
+    },
+    {
+      id: 'bg_hadapu_school', ch: 'ch19', name: '哈达铺读报会议',
+      prompt_en: 'The inside of a small village school in Hadapu, Gansu, in September 1935, used as a meeting room in the afternoon. Whitewashed clay walls and a plastered earth floor enclose the room, with paper windows on one side letting in cool daylight and a long blank blackboard on the far wall. An old wooden Eight Immortals table stands in the middle covered with a spread of worn newspapers, their columns of type blurred and unreadable, and four or five men in faded grey-green uniforms and octagonal caps lean over it, one holding a page up to the light. Wooden benches and a few school desks are pushed back against the wall, and an enamel mug and a folded map sit at the table edge.',
+      prompt_cn: '一九三五年九月，甘肃哈达铺，下午，一间被当作会议室的小学教室内部。白灰抹的土墙、夯实的土地面，一侧的纸窗透进冷白的天光，对面墙上是一块长长的空黑板。屋子中间摆着一张旧八仙桌，桌上摊满磨旧的报纸，报纸上的字行模糊、认不出；四五个穿褪色灰绿军装、戴八角帽的人俯在桌边看报，其中一人把一张报纸举到光下。长凳和几张课桌靠墙推着，桌角放着一只搪瓷缸和一张折起的地图。',
+      must: ['whitewashed clay walls and plastered earth floor of a village schoolroom', 'long blank blackboard on the far wall', 'old wooden Eight Immortals table covered with worn newspapers', 'four or five men in grey-green uniforms leaning over the table', 'paper windows letting in cool daylight'],
+      crowd: 'four or five leaders and staff in grey-green uniforms gathered around the table, of different builds and ages',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'modern classroom furniture', 'electric light']
+    },
+    {
+      id: 'bg_bangluo_school', ch: 'ch19', name: '榜罗镇小学会议',
+      prompt_en: 'The inside of a village primary school in Bangluo, Gansu, in September 1935, during a short meeting in daylight. Rough whitewashed walls and a packed earth floor enclose a plain room with paper windows and a long blank blackboard on the back wall, its surface wiped clean. Two long dark wooden tables with benches are pushed together in the middle, and a group of men in faded grey-green uniforms sit along them, one standing at the head of the table speaking with one hand raised. A water jug, a few folded papers and a pencil lie on the table, and shafts of pale daylight fall across the floor from the windows.',
+      prompt_cn: '一九三五年九月，甘肃榜罗镇，白天，一间乡村小学教室里的短会。粗糙的白灰土墙、夯实的土地面，纸窗透光，后墙是一块抹得干干净净的长黑板。屋子中间拼着两张深色长木桌，周围摆着长凳，一群穿褪色灰绿军装的人沿着桌边坐着，其中一人站在桌首说话，抬起一只手。桌上放着一把水壶、几张折起的纸和一支铅笔，苍白的日光从窗口斜照到地面上。',
+      must: ['rough whitewashed walls and packed earth floor of a village schoolroom', 'long blank blackboard wiped clean', 'two long dark wooden tables with benches pushed together', 'group of men in grey-green uniforms seated along the tables', 'one man standing at the head of the table speaking'],
+      crowd: 'a group of leaders and staff in grey-green uniforms seated on benches, varied in age and build',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'modern classroom', 'electric light']
+    },
+    {
+      id: 'bg_huining_confucian_temple', ch: 'ch20', name: '会宁文庙大成殿',
+      prompt_en: 'The courtyard of the Confucian temple in Huining, Gansu, in October 1936, during the joint forces celebration. A broad hall with a dark tiled roof, red timber columns and closed lattice doors stands at the back of a stone-paved courtyard, and a huge old cypress leans its branches over the roof. The courtyard is packed with soldiers in faded grey-green uniforms and octagonal caps, standing, sitting and crouching, with villagers along the edges. Several plain wooden tables are set in front of the hall, covered with papers and telegrams, and three large red flags on poles rise above the crowd.',
+      prompt_cn: '一九三六年十月，甘肃会宁文庙，会师联欢大会时的院落。院子尽头是一座面阔的大殿，深色瓦顶、红漆木柱、格子门关着，一棵巨大的老柏树把枝子伸到殿顶上方。石板院里挤满穿褪色灰绿军装、戴八角帽的战士，有的站着，有的坐着，有的蹲着，院边站着老乡。殿前摆着几张朴素木桌，桌上放着纸张和电报，三面大红旗从人群中高高竖起。',
+      must: ['broad temple hall with dark tiled roof and red timber columns', 'huge old cypress leaning over the roof', 'stone-paved courtyard packed with soldiers', 'plain wooden tables covered with papers and telegrams', 'three large red flags above the crowd'],
+      crowd: 'hundreds of soldiers and villagers filling the temple courtyard, varied in age, build and wear',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'city gate tower', 'modern buildings']
+    },
+    {
+      id: 'bg_jiangtaibao', ch: 'ch20', name: '将台堡会师',
+      prompt_en: 'A rammed-earth fort village on the loess plateau at Jiangtaibao, Gansu, in October 1936, seen from the open ground inside its earthen walls. Thick ochre rammed-earth walls with a low gate and a few watchtowers enclose a packed dirt yard, and low tile-roofed houses and cave mouths line one side. Two columns of soldiers in faded grey-green uniforms meet in the yard, shaking hands and throwing arms around each other, while a group of village women hands out knitted sweaters and thick wool socks from baskets. Soldiers wrap the new socks around their hands and faces, and bare loess ridges and a pale autumn sky show above the wall.',
+      prompt_cn: '一九三六年十月，甘肃将台堡，从土堡墙内的空地上看这座黄土堡寨。厚厚的赭黄夯土墙围着夯实的土院，墙上有一座矮堡门和几座角楼，院一侧是低矮的瓦房和窑洞口。两列穿褪色灰绿军装的战士在院里会合，握手、互相抱住肩膀；几个乡村妇女从篮子里拿出织好的毛衣和厚毛袜分发。有战士把新毛袜贴在手上和脸上，墙头上方是光秃的黄土梁和淡秋的天。',
+      must: ['thick ochre rammed-earth fort walls with a low gate and watchtowers', 'packed dirt yard inside the fort', 'two columns of soldiers meeting and embracing', 'village women handing out knitted sweaters and wool socks from baskets', 'bare loess ridges above the wall'],
+      crowd: 'two meeting columns of soldiers and village women with baskets of knitted goods, varied in age and build',
+      avoid: ['city gate tower', 'readable characters', 'letter-like marks', 'painted slogans', 'modern buildings']
+    },
+    {
+      id: 'bg_air_raid_paddy', ch: 'ch02', name: '敌机·开阔稻田',
+      prompt_en: 'An open harvested rice paddy in southern China in late October 1934, seen from the muddy field itself under a low overcast sky. Flat flooded paddies stretch to the horizon with only low mud ridges between them, no trees and no ditches anywhere; thin rain falls and every water surface reflects the grey sky. Three dark single-engine biplanes with fixed landing gear fly low across the upper sky, and two tall columns of mud and water rise from bomb strikes in the middle distance among drifting smoke. A score of soldiers in ragged grey-green uniforms lie prone in the muddy water, some with only their heads and backs showing, a few crouching low between the ridges, their straw capes dark with wet.',
+      prompt_cn: '一九三四年十月末，中国南方，一片收割后的开阔稻田，从泥田里平看出去，天低而阴。平坦的积水稻田一直铺到天边，田与田之间只有低矮的泥埂，画面里没有一棵树、也没有一条沟；细雨落着，每片水面都映着灰天。三架深色的单发双翼机固定起落架，低低掠过上方天空；中景里两处炸弹落下，泥水柱高高竖起，周围飘着烟。二十来个穿破烂灰绿军装的战士趴在泥水里，有的只露出头和背，有几个缩在田埂间，身上的蓑衣被雨水浸得发黑。',
+      must: ['flat flooded rice paddies stretching to the horizon with low mud ridges', 'no trees and no ditches in the open field', 'three dark single-engine biplanes flying low overhead', 'tall columns of mud and water from bomb strikes with drifting smoke', 'soldiers lying prone in the muddy water, some only heads and backs showing'],
+      crowd: 'a score of soldiers in ragged grey-green uniforms prone in the paddy mud, varied in pose and distance, a few crouching between the ridges',
+      avoid: ['readable characters', 'letter-like marks', 'painted slogans', 'bamboo forest', 'wooded hills', 'modern aircraft', 'jet aircraft', 'city buildings']
+    },
+    {
+      id: 'bg_liupan_mountain', ch: 'ch19', name: '六盘山',
+      prompt_en: 'The wind-swept ridge of Liupan Mountain in Ningxia in early October 1935, seen along the crest under a high pale blue sky with thin clouds. To the south, range after range of blue-grey mountains recede in layers; to the north, a vast open loess plateau stretches away in pale yellow and ochre. The near ridge is bare dry grassland and broken loess, every tuft of grass bent hard to one side by the wind, with a narrow trodden path running along the crest. A thin line of tiny soldiers in faded grey-green uniforms climbs the ridge with their heads down, and a V formation of wild geese flies south across the open sky.',
+      prompt_cn: '一九三五年十月初，宁夏六盘山，沿着山脊看出去，天高而淡蓝，飘着几缕薄云。南边是一层叠一层的蓝灰色群山，一直退到天边；北边是一整片空旷的黄土高原，泛着浅黄和赭色。近处的山脊是光秃的枯草地和破碎的黄土，每一丛草都被风压向同一侧，山脊上有一条踩出来的窄路。一列穿褪色灰绿军装的细小人影低着头沿山脊上行，天空中一队大雁排成人字向南飞去。',
+      must: ['high pale blue sky with thin clouds', 'layered blue-grey mountain ranges receding to the south', 'vast open pale-yellow loess plateau to the north', 'bare dry grassland and broken loess on the near ridge, grass bent by wind', 'a V formation of wild geese flying south', 'a thin line of tiny soldiers climbing the ridge'],
+      crowd: 'a thin line of tiny soldiers in faded grey-green uniforms climbing the ridge, varied in distance and pose',
+      avoid: ['bamboo', 'green terraces', 'snow', 'readable characters', 'letter-like marks', 'painted slogans', 'modern buildings', 'electric wires']
+    },
   ];
 
   G.ART.bgArtList = BG_ART;
