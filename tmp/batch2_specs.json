@@ -1,0 +1,287 @@
+[
+  {
+    "chapter": 6,
+    "character": "xiaoman",
+    "filename": "xiaoman_ch06.svg",
+    "dirt": 15,
+    "injury": "none",
+    "expression": "calm",
+    "props": [
+      "bugle_on_back"
+    ],
+    "notes": "猴场跨年，新年期待，军纪严肃",
+    "pose": "standing",
+    "wear": 52,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": -5
+    }
+  },
+  {
+    "chapter": 6,
+    "character": "wu_laoliu",
+    "filename": "wu_laoliu_ch06.svg",
+    "dirt": 12,
+    "injury": "none",
+    "expression": "calm",
+    "props": [
+      "pipe"
+    ],
+    "notes": "老兵沉稳，接待干部，烟袋闲置",
+    "pose": "standing",
+    "wear": 52,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": 0
+    }
+  },
+  {
+    "chapter": 6,
+    "character": "he_xiaomei",
+    "filename": "he_xiaomei_ch06.svg",
+    "dirt": 14,
+    "injury": "none",
+    "expression": "calm",
+    "props": [
+      "medbox"
+    ],
+    "notes": "民兵医疗岗，准备充足，新年希冀",
+    "pose": "standing",
+    "wear": 52,
+    "head": {
+      "yaw": 2,
+      "roll": 0,
+      "pitch": -3
+    }
+  },
+  {
+    "chapter": 7,
+    "character": "xiaoman",
+    "filename": "xiaoman_ch07.svg",
+    "dirt": 12,
+    "injury": "none",
+    "expression": "hopeful",
+    "props": [
+      "bugle_on_back"
+    ],
+    "notes": "遵义会议转折，补给更新，士气回升",
+    "pose": "standing",
+    "wear": 37,
+    "head": {
+      "yaw": -2,
+      "roll": 0,
+      "pitch": -2
+    }
+  },
+  {
+    "chapter": 7,
+    "character": "wu_laoliu",
+    "filename": "wu_laoliu_ch07.svg",
+    "dirt": 10,
+    "injury": "none",
+    "expression": "thoughtful",
+    "props": [
+      "pipe"
+    ],
+    "notes": "战略调整后，老兵深思熟虑",
+    "pose": "standing",
+    "wear": 37,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": 0
+    }
+  },
+  {
+    "chapter": 7,
+    "character": "he_xiaomei",
+    "filename": "he_xiaomei_ch07.svg",
+    "dirt": 10,
+    "injury": "none",
+    "expression": "hopeful",
+    "props": [
+      "medbox"
+    ],
+    "notes": "补给后精神焕发，医疗物资充实",
+    "pose": "standing",
+    "wear": 37,
+    "head": {
+      "yaw": 1,
+      "roll": 0,
+      "pitch": -1
+    }
+  },
+  {
+    "chapter": 8,
+    "character": "xiaoman",
+    "filename": "xiaoman_ch08.svg",
+    "dirt": 18,
+    "injury": "none",
+    "expression": "worried",
+    "props": [
+      "bugle_on_back"
+    ],
+    "notes": "土城战役，敌情紧张，开始撤退",
+    "pose": "marching",
+    "wear": 42,
+    "head": {
+      "yaw": 3,
+      "roll": 0,
+      "pitch": -4
+    }
+  },
+  {
+    "chapter": 8,
+    "character": "wu_laoliu",
+    "filename": "wu_laoliu_ch08.svg",
+    "dirt": 16,
+    "injury": "none",
+    "expression": "stern",
+    "props": [
+      "pipe"
+    ],
+    "notes": "战役中老兵严肃，指挥有度",
+    "pose": "marching",
+    "wear": 42,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": -2
+    }
+  },
+  {
+    "chapter": 8,
+    "character": "he_xiaomei",
+    "filename": "he_xiaomei_ch08.svg",
+    "dirt": 17,
+    "injury": "none",
+    "expression": "worried",
+    "props": [
+      "medbox"
+    ],
+    "notes": "战斗紧急，医疗准备，脸带忧虑",
+    "pose": "marching",
+    "wear": 42,
+    "head": {
+      "yaw": 2,
+      "roll": 0,
+      "pitch": -5
+    }
+  },
+  {
+    "chapter": 9,
+    "character": "xiaoman",
+    "filename": "xiaoman_ch09.svg",
+    "dirt": 20,
+    "injury": "minor",
+    "expression": "thoughtful",
+    "props": [
+      "bugle_on_back"
+    ],
+    "notes": "扎西整编，第二渡赤水，编制调整",
+    "pose": "standing",
+    "wear": 48,
+    "head": {
+      "yaw": -1,
+      "roll": 0,
+      "pitch": -3
+    }
+  },
+  {
+    "chapter": 9,
+    "character": "wu_laoliu",
+    "filename": "wu_laoliu_ch09.svg",
+    "dirt": 18,
+    "injury": "minor",
+    "expression": "thoughtful",
+    "props": [
+      "pipe"
+    ],
+    "notes": "整编思考，老兵回顾战策",
+    "pose": "standing",
+    "wear": 48,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": 0
+    }
+  },
+  {
+    "chapter": 9,
+    "character": "he_xiaomei",
+    "filename": "he_xiaomei_ch09.svg",
+    "dirt": 19,
+    "injury": "none",
+    "expression": "calm",
+    "props": [
+      "medbox"
+    ],
+    "notes": "整编间隙，医疗休整，备战状态",
+    "pose": "sitting",
+    "wear": 48,
+    "head": {
+      "yaw": 1,
+      "roll": 0,
+      "pitch": -2
+    }
+  },
+  {
+    "chapter": 10,
+    "character": "xiaoman",
+    "filename": "xiaoman_ch10.svg",
+    "dirt": 22,
+    "injury": "none",
+    "expression": "determined",
+    "props": [
+      "bugle_on_back"
+    ],
+    "notes": "娄山关首胜，士气升高，号声荣耀",
+    "pose": "standing",
+    "wear": 55,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": -2
+    }
+  },
+  {
+    "chapter": 10,
+    "character": "wu_laoliu",
+    "filename": "wu_laoliu_ch10.svg",
+    "dirt": 20,
+    "injury": "none",
+    "expression": "smile",
+    "props": [
+      "pipe"
+    ],
+    "notes": "首次大捷，老兵欣慰，烟袋有烟",
+    "pose": "standing",
+    "wear": 55,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": 1
+    }
+  },
+  {
+    "chapter": 10,
+    "character": "he_xiaomei",
+    "filename": "he_xiaomei_ch10.svg",
+    "dirt": 21,
+    "injury": "none",
+    "expression": "determined",
+    "props": [
+      "medbox"
+    ],
+    "notes": "战役胜利，医疗部队士气昂扬",
+    "pose": "standing",
+    "wear": 55,
+    "head": {
+      "yaw": 0,
+      "roll": 0,
+      "pitch": 0
+    }
+  }
+]
