@@ -1,197 +1,229 @@
 [
   {
+    "chapter": 11,
     "character": "xiaoman",
-    "chapter": 11,
-    "filename": "xiaoman_ch11.svg",
-    "wear": 60,
-    "dirt": 25,
-    "injury": "none",
-    "expression": "thoughtful",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": -5, "roll": 0},
-    "notes": "四渡赤水，号管三节刻痕纪念往事"
-  },
-  {
-    "character": "wu_laoliu",
-    "chapter": 11,
-    "filename": "wu_laoliu_ch11.svg",
-    "wear": 60,
-    "dirt": 25,
-    "injury": "none",
-    "expression": "thoughtful",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 0, "pitch": 0, "roll": 0},
-    "notes": "四渡赤水后沉思，老兵风范"
-  },
-  {
-    "character": "he_xiaomei",
-    "chapter": 11,
-    "filename": "he_xiaomei_ch11.svg",
-    "wear": 60,
-    "dirt": 22,
-    "injury": "none",
-    "expression": "hopeful",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -2, "pitch": 0, "roll": 0},
-    "notes": "四渡赤水后带着希望的民兵医护"
-  },
-  {
-    "character": "xiaoman",
-    "chapter": 12,
-    "filename": "xiaoman_ch12.svg",
-    "wear": 50,
-    "dirt": 20,
+    "wear": 15,
+    "dirt": 5,
     "injury": "none",
     "expression": "calm",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 2, "pitch": 0, "roll": 0},
-    "notes": "黔西北补给后，金沙江渡口平静"
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满行军接近大渡河，衣物磨损中度，手持号角，神情专注"
   },
   {
+    "chapter": 11,
     "character": "wu_laoliu",
-    "chapter": 12,
-    "filename": "wu_laoliu_ch12.svg",
-    "wear": 50,
-    "dirt": 20,
+    "wear": 15,
+    "dirt": 5,
     "injury": "none",
     "expression": "calm",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 1, "pitch": 2, "roll": 0},
-    "notes": "补给后神色平和，金沙江渡前"
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六行军途中保持警惕，枪械紧握，神情沉稳"
   },
   {
+    "chapter": 11,
     "character": "he_xiaomei",
-    "chapter": 12,
-    "filename": "he_xiaomei_ch12.svg",
-    "wear": 50,
-    "dirt": 18,
+    "wear": 15,
+    "dirt": 5,
     "injury": "none",
     "expression": "calm",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": 0, "pitch": 1, "roll": 0},
-    "notes": "补给后恢复精神，准备过金沙江"
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹行军中背着药箱，神情专注，准备应对即将到来的挑战"
   },
   {
+    "chapter": 12,
     "character": "xiaoman",
-    "chapter": 13,
-    "filename": "xiaoman_ch13.svg",
-    "wear": 58,
-    "dirt": 23,
+    "wear": 10,
+    "dirt": 6,
     "injury": "none",
-    "expression": "hopeful",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 3, "pitch": -2, "roll": 0},
-    "notes": "彝海结盟后心怀希望的号手"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "黔西北补给后小满精神恢复，衣物略显整洁，神情平静"
   },
   {
+    "chapter": 12,
     "character": "wu_laoliu",
-    "chapter": 13,
-    "filename": "wu_laoliu_ch13.svg",
-    "wear": 58,
-    "dirt": 23,
+    "wear": 10,
+    "dirt": 6,
     "injury": "none",
-    "expression": "smile",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": -1, "pitch": 1, "roll": 0},
-    "notes": "彝海结盟见证者，难得的微笑"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle",
+      "pipe"
+    ],
+    "narrative": "吴老六在补给点休整，手持烟斗，神情平静安详"
   },
   {
+    "chapter": 12,
     "character": "he_xiaomei",
-    "chapter": 13,
-    "filename": "he_xiaomei_ch13.svg",
-    "wear": 58,
-    "dirt": 21,
+    "wear": 10,
+    "dirt": 6,
     "injury": "none",
-    "expression": "hopeful",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": 2, "pitch": 0, "roll": 0},
-    "notes": "彝海结盟后眼中有光的医护"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box",
+      "soup_pot"
+    ],
+    "narrative": "何小妹在补给站忙碌分配物资，手持汤锅，神情平静"
   },
   {
+    "chapter": 13,
     "character": "xiaoman",
-    "chapter": 14,
-    "filename": "xiaoman_ch14.svg",
-    "wear": 65,
-    "dirt": 28,
-    "injury": "minor",
-    "expression": "tense",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": -2, "pitch": -3, "roll": 0},
-    "notes": "强渡大渡河紧张时刻，搪瓷缸给粮"
+    "wear": 25,
+    "dirt": 6,
+    "injury": "bandage",
+    "expression": "desperate",
+    "headTurn": -5,
+    "headTilt": -5,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "大渡河强渡中小满受伤，左臂包扎绷带，神情绝望但坚持吹号"
   },
   {
+    "chapter": 13,
     "character": "wu_laoliu",
-    "chapter": 14,
-    "filename": "wu_laoliu_ch14.svg",
-    "wear": 65,
-    "dirt": 28,
+    "wear": 25,
+    "dirt": 6,
     "injury": "none",
-    "expression": "stern",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 0, "pitch": 0, "roll": 0},
-    "notes": "大渡河前教脚护理，严肃老兵"
+    "expression": "commanding",
+    "headTurn": 0,
+    "headTilt": 5,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六指挥强渡战斗，神情威严命令，枪械紧握"
   },
   {
+    "chapter": 13,
     "character": "he_xiaomei",
-    "chapter": 14,
-    "filename": "he_xiaomei_ch14.svg",
-    "wear": 65,
-    "dirt": 26,
+    "wear": 25,
+    "dirt": 6,
     "injury": "none",
     "expression": "tense",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -2, "pitch": -5, "roll": 0},
-    "notes": "检查李班长手抖，大渡河前紧张"
+    "headTurn": -5,
+    "headTilt": -5,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹在激战中跪姿救治，神情紧张焦虑，药箱打开"
   },
   {
+    "chapter": 14,
     "character": "xiaoman",
-    "chapter": 15,
-    "filename": "xiaoman_ch15.svg",
-    "wear": 72,
-    "dirt": 30,
-    "injury": "minor",
-    "expression": "exhausted",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": -5, "roll": 0},
-    "notes": "泸定桥后疲惫，接过石柱布包信物"
+    "wear": 28,
+    "dirt": 7,
+    "injury": "bandage",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满伤势持续，左臂包扎绷带，行军中神情疲惫但坚持"
   },
   {
+    "chapter": 14,
     "character": "wu_laoliu",
-    "chapter": 15,
-    "filename": "wu_laoliu_ch15.svg",
-    "wear": 72,
-    "dirt": 30,
-    "injury": "minor",
-    "expression": "thoughtful",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 1, "pitch": -2, "roll": 0},
-    "notes": "泸定桥后沉思，老兵依旧坚韧"
+    "wear": 28,
+    "dirt": 7,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六行军中保持警戒，衣物严重磨损，神情沉重"
   },
   {
+    "chapter": 14,
     "character": "he_xiaomei",
+    "wear": 28,
+    "dirt": 7,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹行军中背着药箱，神情疲惫但坚韧，持续照顾伤员"
+  },
+  {
     "chapter": 15,
-    "filename": "he_xiaomei_ch15.svg",
-    "wear": 72,
-    "dirt": 28,
-    "injury": "minor",
+    "character": "xiaoman",
+    "wear": 30,
+    "dirt": 7,
+    "injury": "bandage",
+    "expression": "heroic",
+    "headTurn": 0,
+    "headTilt": 8,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "泸定桥夺桥后小满伤势持续，左臂包扎绷带，神情英勇但精疲力竭"
+  },
+  {
+    "chapter": 15,
+    "character": "wu_laoliu",
+    "wear": 30,
+    "dirt": 7,
+    "injury": "none",
     "expression": "exhausted",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -2, "pitch": -3, "roll": 0},
-    "notes": "班佑剪开脚趾，疲惫但继续前行"
+    "headTurn": 0,
+    "headTilt": -10,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六战斗后精疲力竭，站立姿态，衣物严重磨损"
+  },
+  {
+    "chapter": 15,
+    "character": "he_xiaomei",
+    "wear": 30,
+    "dirt": 7,
+    "injury": "none",
+    "expression": "exhausted",
+    "headTurn": 0,
+    "headTilt": -10,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹战斗后跪姿救治大量伤员，神情精疲力竭，药箱打开"
   }
 ]

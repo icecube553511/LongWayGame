@@ -1,197 +1,230 @@
 [
   {
+    "chapter": 16,
     "character": "xiaoman",
-    "chapter": 16,
-    "filename": "xiaoman_ch16.svg",
-    "wear": 52,
-    "dirt": 22,
-    "injury": "none",
-    "expression": "determined",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": -2, "roll": 0},
-    "notes": "夹金山补给后，号贴胸口御寒"
+    "wear": 10,
+    "dirt": 8,
+    "injury": "bruise",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "甘孜休整后小满伤势愈合，左臂淤青痕迹，衣物整洁，神情平静恢复"
   },
   {
+    "chapter": 16,
     "character": "wu_laoliu",
-    "chapter": 16,
-    "filename": "wu_laoliu_ch16.svg",
-    "wear": 52,
-    "dirt": 22,
+    "wear": 10,
+    "dirt": 8,
     "injury": "none",
-    "expression": "determined",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 2, "pitch": 0, "roll": 0},
-    "notes": "夹金山补给后，老兵重整精神"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle",
+      "pipe"
+    ],
+    "narrative": "吴老六在甘孜休整，手持烟斗，神情平静安详"
   },
   {
+    "chapter": 16,
     "character": "he_xiaomei",
-    "chapter": 16,
-    "filename": "he_xiaomei_ch16.svg",
-    "wear": 52,
-    "dirt": 22,
+    "wear": 10,
+    "dirt": 8,
     "injury": "none",
-    "expression": "determined",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -1, "pitch": 0, "roll": 0},
-    "notes": "夹金山补给后，告诫号会冻住"
+    "expression": "relieved",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box",
+      "soup_pot"
+    ],
+    "narrative": "何小妹在休整站忙碌分配物资，手持汤锅，神情舒缓恢复"
   },
   {
+    "chapter": 17,
     "character": "xiaoman",
-    "chapter": 17,
-    "filename": "xiaoman_ch17.svg",
-    "wear": 85,
-    "dirt": 35,
-    "injury": "minor",
-    "expression": "sad",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": -3, "roll": 0},
-    "notes": "草地背锅前行，铜锅底擦亮李班长"
+    "wear": 5,
+    "dirt": 8,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满进入草地前行军，衣物略显整洁，手持号角，神情平静"
   },
   {
-    "character": "wu_laoliu",
     "chapter": 17,
-    "filename": "wu_laoliu_ch17.svg",
-    "wear": 85,
-    "dirt": 35,
-    "injury": "minor",
+    "character": "wu_laoliu",
+    "wear": 5,
+    "dirt": 8,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六行军中保持警戒，枪械紧握，神情沉稳"
+  },
+  {
+    "chapter": 17,
+    "character": "he_xiaomei",
+    "wear": 5,
+    "dirt": 8,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹行军中背着药箱，神情平静，准备应对草地考验"
+  },
+  {
+    "chapter": 18,
+    "character": "xiaoman",
+    "wear": 15,
+    "dirt": 9,
+    "injury": "none",
+    "expression": "gaunt",
+    "headTurn": 0,
+    "headTilt": -10,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满草地行军中面容憔悴消瘦，衣物磨损，手持号角，神情痛苦"
+  },
+  {
+    "chapter": 18,
+    "character": "wu_laoliu",
+    "wear": 15,
+    "dirt": 9,
+    "injury": "none",
+    "expression": "gaunt",
+    "headTurn": 0,
+    "headTilt": -10,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六草地行军中面容憔悴消瘦，枪械紧握，神情痛苦"
+  },
+  {
+    "chapter": 18,
+    "character": "he_xiaomei",
+    "wear": 15,
+    "dirt": 9,
+    "injury": "none",
     "expression": "exhausted",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 1, "pitch": -2, "roll": 0},
-    "notes": "草地艰难行军，沉默老兵"
+    "headTurn": 0,
+    "headTilt": -10,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹草地行军中虚弱精疲力竭，背着药箱，神情痛苦但坚持"
   },
   {
-    "character": "he_xiaomei",
-    "chapter": 17,
-    "filename": "he_xiaomei_ch17.svg",
-    "wear": 85,
-    "dirt": 35,
-    "injury": "minor",
-    "expression": "sad",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -2, "pitch": -4, "roll": 0},
-    "notes": "草地班佑剪脚趾，哭而不哭"
-  },
-  {
+    "chapter": 19,
     "character": "xiaoman",
-    "chapter": 18,
-    "filename": "xiaoman_ch18.svg",
-    "wear": 88,
-    "dirt": 38,
-    "injury": "minor",
+    "wear": 20,
+    "dirt": 9,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满走出草地后衣物磨损加重，手持号角，神情疲惫但坚毅"
+  },
+  {
+    "chapter": 19,
+    "character": "wu_laoliu",
+    "wear": 20,
+    "dirt": 9,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六走出草地后行军警戒，衣物磨损严重，神情沉重"
+  },
+  {
+    "chapter": 19,
+    "character": "he_xiaomei",
+    "wear": 20,
+    "dirt": 9,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹走出草地后背着药箱行军，神情疲惫但温柔坚韧"
+  },
+  {
+    "chapter": 20,
+    "character": "xiaoman",
+    "wear": 15,
+    "dirt": 10,
+    "injury": "none",
     "expression": "determined",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": 1, "roll": 0},
-    "notes": "腊子口攀壁，试吹号角"
+    "headTurn": 0,
+    "headTilt": 5,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "会师前小满整理衣物，站立姿态，手持号角，神情坚定充满希望"
   },
   {
-    "character": "wu_laoliu",
-    "chapter": 18,
-    "filename": "wu_laoliu_ch18.svg",
-    "wear": 88,
-    "dirt": 38,
-    "injury": "minor",
-    "expression": "worried",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 3, "pitch": 0, "roll": 0},
-    "notes": "腊子口教接绳技巧，与毛对话"
-  },
-  {
-    "character": "he_xiaomei",
-    "chapter": 18,
-    "filename": "he_xiaomei_ch18.svg",
-    "wear": 88,
-    "dirt": 38,
-    "injury": "minor",
-    "expression": "worried",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -1, "pitch": 0, "roll": 0},
-    "notes": "腊子口出场少，医护坚守"
-  },
-  {
-    "character": "xiaoman",
-    "chapter": 19,
-    "filename": "xiaoman_ch19.svg",
-    "wear": 89,
-    "dirt": 36,
-    "injury": "minor",
-    "expression": "hopeful",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": 2, "roll": 0},
-    "notes": "吴起镇号管麻线带旧色，望陕北"
-  },
-  {
-    "character": "wu_laoliu",
-    "chapter": 19,
-    "filename": "wu_laoliu_ch19.svg",
-    "wear": 89,
-    "dirt": 36,
-    "injury": "minor",
-    "expression": "smile",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 2, "pitch": 1, "roll": 0},
-    "notes": "吴起镇难得微笑，报纸有见地"
-  },
-  {
-    "character": "he_xiaomei",
-    "chapter": 19,
-    "filename": "he_xiaomei_ch19.svg",
-    "wear": 89,
-    "dirt": 36,
-    "injury": "minor",
-    "expression": "hopeful",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -1, "pitch": 0, "roll": 0},
-    "notes": "吴起镇恢复希望的医护"
-  },
-  {
-    "character": "xiaoman",
     "chapter": 20,
-    "filename": "xiaoman_ch20.svg",
-    "wear": 90,
-    "dirt": 35,
-    "injury": "minor",
-    "expression": "calm",
-    "pose": "standing",
-    "props": ["bugle_on_back"],
-    "head": {"yaw": 0, "pitch": 0, "roll": 0},
-    "notes": "会宁大会师号长，指挥六名司号员"
-  },
-  {
     "character": "wu_laoliu",
-    "chapter": 20,
-    "filename": "wu_laoliu_ch20.svg",
-    "wear": 90,
-    "dirt": 35,
-    "injury": "minor",
-    "expression": "calm",
-    "pose": "standing",
-    "props": ["pipe"],
-    "head": {"yaw": 1, "pitch": 0, "roll": 0},
-    "notes": "会宁大会师与婆姨对话，听号声"
+    "wear": 15,
+    "dirt": 10,
+    "injury": "none",
+    "expression": "victorious",
+    "headTurn": 0,
+    "headTilt": 8,
+    "eyeAngle": 0,
+    "props": [
+      "rifle",
+      "pipe"
+    ],
+    "narrative": "吴老六会师时站立姿态，手持烟斗，神情胜利自豪"
   },
   {
-    "character": "he_xiaomei",
     "chapter": 20,
-    "filename": "he_xiaomei_ch20.svg",
-    "wear": 90,
-    "dirt": 35,
-    "injury": "minor",
-    "expression": "dawn",
-    "pose": "standing",
-    "props": ["medbox"],
-    "head": {"yaw": -2, "pitch": 1, "roll": 0},
-    "notes": "会宁大会师黎明时分，医护坚守到底"
+    "character": "he_xiaomei",
+    "wear": 15,
+    "dirt": 10,
+    "injury": "none",
+    "expression": "relieved",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹会师时背着药箱站立，神情舒缓充满希望"
   }
 ]

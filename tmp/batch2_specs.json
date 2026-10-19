@@ -1,182 +1,228 @@
 [
   {
-    "chapter": "ch06",
+    "chapter": 6,
     "character": "xiaoman",
-    "wear": 13,
-    "dirt": 2,
-    "injury": "none",
-    "expression": "nostalgic_hopeful",
-    "headTurn": {"h": 0, "v": -5},
-    "pose": "standing_vigilant",
-    "props": ["bugle", "rifle"],
-    "reasoning": "猴场新年补给后wear下降，但强渡乌江战斗增加磨损。站在遵义灯下仰望，对未来充满希望。"
-  },
-  {
-    "chapter": "ch06",
-    "character": "wu_laoliu",
-    "wear": 11,
-    "dirt": 2,
+    "wear": 15,
+    "dirt": 3,
     "injury": "none",
     "expression": "calm",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["rifle", "medbox", "pipe"],
-    "reasoning": "新年补给后装备得到修整，战斗中保持冷静沉着，担负背负救护箱的责任。"
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle_on_back"
+    ],
+    "narrative": "乌江渡河后，小满显得疲惫但坚定，号角背在身后，眼神专注前方"
   },
   {
-    "chapter": "ch06",
+    "chapter": 6,
+    "character": "wu_laoliu",
+    "wear": 15,
+    "dirt": 3,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六沉稳警戒，枪械紧握，经验丰富的老兵气质"
+  },
+  {
+    "chapter": 6,
     "character": "he_xiaomei",
     "wear": 15,
-    "dirt": 2,
+    "dirt": 3,
     "injury": "none",
-    "expression": "caring",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["medkit", "rifle"],
-    "reasoning": "新年补给后衣物有所恢复，作为卫生员关注伤员救治工作。"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹背着药箱行军，神情专注，随时准备救治伤员"
   },
   {
-    "chapter": "ch07",
+    "chapter": 7,
     "character": "xiaoman",
     "wear": 10,
-    "dirt": 2,
+    "dirt": 3,
+    "injury": "none",
+    "expression": "relieved",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle_on_back"
+    ],
+    "narrative": "补给后小满精神恢复，衣物略显整洁，表情舒缓但仍保持警惕"
+  },
+  {
+    "chapter": 7,
+    "character": "wu_laoliu",
+    "wear": 10,
+    "dirt": 3,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六在补给点平静休整，枪械保养得当，神情安定"
+  },
+  {
+    "chapter": 7,
+    "character": "he_xiaomei",
+    "wear": 10,
+    "dirt": 3,
+    "injury": "none",
+    "expression": "relieved",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box",
+      "soup_pot"
+    ],
+    "narrative": "何小妹在补给站忙碌分配物资，手持汤锅，神情舒缓"
+  },
+  {
+    "chapter": 8,
+    "character": "xiaoman",
+    "wear": 15,
+    "dirt": 4,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满开始手持号角，行军中保持警戒，衣物再次磨损"
+  },
+  {
+    "chapter": 8,
+    "character": "wu_laoliu",
+    "wear": 15,
+    "dirt": 4,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六行军途中保持警惕，枪械随时可用，神情专注"
+  },
+  {
+    "chapter": 8,
+    "character": "he_xiaomei",
+    "wear": 15,
+    "dirt": 4,
+    "injury": "none",
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹背着药箱跟随行军，神情专注，随时准备应对伤员"
+  },
+  {
+    "chapter": 9,
+    "character": "xiaoman",
+    "wear": 20,
+    "dirt": 4,
     "injury": "none",
     "expression": "determined",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing_attentive",
-    "props": ["bugle", "rifle", "new_uniform"],
-    "reasoning": "遵义会议期间获得新军装和补给，wear重置到10%。何小妹为其治疗冻脚，见证历史转折。"
+    "headTurn": 0,
+    "headTilt": 5,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "娄山关大捷后小满意志坚定，手持号角站立，眼神锐利向前"
   },
   {
-    "chapter": "ch07",
-    "character": "wu_laoliu",
-    "wear": 10,
-    "dirt": 2,
-    "injury": "none",
-    "expression": "confident",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["rifle", "medbox", "pipe", "new_uniform"],
-    "reasoning": "遵义会议补给重置，获得新装备。说出'如今咱们敢说回得去了'，展现信心。"
-  },
-  {
-    "chapter": "ch07",
-    "character": "he_xiaomei",
-    "wear": 10,
-    "dirt": 2,
-    "injury": "none",
-    "expression": "hopeful",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["medkit", "rifle", "new_uniform"],
-    "reasoning": "遵义会议期间获得补给和新军装，为小满治疗冻脚，对革命前途充满希望。"
-  },
-  {
-    "chapter": "ch08",
-    "character": "xiaoman",
-    "wear": 18,
-    "dirt": 4,
-    "injury": "none",
-    "expression": "worried",
-    "headTurn": {"h": -10, "v": 0},
-    "pose": "standing_vigilant",
-    "props": ["bugle", "rifle", "token"],
-    "reasoning": "土城战役激战，3000人伤亡。从伤员史柱手中接过家人信物，强渡赤水河时帮扶伤员。磨损显著增加。"
-  },
-  {
-    "chapter": "ch08",
-    "character": "wu_laoliu",
-    "wear": 17,
-    "dirt": 4,
-    "injury": "none",
-    "expression": "stern",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["rifle", "medbox", "pipe"],
-    "reasoning": "土城战役重创后一渡赤水撤退，战斗中保持严肃警惕，继续背负救护任务。"
-  },
-  {
-    "chapter": "ch08",
-    "character": "he_xiaomei",
-    "wear": 18,
-    "dirt": 4,
-    "injury": "none",
-    "expression": "worried",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["medkit", "rifle", "bandages"],
-    "reasoning": "土城战役后救治大量伤员，一渡赤水撤退途中担忧战局，救护物资紧张。"
-  },
-  {
-    "chapter": "ch09",
-    "character": "xiaoman",
-    "wear": 22,
-    "dirt": 5,
-    "injury": "none",
-    "expression": "resolute",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing_vigilant",
-    "props": ["bugle", "rifle", "token"],
-    "reasoning": "扎西整编轻装简从，二渡赤水东返贵州。每晚擦拭军号，妥善保管史柱信物，展现坚定意志。"
-  },
-  {
-    "chapter": "ch09",
+    "chapter": 9,
     "character": "wu_laoliu",
     "wear": 20,
+    "dirt": 4,
+    "injury": "bruise",
+    "expression": "stern",
+    "headTurn": 0,
+    "headTilt": 5,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六在战斗中受轻伤但神情严峻，指挥姿态威严，右臂有淤青"
+  },
+  {
+    "chapter": 9,
+    "character": "he_xiaomei",
+    "wear": 20,
+    "dirt": 4,
+    "injury": "none",
+    "expression": "relieved",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹战斗后神情舒缓，跪姿救治伤员，药箱打开"
+  },
+  {
+    "chapter": 10,
+    "character": "xiaoman",
+    "wear": 25,
     "dirt": 5,
     "injury": "none",
     "expression": "calm",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["rifle", "medbox", "pipe"],
-    "reasoning": "扎西整编后装备轻量化，二渡赤水行军中保持冷静稳重，继续担负救护职责。"
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "bugle"
+    ],
+    "narrative": "小满继续行军，衣物磨损加重，号角随身，神情疲惫但坚毅"
   },
   {
-    "chapter": "ch09",
-    "character": "he_xiaomei",
-    "wear": 22,
+    "chapter": 10,
+    "character": "wu_laoliu",
+    "wear": 25,
     "dirt": 5,
     "injury": "none",
-    "expression": "focused",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["medkit", "rifle", "bandages"],
-    "reasoning": "扎西整编后轻装前进，二渡赤水途中专注医疗救护工作，准备娄山关战役。"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "rifle"
+    ],
+    "narrative": "吴老六伤势愈合，行军中保持警戒，神情恢复平静"
   },
   {
-    "chapter": "ch10",
-    "character": "xiaoman",
-    "wear": 25,
-    "dirt": 6,
-    "injury": "none",
-    "expression": "dawn",
-    "headTurn": {"h": 0, "v": 5},
-    "pose": "standing_proud",
-    "props": ["bugle", "rifle", "token"],
-    "reasoning": "娄山关首次大捷，军号在战斗中完美响起，象征生存与希望。微微仰头展现胜利后的曙光感。"
-  },
-  {
-    "chapter": "ch10",
-    "character": "wu_laoliu",
-    "wear": 23,
-    "dirt": 6,
-    "injury": "none",
-    "expression": "proud",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["rifle", "medbox", "pipe"],
-    "reasoning": "娄山关大捷后士气高涨，磨损维持较高但内心自豪，见证长征首次重大胜利。"
-  },
-  {
-    "chapter": "ch10",
+    "chapter": 10,
     "character": "he_xiaomei",
     "wear": 25,
-    "dirt": 6,
+    "dirt": 5,
     "injury": "none",
-    "expression": "relieved",
-    "headTurn": {"h": 0, "v": 0},
-    "pose": "standing",
-    "props": ["medkit", "rifle", "bandages"],
-    "reasoning": "娄山关胜利后救治工作减轻，重新夺取遵义，终于可以稍微松一口气。"
+    "expression": "calm",
+    "headTurn": 5,
+    "headTilt": 0,
+    "eyeAngle": 0,
+    "props": [
+      "medicine_box"
+    ],
+    "narrative": "何小妹行军中背着药箱，神情疲惫但保持温柔坚韧"
   }
 ]
