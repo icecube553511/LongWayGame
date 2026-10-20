@@ -1,5 +1,6 @@
 ﻿# 《长征·万水千山》APK 构建脚本
 # 依赖：Android SDK（build-tools 35 + android-35）、JDK 与 Python 3 标准库；不引入 Gradle 或第三方依赖。
+# 正式包使用本机长期保存的 Martin 发布证书签名；证书与口令放在用户目录，不进入仓库。
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -49,12 +50,51 @@ $Javac = if ($env:JAVA_HOME -and (Test-Path -LiteralPath (Join-Path $env:JAVA_HO
     (Get-Command javac.exe -ErrorAction Stop).Source
 }
 $JarTool = Join-Path (Split-Path -Parent $Javac) 'jar.exe'
-$Keystore = Join-Path $env:USERPROFILE '.android\debug.keystore'
+$Keytool = Join-Path (Split-Path -Parent $Javac) 'keytool.exe'
+$SigningDir = Join-Path $env:USERPROFILE '.android\longwaygame-signing'
+$Keystore = Join-Path $SigningDir 'martin-release.p12'
+$SigningPasswordFile = Join-Path $SigningDir 'password.txt'
+$SigningAlias = 'martin'
+$SigningDname = 'CN=Martin, OU=LongWayGame, O=Martin, L=Shanghai, ST=Shanghai, C=CN'
 
-foreach ($required in @($Aapt2, $ZipAlign, $ApkSigner, $D8, $Javac, $JarTool, $AndroidJar, $Keystore)) {
+foreach ($required in @($Aapt2, $ZipAlign, $ApkSigner, $D8, $Javac, $JarTool, $Keytool, $AndroidJar)) {
     if (-not (Test-Path -LiteralPath $required)) {
         throw "缺少构建依赖：$required"
     }
+}
+
+$SigningPassword = $env:LONGWAY_SIGNING_PASSWORD
+if (-not $SigningPassword -and (Test-Path -LiteralPath $SigningPasswordFile)) {
+    $SigningPassword = (Get-Content -LiteralPath $SigningPasswordFile -Raw).Trim()
+}
+if (-not (Test-Path -LiteralPath $Keystore)) {
+    New-Item -ItemType Directory -Force -Path $SigningDir | Out-Null
+    if (-not $SigningPassword) {
+        $randomBytes = New-Object byte[] 24
+        $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+        try {
+            $rng.GetBytes($randomBytes)
+        } finally {
+            $rng.Dispose()
+        }
+        $SigningPassword = -join ($randomBytes | ForEach-Object { $_.ToString('x2') })
+        [System.IO.File]::WriteAllText($SigningPasswordFile, $SigningPassword, [System.Text.Encoding]::ASCII)
+    }
+    Invoke-Native $Keytool @(
+        '-genkeypair',
+        '-keystore', $Keystore,
+        '-storetype', 'PKCS12',
+        '-alias', $SigningAlias,
+        '-keyalg', 'RSA',
+        '-keysize', '4096',
+        '-validity', '36500',
+        '-dname', $SigningDname,
+        '-storepass', $SigningPassword,
+        '-keypass', $SigningPassword
+    )
+}
+if (-not $SigningPassword) {
+    throw "发布证书已存在，但缺少签名口令。请设置 LONGWAY_SIGNING_PASSWORD，或恢复 $SigningPasswordFile。"
 }
 
 $Manifest = Join-Path $ProjectRoot 'android\AndroidManifest.xml'
@@ -158,15 +198,22 @@ if (Test-Path -LiteralPath $OutputApk) {
 Invoke-Native $ApkSigner @(
     'sign',
     '--ks', $Keystore,
-    '--ks-key-alias', 'androiddebugkey',
-    '--ks-pass', 'pass:android',
-    '--key-pass', 'pass:android',
+    '--ks-key-alias', $SigningAlias,
+    '--ks-pass', "pass:$SigningPassword",
+    '--key-pass', "pass:$SigningPassword",
     '--out', $OutputApk,
     $AlignedApk
 )
 
 # 签名完成后只校验，不再运行 zipalign。
-Invoke-Native $ApkSigner @('verify', '--verbose', '--print-certs', $OutputApk)
+$certificateReport = & $ApkSigner 'verify' '--verbose' '--print-certs' $OutputApk
+if ($LASTEXITCODE -ne 0) {
+    throw 'apksigner verify 失败'
+}
+$certificateText = ($certificateReport -join "`n")
+if ($certificateText -notmatch 'CN=Martin(?:,|\s|$)') {
+    throw 'APK 签名证书不是 Martin，拒绝交付'
+}
 
 $permissions = & $Aapt2 dump permissions $OutputApk
 if ($LASTEXITCODE -ne 0) {
@@ -202,6 +249,7 @@ Write-Output '构建完成'
 Write-Output "APK：$OutputApk"
 Write-Output "大小：$size 字节"
 Write-Output "SHA256：$hash"
+Write-Output "签名：Martin（CN=Martin）"
 Write-Output ''
 Write-Output 'aapt2 dump badging：'
 $badging | Write-Output

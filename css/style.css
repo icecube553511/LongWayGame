@@ -22,6 +22,46 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+button {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--press-x, 50%) var(--press-y, 50%),
+      rgba(245, 235, 212, .7) 0%,
+      rgba(215, 177, 72, .28) 34%,
+      rgba(215, 177, 72, 0) 68%);
+  transform: scale(.18);
+}
+
+button.ui-pressing:not(:disabled)::after {
+  animation: buttonRipple 480ms cubic-bezier(.2, .75, .3, 1) both;
+}
+
+button:not(:disabled):active {
+  filter: brightness(1.08);
+  transform: translateY(1px) scale(.985);
+}
+
+button:focus-visible {
+  outline: calc(2 * var(--u)) solid rgba(215, 177, 72, .92);
+  outline-offset: calc(3 * var(--u));
+}
+
+@keyframes buttonRipple {
+  0% { opacity: .48; transform: scale(.18); }
+  58% { opacity: .2; }
+  100% { opacity: 0; transform: scale(1.28); }
+}
+
 html, body {
   width: 100%; height: 100%;
   background: #07090f;
@@ -229,7 +269,11 @@ html, body {
 /* ---------------- 对白 ---------------- */
 #dialogue {
   position: absolute; left: calc(96 * var(--u)); right: calc(96 * var(--u)); bottom: calc(46 * var(--u));
-  transition: opacity 260ms ease, transform 260ms ease;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease,
+    bottom 320ms cubic-bezier(.22, .8, .28, 1);
+  will-change: bottom;
 }
 #name-plate {
   position: relative; display: inline-block;
@@ -288,7 +332,10 @@ html, body {
   background: rgba(9, 13, 21, .72);
   border-left: calc(2 * var(--u)) solid var(--gold-dim);
   padding: calc(8 * var(--u)) calc(16 * var(--u));
-  opacity: 0; transition: opacity 300ms ease;
+  opacity: 0;
+  transition:
+    opacity 300ms ease,
+    bottom 320ms cubic-bezier(.22, .8, .28, 1);
 }
 #note-layer.on { opacity: .96; }
 #note-layer .note-mark { color: var(--gold); margin-right: calc(10 * var(--u)); letter-spacing: .2em; font-size: calc(14 * var(--u)); }
@@ -343,20 +390,87 @@ html, body {
 /* ---------------- 快捷条 ---------------- */
 #quickbar {
   position: absolute; right: calc(22 * var(--u)); bottom: calc(16 * var(--u));
-  display: flex; gap: calc(6 * var(--u)); z-index: 20;
-  opacity: .55; transition: opacity 220ms ease;
+  display: flex; align-items: center; gap: calc(7 * var(--u)); z-index: 20;
+  opacity: .78; transition: opacity 220ms ease;
 }
 #quickbar:hover { opacity: 1; }
+#quickbar-actions {
+  display: flex; align-items: center; gap: calc(6 * var(--u));
+  max-width: calc(920 * var(--u));
+  overflow: hidden;
+  transform-origin: right center;
+  transition:
+    max-width 320ms cubic-bezier(.22, .8, .28, 1),
+    opacity 190ms ease,
+    transform 320ms cubic-bezier(.22, .8, .28, 1);
+}
 .qbtn {
   font: inherit; font-size: calc(14 * var(--u)); letter-spacing: .14em;
   color: var(--paper-dim); background: rgba(9, 13, 21, .8);
   border: 1px solid rgba(191, 154, 56, .22);
   padding: calc(6 * var(--u)) calc(13 * var(--u));
   cursor: pointer;
-  transition: color 160ms, border-color 160ms, background 160ms;
+  transition:
+    color 160ms,
+    border-color 160ms,
+    background 160ms,
+    box-shadow 180ms,
+    transform 180ms cubic-bezier(.2, .8, .3, 1);
 }
-.qbtn:hover { color: var(--paper); border-color: var(--gold); }
-.qbtn.active { color: #101723; background: linear-gradient(180deg, #d7b148, #a5822f); border-color: #d7b148; }
+.qbtn:hover {
+  color: var(--paper);
+  border-color: var(--gold);
+  background: rgba(22, 29, 42, .94);
+  box-shadow: 0 calc(5 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, .4);
+  transform: translateY(calc(-1 * var(--u)));
+}
+.qbtn.active {
+  color: #101723;
+  background: linear-gradient(180deg, #d7b148, #a5822f);
+  border-color: #d7b148;
+  box-shadow: 0 0 calc(15 * var(--u)) rgba(215, 177, 72, .24);
+  animation: qbtnActivePulse 2.1s ease-in-out infinite;
+}
+.qbtn-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: calc(4 * var(--u));
+  min-width: calc(62 * var(--u));
+  padding-right: calc(10 * var(--u)); padding-left: calc(9 * var(--u));
+  color: #e3d4a9;
+  background: linear-gradient(145deg, rgba(27, 34, 48, .96), rgba(10, 15, 24, .9));
+  border-color: rgba(191, 154, 56, .46);
+  box-shadow: 0 calc(4 * var(--u)) calc(14 * var(--u)) rgba(0, 0, 0, .32);
+}
+.qbtn-toggle-arrow {
+  display: inline-block;
+  line-height: 1;
+  font-size: calc(17 * var(--u));
+  transition: transform 300ms cubic-bezier(.22, .8, .28, 1);
+}
+.qbtn-toggle-label { letter-spacing: .08em; }
+#stage.quickbar-collapsed #quickbar-actions {
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(calc(22 * var(--u))) scale(.92);
+  pointer-events: none;
+}
+#stage.quickbar-collapsed #quickbar-toggle {
+  color: #f2dfaa;
+  border-color: var(--gold);
+  background: linear-gradient(145deg, rgba(107, 26, 30, .94), rgba(20, 27, 40, .94));
+}
+#stage.quickbar-collapsed #quickbar-toggle .qbtn-toggle-arrow {
+  transform: rotate(180deg);
+}
+#stage.quickbar-collapsed #dialogue {
+  bottom: calc(18 * var(--u));
+}
+#stage.quickbar-collapsed #note-layer {
+  bottom: calc(332 * var(--u));
+}
+@keyframes qbtnActivePulse {
+  0%, 100% { box-shadow: 0 0 calc(10 * var(--u)) rgba(215, 177, 72, .16); }
+  50% { box-shadow: 0 0 calc(20 * var(--u)) rgba(215, 177, 72, .42); }
+}
 /* 「倒退」默认不在快捷条上，口令解锁后才出现（见 engine.js syncRewindUI） */
 #quickbar .qbtn[data-act="rewind"] { display: none; }
 #stage.rewind-on #quickbar .qbtn[data-act="rewind"] { display: inline-block; }
@@ -638,3 +752,15 @@ html, body {
 /* 胜利/结束闪光 */
 .gold-glow { animation: goldGlow 1.6s ease; }
 @keyframes goldGlow { 0% { filter: brightness(1); } 30% { filter: brightness(1.7) saturate(1.2); } 100% { filter: brightness(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  button.ui-pressing::after { animation: none; opacity: 0; }
+  .qbtn.active { animation: none; }
+  #dialogue,
+  #note-layer,
+  #quickbar-actions,
+  .qbtn,
+  .qbtn-toggle-arrow {
+    transition-duration: 1ms !important;
+  }
+}

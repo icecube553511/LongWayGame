@@ -288,6 +288,8 @@
       };
     });
     D.quickbar = $('quickbar');
+    D.quickbarActions = $('quickbar-actions');
+    D.quickbarToggle = $('quickbar-toggle');
     D.toastLayer = $('toast-layer');
     D.cgCaption = $('cg-caption');
     D.loading = $('loading');
@@ -1788,6 +1790,32 @@
     D.stage.classList.toggle('ui-hidden', VN.state.hideUI);
   }
   VN.toggleUI = toggleUI;
+
+  /* 快捷栏可以收起。选择会记住；storage 不可用时只退回本次运行的内存状态，
+   * 不阻断游戏，也不在 file:// 或受限 WebView 环境里制造异常。 */
+  var quickbarCollapsed = false;
+  var QUICKBAR_KEY = 'lw_quickbar_collapsed';
+  function readQuickbarCollapsed() {
+    try { return localStorage.getItem(QUICKBAR_KEY) === '1'; }
+    catch (e) { return false; }
+  }
+  function setQuickbarCollapsed(collapsed, persist) {
+    quickbarCollapsed = !!collapsed;
+    if (D.stage) D.stage.classList.toggle('quickbar-collapsed', quickbarCollapsed);
+    if (D.quickbarToggle) {
+      D.quickbarToggle.setAttribute('aria-expanded', quickbarCollapsed ? 'false' : 'true');
+      D.quickbarToggle.title = quickbarCollapsed ? '展开快捷操作' : '收起快捷操作';
+      var label = D.quickbarToggle.querySelector('.qbtn-toggle-label');
+      if (label) label.textContent = quickbarCollapsed ? '展开' : '收起';
+    }
+    if (persist) {
+      try { localStorage.setItem(QUICKBAR_KEY, quickbarCollapsed ? '1' : '0'); }
+      catch (e) { /* storage 不可用时保留本次运行状态 */ }
+    }
+  }
+  VN.setQuickbarCollapsed = setQuickbarCollapsed;
+  VN.isQuickbarCollapsed = function () { return quickbarCollapsed; };
+
   VN.setOverlayOpen = function (open) {
     if (D.stage) D.stage.classList.toggle('overlay-open', !!open);
   };
@@ -1795,11 +1823,31 @@
   VN.topFrame = topFrame;
 
   function bindInput() {
+    /* 所有按钮共用一套按压波纹。菜单与选项会动态创建，所以委托到 document；
+     * 鼠标、触屏和手写笔都在 pointerdown 时得到同一套即时反馈。 */
+    document.addEventListener('pointerdown', function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest('button') : null;
+      if (!btn || btn.disabled) return;
+      var r = btn.getBoundingClientRect();
+      btn.style.setProperty('--press-x', Math.max(0, e.clientX - r.left) + 'px');
+      btn.style.setProperty('--press-y', Math.max(0, e.clientY - r.top) + 'px');
+      btn.classList.remove('ui-pressing');
+      void btn.offsetWidth;
+      btn.classList.add('ui-pressing');
+      setTimeout(function () { btn.classList.remove('ui-pressing'); }, 520);
+    }, { passive: true });
+
     D.stage.addEventListener('click', function (e) {
       var t = e.target;
       if (t && t.closest && (t.closest('#quickbar') || t.closest('#choice-layer') || t.closest('#overlay') || t.closest('button'))) return;
       userAdvance();
     });
+    if (D.quickbarToggle) {
+      D.quickbarToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setQuickbarCollapsed(!quickbarCollapsed, true);
+      });
+    }
     D.quickbar.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('.qbtn') : null;
       if (!b) return;
@@ -1879,6 +1927,7 @@
     fitUnit();
     fxResize();
     bindInput();
+    setQuickbarCollapsed(readQuickbarCollapsed(), false);
     syncMeters(false);
     if (VN.ui) VN.ui.init();
     var m = manifestList();

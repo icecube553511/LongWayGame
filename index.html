@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="《长征·万水千山》——立体几何风格视觉小说。二十章，从于都河畔到会宁会师。">
+<meta name="author" content="Martin">
 <title>长征 · 万水千山</title>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/mobile.css">
@@ -81,14 +82,21 @@
     </div>
 
     <div id="quickbar">
-      <button class="qbtn" data-act="auto" title="自动播放 (A)">自动</button>
-      <button class="qbtn" data-act="skip" title="快进 (S / 按住 Ctrl)">快进</button>
-      <!-- 倒退播放：口令解锁后才显示（#stage.rewind-on） -->
-      <button class="qbtn" data-act="rewind" title="倒退一行 (Backspace)">倒退</button>
-      <button class="qbtn" data-act="history" title="回想 (L)">记录</button>
-      <button class="qbtn" data-act="save" title="存档 (Esc → 存档)">存档</button>
-      <button class="qbtn" data-act="settings" title="设置">设置</button>
-      <button class="qbtn" data-act="hide" title="隐藏界面 (H)">隐藏</button>
+      <div id="quickbar-actions" aria-label="快捷操作">
+        <button class="qbtn" data-act="auto" title="自动播放 (A)">自动</button>
+        <button class="qbtn" data-act="skip" title="快进 (S / 按住 Ctrl)">快进</button>
+        <!-- 倒退播放：口令解锁后才显示（#stage.rewind-on） -->
+        <button class="qbtn" data-act="rewind" title="倒退一行 (Backspace)">倒退</button>
+        <button class="qbtn" data-act="history" title="回想 (L)">记录</button>
+        <button class="qbtn" data-act="save" title="存档 (Esc → 存档)">存档</button>
+        <button class="qbtn" data-act="settings" title="设置">设置</button>
+        <button class="qbtn" data-act="hide" title="隐藏界面 (H)">隐藏</button>
+      </div>
+      <button id="quickbar-toggle" class="qbtn qbtn-toggle" type="button"
+              aria-controls="quickbar-actions" aria-expanded="true" title="收起快捷操作">
+        <span class="qbtn-toggle-arrow" aria-hidden="true">⌄</span>
+        <span class="qbtn-toggle-label">收起</span>
+      </button>
     </div>
 
     <div id="toast-layer"></div>
