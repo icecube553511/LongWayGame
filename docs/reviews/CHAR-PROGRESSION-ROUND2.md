@@ -126,3 +126,44 @@ node tools/qa-consistency.js
 
 第三章定点实拍 `tmp/e2e/soldiers-ch03.png` 中，群像位于右舞台槽，
 三名战士的脸与外肩均完整可见，且相对原稿明显放大。主 agent 复核结论：**通过**。
+
+## 6. 小满开场圆下颌微调（2026-10-20）
+
+用户复核指出小满的下颌仍略尖。本轮只调整 `xiaoman_ch01_departure`：
+
+- 提示词把下半脸明确限定为短而宽、双颊延续到圆下颌，禁止下巴与下颌收尖；
+- 以已认可的 calm 成片同时作为身份与构图参考重出基准，再从其重做 sad / worry / dawn；
+- 首轮蒙版表情实验在右臂轮廓产生黑边，已废弃；最终四张改走常规表情编辑与洋红抠底链；
+- calm / sad / worry / dawn 保留同一眉眼间距、帽型、军号、挎包、领章与袖章，
+  仅使下颌轮廓更圆润。
+
+复验读数：
+
+```text
+node tools/build-portrait-states.js --check
+  35 角色 / 169 状态 / 282 章映射 / 19 个章内变化
+
+node tools/check.js
+  形象演进 623/623 表情图；检查通过
+
+node tools/check-assets.js
+  规范检查通过
+
+python -X utf8 tools/check-portrait-key.py
+  立绘洋红残留检查：801 张；0 张超阈值
+
+python -X utf8 tools/qc-portraits.py --csv tmp/qc-portraits-followup-chin.csv
+  454 张表情图；硬伤 0 张；12 张既有姿态/构图警告，小满本状态无警告
+
+node tools/e2e-run.js
+  20/20 章走完；24093 步；0 条 JS 报错
+
+node tools/qa-consistency.js
+  20 章 / 4465 句台词 / 违规 0 条
+
+体积自检
+  超过本档上限的文件数 = 0
+```
+
+第一章定点实拍 `tmp/e2e/xiaoman-ch01-round-chin.png` 中，实际加载
+`xiaoman_ch01_departure_calm.png`，圆下颌、分离双眉与原有装备均正常。
