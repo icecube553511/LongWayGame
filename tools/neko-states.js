@@ -52,6 +52,9 @@ const forceStateFilter = argOf('--force-state', '').split(',').map(s => s.trim()
 const forceFaceFilter = argOf('--force-face', '').split(',').map(s => s.trim()).filter(Boolean);
 /* 单张返修用的补充提示词（只写画面，否定句仍走 avoid）；不写进长期清单。 */
 const EXTRA = argOf('--extra', '');
+const IDENTITY_OVERRIDE = argOf('--identity', '');
+const BODY_REF_OVERRIDE = argOf('--body-ref', '');
+const NO_IDENTITY = argv.includes('--no-identity');
 const CROWD = { soldiers: 'three Red Army soldiers', villagers: 'three Chinese villagers', yi_people: 'three Yi people' };
 
 function loadStates() {
@@ -554,17 +557,21 @@ async function pool(tasks, limit) {
       const stateIds = data.characters[group.character].stateIds;
       const results = [];
       for (const p of group.items) {
-      if (EXPR_ONLY) {
-        results.push(isGoodPng(path.join(OUT, p.state.id + '_calm.png')));
-        continue;
-      }
+        if (EXPR_ONLY) {
+          results.push(isGoodPng(path.join(OUT, p.state.id + '_calm.png')));
+          continue;
+        }
         const idx = stateIds.indexOf(p.state.id);
         const prev = idx > 0 ? data.states[stateIds[idx - 1]] : null;
-        const identity = baseImage(group.character);
+        const identity = NO_IDENTITY ? '' : (IDENTITY_OVERRIDE
+          ? path.resolve(ROOT, IDENTITY_OVERRIDE)
+          : baseImage(group.character));
         const previous = prev ? path.join(OUT, prev.id + '_calm.png') : '';
         /* 重出时不要拿“旧的坏图”当身体参考：只复用上一状态成品，
          * 首状态重出则从文字 + 人物基础图重新锁脸。 */
-        const stateRef = previous && isGoodPng(previous) ? previous : '';
+        const stateRef = NO_IDENTITY ? '' : (BODY_REF_OVERRIDE
+          ? path.resolve(ROOT, BODY_REF_OVERRIDE)
+          : (previous && isGoodPng(previous) ? previous : ''));
         results.push(await generateCalmIdentity(group.character, p.state, identity, stateRef));
       }
       return results;

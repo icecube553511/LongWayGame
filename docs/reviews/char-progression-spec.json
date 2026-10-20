@@ -3003,8 +3003,8 @@
             "worry",
             "dawn"
           ],
-          "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. A small fifteen-year-old bugler, shortest build, round childish face, large eyes, thin brows. An oversized octagonal cap with the brim pressed down to the eyebrows, and a faded blue-grey tunic clearly too large: drooping shoulder seams, sleeves covering half the hands, body loose at the waist, one neat square patch on the left sleeve, loose puttees, new straw sandals. One hand on the bugle strap, posture upright but hesitant.",
-          "avoid_en": "no fitted uniform, no small cap, no adult proportions, no rifle, no extra people, no text"
+          "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. A fifteen-year-old Chinese bugler with Sanwa-like child proportions: small and slightly undernourished, large head relative to the body, narrow shoulders, round soft cheeks, large clear eyes, and two clearly separate thin natural eyebrows with a clean gap at the bridge of the nose. No unibrow, no heavy inward-slanting angry eyebrows. An oversized faded blue-grey tunic with drooping shoulder seams and sleeves covering half the hands, dull red collar tabs, an octagonal cap one size too large with the brim pressed to the eyebrows, loose puttees and new straw sandals. Brass bugle on an olive canvas strap at his side, small satchel, one neat sleeve patch; posture upright but hesitant.",
+          "avoid_en": "no unibrow, no joined eyebrows, no heavy angry eyebrows, no adult proportions, no fitted uniform, no small cap, no rifle, no extra people, no text"
         },
         "xiaoman_ch02_rain": {
           "label": "雨里行军·第三双草鞋",
@@ -5457,8 +5457,8 @@
             "weak",
             "dawn"
           ],
-          "appearance_en": "Three Red Army soldiers standing shoulder to shoulder, 600x900 half-body group, transparent background, low-poly faceted planes, hard light from upper left. Clearly different men: one tall and lean with a shoulder patch, one short and broad with mud-caked puttees, one young with an oversized cap. Their grey-green tunics show different wear, faded at different seams, one with a missing button, one with a sleeve repair, one cleaner at the collar. Rifles, ammunition pouches, straw sandals, slightly different stances.",
-          "avoid_en": "no identical faces, no identical uniforms, no three clones, no modern gear, no text"
+          "appearance_en": "Three Red Army soldiers in a tight staggered row, 600x900 half-body group portrait, transparent background, low-poly faceted planes, hard light from upper left. All three full heads, shoulders, chests, arms and held rifles are completely inside the image with clear margins; nobody is clipped by any edge. Make the group larger in frame and tightly overlapping shoulder to shoulder: one tall lean soldier with a sleeve patch at the left rear, one short broad soldier in the center foreground, one younger soldier at the right rear. Every face is fully visible; their heights, ages, face shapes and degrees of uniform wear differ. Exactly three people, no fourth person.",
+          "avoid_en": "no cropped head, no cropped shoulder, no half-visible person, no figures touching the canvas edge, no fourth person, no identical faces, no tiny distant group, no text"
         },
         "soldiers_ch06_supply": {
           "label": "猴场遵义·洗净与补鞋",

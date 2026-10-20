@@ -79,3 +79,50 @@ ch17 背铜锅 → xiaoman_ch17_pot
 - `shi_zhu_ch15_burned` 的烧伤因上游内容策略未再重出，当前用焦黑衣衫、烟灰和绷带克制表现；
 - 五位老人的长衫/军装领口仍有轻微风格差异；
 - 帽星与褪色领章在不同状态间还没有做到完全统一；后续可按 `docs/reviews/CHAR-PROGRESSION-SPEC.md` §8.4 的系统性修法再做一轮美术统一。
+
+## 5. 小满眉形与湘江群像返修（2026-10-20）
+
+用户复核时指出：小满初始造型应更接近三娃的儿童比例，附图中的连眉必须修正；
+第三章红军群像本身可用，但人物缩得过小，左右边缘战士被画布切断。
+
+本轮只替换相关成品，不改其他角色状态：
+
+- 小满 `xiaoman_ch01_departure` 的 calm / sad / worry / dawn 四张重出，
+  改为大头、窄肩、圆颊、略不合身军装的儿童体态；两眉分离，鼻梁留出清晰空隙，
+  同时保留八角帽、军号、挎包、领章和袖章；
+- 战士 `soldiers_ch01_early` 的 calm / stern / sad / worry / fierce / weak / dawn 七张重出，
+  收成三人紧凑前后错位构图；三人的脸、帽檐、耳朵和外肩均完整入画，
+  保持高瘦左后、宽壮中前、年轻右后的身份关系，不出现第四人；
+- `tools/neko-states.js` 增加自定义身份参考、身体参考和跳过参考参数，
+  用于首状态重出时避免旧连眉图继续污染新图。
+
+复验读数：
+
+```text
+node tools/build-portrait-states.js --check
+  35 角色 / 169 状态 / 282 章映射 / 19 个章内变化
+
+node tools/check.js
+  形象演进 623/623 表情图；检查通过
+
+node tools/check-assets.js
+  规范检查通过
+
+python -X utf8 tools/check-portrait-key.py
+  立绘洋红残留检查：801 张；0 张超阈值
+
+python -X utf8 tools/qc-portraits.py --csv tmp/qc-portraits-followup.csv
+  454 张表情图；硬伤 0 张；12 张既有姿态/构图警告
+
+node tools/e2e-run.js
+  20/20 章走完；24061 步；0 条 JS 报错
+
+node tools/qa-consistency.js
+  20 章 / 4449 句台词 / 违规 0 条
+
+体积自检
+  超过本档上限的文件数 = 0
+```
+
+第三章定点实拍 `tmp/e2e/soldiers-ch03-show.png` 中，群像位于右舞台槽，
+三名战士的脸与外肩均完整可见，且相对原稿明显放大。主 agent 复核结论：**通过**。
