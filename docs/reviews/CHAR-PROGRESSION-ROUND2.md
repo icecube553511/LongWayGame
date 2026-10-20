@@ -124,5 +124,5 @@ node tools/qa-consistency.js
   超过本档上限的文件数 = 0
 ```
 
-第三章定点实拍 `tmp/e2e/soldiers-ch03-show.png` 中，群像位于右舞台槽，
+第三章定点实拍 `tmp/e2e/soldiers-ch03.png` 中，群像位于右舞台槽，
 三名战士的脸与外肩均完整可见，且相对原稿明显放大。主 agent 复核结论：**通过**。
