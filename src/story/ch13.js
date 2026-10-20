@@ -321,6 +321,12 @@
       { t: 'set', var: 'hope', op: '+=', value: 4 },
       { t: 'set', var: 'trust', op: '+=', value: 4 },
 
+      { t: 'say', who: 'xiaoman', face: 'calm', text: '排长说得对。有些事，不是能还击就还击。' },
+      { t: 'say', who: 'xiaoman', text: '纪律就是骨头。断了，队伍就散了。' },
+      { t: 'narr', text: '夜风吹来，他抬头看向南方。黑暗中，那条路还在。' },
+      { t: 'narr', text: '每一步都要走对。' },
+      { t: 'hide', who: 'xiaoman' },
+
       { t: 'title', text: '五月二十四日 · 出彝区' },
       { t: 'bg', id: 'bg_mountain_pass', fx: 'dissolve', ms: 1000 },
       { t: 'narr', text: '七天以后，先遣队走出了彝族地区。' },
