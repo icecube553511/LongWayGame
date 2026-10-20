@@ -20,6 +20,7 @@
 | `src/engine/gallery.js` | extras | 已写完。人物图鉴 / 史料档案 / 插画画廊 |
 | `src/engine/audio.js` | audio | 已写完。12 首程序化 BGM + 14 个音效，纯 WebAudio |
 | `src/data/characters.js` `src/data/backgrounds.js` | root | root 冻结；引擎读取 `window.ART.charactersById` 合并进 `VN.CHARACTERS`（数据表优先，内置表兜底） |
+| `docs/reviews/char-progression-spec.json` → `src/data/portraitStates.js` | root | 角色剧情造型清单与运行时表；`node tools/build-portrait-states.js --check` 校验两者一致 |
 | `src/story/chNN.js` | story-* | 各自 1 章；验收闸门 `node tools/lint-story.js src/story/chNN.js` |
 
 ## 2. DOM 契约（引擎实际使用，不得改动）
@@ -53,6 +54,7 @@ VN.state                          // { chapter, frames, morale, trust, hope, fla
 VN.G                              // { settings, run, progress, unlocked:{chars,archives,cgs,bgs} }
 VN.save.{readSlot,writeSlot,listSlots,readAuto,writeAuto,wipe}
 VN.CHARACTERS[id]                 // { name, role, desc, chapter }（35 个 id，已与 src/data/characters.js 合并）
+window.ART.portraitStates         // { states, chapterStates, beats }（角色剧情造型；不改人物 id）
 VN.audio.{init,bgm,stopBgm,sfx,setVolume,duck}
 VN.ui.{showTitle,showChapterSelect,showHistory,showSlots,showSettings,showSystem,showResult,error}
 VN.gallery.{showChars,showArchives,showArt}
@@ -71,6 +73,11 @@ VN.gallery.{showChars,showArchives,showArt}
   回归测试：`node tools/qa-consistency.js`（全剧逐句核对说话人是否在台上）。
 - `note` 显示为对话框上方的"史料"小注条。
 - 人物首次 `say`/`show` 自动解锁图鉴；背景与 CG 首次出现自动解锁画廊；`unlock` 步可显式解锁档案。
+- 立绘造型解析顺序：剧本显式 `portraitId` → 本章已触发的 beat 状态 →
+  当前槽位已有造型 → `chapterStates[章][人物]` → 人物基础 id。
+  状态图片缺失时按“状态 PNG → 状态 SVG → 基础 PNG → 基础 SVG”逐级回退。
+- `beats` 以剧本原文连续片段触发；当前句念完、玩家翻页后才应用，
+  跨 `hide/clear` 保留到本章结束，并写入存档快照。
 - 缺失资源一律静默降级：背景保留上一张，立绘不显示，**不产生任何 JS 报错**。
 
 ## 4. 自检与冒烟测试
@@ -78,6 +85,8 @@ VN.gallery.{showChars,showArchives,showArt}
 ```powershell
 node tools/lint-story.js                     # 剧本静态检查（全 20 章）
 node tools/lint-story.js src/story/ch16.js   # 单章
+node tools/build-portrait-states.js --check  # 造型清单与运行时表一致
+node tools/neko-states.js --dry-run          # 打印全部造型生成计划与提示词
 ```
 
 `tmp/engine/game-test.html` 是在真实浏览器里直接开某一章的调试页（把 ch16 换成任意章节即可），

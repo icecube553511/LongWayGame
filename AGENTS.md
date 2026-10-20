@@ -33,8 +33,11 @@
 ```powershell
 node tools/check.js                        # 总闸门：20 章 + id 表 + 资源齐备 + 位图完整 + 死链
 node tools/check-assets.js                 # 制作规范闸门：规范文件与引用齐备、群众印章变体够、无重复登记
+node tools/build-portrait-states.js --check # 角色剧情造型清单与运行时表一致
 node tools/lint-story.js src/story/chNN.js # 改过剧本就跑（0 错 0 警）
 node tools/validate-svg.js                 # 改了 art/ 或烘焙字跑
+python tools/check-portrait-key.py         # 改了立绘/抠底/烘焙后跑（洋红残留）
+python tools/qc-portraits.py               # 表情与同状态 calm 的轮廓/身体一致性质检
 node tools/e2e-run.js                      # 全剧自动通关（必须 0 条 JS 报错）
 node tools/qa-consistency.js               # 改了剧本/背景时跑（舞台一致性）
 ```

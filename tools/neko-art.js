@@ -30,6 +30,13 @@ fs.mkdirSync(RAW, { recursive: true });
 fs.mkdirSync(OUT, { recursive: true });
 
 const KEY_COLOR = '#FF00FF';
+const STYLE = [
+  'Low-poly faceted 3D character art, flat-shaded polygons with hard angular facets,',
+  'one strong directional light from the upper left, matte surfaces, thin dark edges only at',
+  'silhouette breaks, no gradients, no halftones, muted desaturated palette of slate blue-grey,',
+  'faded grey-green, ochre and dull brick red. Style must match a low-poly isometric historical',
+  'game set in 1934-1936 China.'
+].join('\n');
 
 /* ---------------- 参数 ---------------- */
 const argv = process.argv.slice(2);
@@ -148,11 +155,7 @@ function promptFor(id, face) {
   const look = sp ? sp.look : (LOOK[id] || 'a Chinese Red Army figure');
   const faceText = (SPECIAL_FACE[id] && SPECIAL_FACE[id][face]) || FACEDESC[face] || FACEDESC.calm;
   return [
-    'Low-poly faceted 3D character art, flat-shaded polygons with hard angular facets,',
-    'one strong directional light from the upper left, matte surfaces, thin dark edges only at',
-    'silhouette breaks, no gradients, no halftones, muted desaturated palette of slate blue-grey,',
-    'faded grey-green, ochre and dull brick red. Style must match a low-poly isometric historical',
-    'game set in 1934-1936 China.',
+    STYLE,
     '',
     sp
       ? 'SUBJECT: ' + (sp.subject || 'head-to-waist portrait of one Chinese Red Army figure from the Long March') + '.'
@@ -275,7 +278,7 @@ async function pool(tasks, n) {
 }
 
 /* ---------------- 主流程 ---------------- */
-(async () => {
+if (require.main === module) (async () => {
   const tasks = [];
   let label;
   if (NEEDED) {
@@ -309,4 +312,13 @@ async function pool(tasks, n) {
   console.log('原始图完成：成功 ' + ok + '，失败 ' + fail + '，用时 ' + Math.round((Date.now() - t0) / 1000) + 's');
   console.log('原始图目录：' + RAW);
 })();
+
+module.exports = {
+  STYLE: STYLE,
+  FACES: FACES,
+  FACEDESC: FACEDESC,
+  LOOK: LOOK,
+  KEY_COLOR: KEY_COLOR,
+  getProvider: getProvider
+};
 

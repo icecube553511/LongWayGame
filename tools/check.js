@@ -59,6 +59,12 @@ const BACKGROUNDS = (function () {
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'backgrounds.js'), 'utf8'), sb);
   return (sb.window.ART || {}).backgrounds || {};
 })();
+const PORTRAIT_STATES = (function () {
+  const sb = { window: {} };
+  sb.globalThis = sb;
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'portraitStates.js'), 'utf8'), sb);
+  return (sb.window.ART || {}).portraitStates || null;
+})();
 const CG_MOTIONS = ['zoom-in', 'pan-left', 'pan-right', 'still', 'impact'];
 
 const BGS = [
@@ -144,6 +150,8 @@ function walk(steps, file, ctx, stats, labels, gotos) {
     const w = ctx + '[' + i + ']';
     if (!s || typeof s !== 'object') { err(file, w + ' 不是对象'); return; }
     stats.steps++;
+    if (s.text) stats.texts.push(String(s.text));
+    if (s.prompt) stats.texts.push(String(s.prompt));
     if (typeof s.t !== 'string') { err(file, w + ' 缺少 t'); return; }
     if (STEP_TYPES.indexOf(s.t) < 0) { err(file, w + ' 未知 step 类型：' + s.t); return; }
 
@@ -237,6 +245,8 @@ const report = [];
 const allBgs = new Set();
 const allCgs = new Set();
 const allWho = new Set();
+const chapterWho = {};
+const chapterTexts = {};
 
 CHAPTERS.forEach(([id, num, title]) => {
   const ch = loadChapter(id);
@@ -249,7 +259,7 @@ CHAPTERS.forEach(([id, num, title]) => {
   if (!ch.date) err(file, '缺少 date');
   if (!ch.place) err(file, '缺少 place');
 
-  const stats = { steps: 0, hanzi: 0, choice: 0, fx: 0, end: 0, bgs: new Set(), cgs: new Set(), who: new Set(), records: new Set() };
+  const stats = { steps: 0, hanzi: 0, choice: 0, fx: 0, end: 0, bgs: new Set(), cgs: new Set(), who: new Set(), records: new Set(), texts: [] };
   const labels = new Set();
   const gotos = [];
   walk(ch.steps, file, 'steps', stats, labels, gotos);
@@ -269,6 +279,8 @@ CHAPTERS.forEach(([id, num, title]) => {
   stats.bgs.forEach(b => allBgs.add(b));
   stats.cgs.forEach(c => allCgs.add(c));
   stats.who.forEach(w => allWho.add(w));
+  chapterWho[id] = Array.from(stats.who);
+  chapterTexts[id] = stats.texts;
   report.push({
     id, title, steps: stats.steps, hanzi: stats.hanzi, choice: stats.choice,
     fx: stats.fx, archive: archive.length, bgs: stats.bgs.size, who: stats.who.size,
@@ -304,6 +316,93 @@ else {
       else assetReport.missingChars.push(w + '_' + f);
     });
   });
+}
+
+/* ---------------- 形象演进自检 ----------------
+ * 评审组给的 160 个剧情状态必须在运行时表里可查，章内 beat 必须能对上原文，
+ * 每个状态列出的表情都要有成品（位图或矢量兜底）。这样就不会出现
+ * “清单写得很丰富、玩家永远只看到基础立绘”的假完成。 */
+const psReport = { states: 0, faceSlots: 0, have: 0, missing: [], beats: 0 };
+if (!PORTRAIT_STATES) {
+  err('src/data/portraitStates.js', '找不到 ART.portraitStates');
+} else {
+  const states = PORTRAIT_STATES.states || {};
+  const chapters = PORTRAIT_STATES.chapterStates || {};
+  const beats = PORTRAIT_STATES.beats || [];
+  psReport.states = Object.keys(states).length;
+  psReport.beats = beats.length;
+
+  Object.keys(chapterWho).forEach(ch => {
+    const mapped = chapters[ch] || {};
+    chapterWho[ch].forEach(who => {
+      if (!mapped[who]) {
+        err('src/data/portraitStates.js', ch + ' 出场人物 ' + who + ' 没有默认形象状态');
+      }
+    });
+  });
+  Object.keys(chapters).forEach(ch => {
+    Object.keys(chapters[ch]).forEach(who => {
+      const sid = chapters[ch][who];
+      if (!states[sid]) err('src/data/portraitStates.js', ch + ' 的 ' + who + ' 指向不存在的状态 ' + sid);
+    });
+  });
+
+  Object.keys(states).forEach(sid => {
+    const st = states[sid];
+    const where = 'src/data/portraitStates.js(' + sid + ')';
+    if (!st || !st.character) { err(where, '状态缺少 character'); return; }
+    if (!Array.isArray(st.faces) || !st.faces.length) { err(where, 'faces 为空'); return; }
+    if (st.faces.indexOf('calm') < 0) err(where, 'faces 缺少 calm');
+    st.faces.forEach(face => {
+      if (FACES.indexOf(face) < 0) err(where, '非法表情 ' + face);
+      psReport.faceSlots++;
+      if (haveCh && haveCh.has(sid + '_' + face)) psReport.have++;
+      else psReport.missing.push(sid + '_' + face);
+    });
+  });
+
+  beats.forEach((b, i) => {
+    const where = 'src/data/portraitStates.js(beats[' + i + '])';
+    if (!b || !b.chapter || !b.character || !b.after_text || !b.portraitId) {
+      err(where, '字段不完整');
+      return;
+    }
+    if (!(chapterTexts[b.chapter] || []).some(t => t.indexOf(b.after_text) >= 0)) {
+      err(where, b.chapter + ' 找不到 beat 原文片段：' + b.after_text);
+    }
+    if (!states[b.portraitId]) err(where, 'portraitId 不存在：' + b.portraitId);
+    else if (states[b.portraitId].character !== b.character) err(where, 'portraitId 不属于 ' + b.character);
+  });
+  if (psReport.missing.length) {
+    err('assets/generated/chars', '形象演进图缺 ' + psReport.missing.length + ' 张：' +
+      psReport.missing.slice(0, 12).join(', ') + (psReport.missing.length > 12 ? ' …' : ''));
+  }
+}
+
+/* 600×900 立绘 PNG 的体积与 IHDR 尺寸 */
+const CH_PNG_MAX = 512 * 1024;
+const CH_PNG_SIG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+let chPngBad = 0;
+try {
+  fs.readdirSync(ASSET_CH).filter(f => f.endsWith('.png')).forEach(f => {
+    const fp = path.join(ASSET_CH, f);
+    const buf = fs.readFileSync(fp);
+    if (buf.length > CH_PNG_MAX) {
+      chPngBad++;
+      err('assets/generated/chars/' + f, '超过立绘 512 KB 上限：' + Math.round(buf.length / 1024) + ' KB');
+    }
+    if (buf.length < 24 || !buf.subarray(0, 8).equals(CH_PNG_SIG)) {
+      err('assets/generated/chars/' + f, '不是完整 PNG');
+      return;
+    }
+    const width = buf.readUInt32BE(16);
+    const height = buf.readUInt32BE(20);
+    if (width !== 600 || height !== 900) {
+      err('assets/generated/chars/' + f, '尺寸应为 600×900，实际 ' + width + '×' + height);
+    }
+  });
+} catch (e) {
+  err('assets/generated/chars', '立绘 PNG 自检失败：' + e.message);
 }
 
 /* ---------------- CG（全屏插画）自检 ----------------
@@ -462,6 +561,9 @@ console.log('背景位图 ' + bgArtReport.have + ' / ' + bgArtReport.want + ' �
   + (bgArtReport.missing.length ? '（缺 ' + bgArtReport.missing.length + ' 张：'
     + bgArtReport.missing.join(', ') + '）' : ''));
 console.log('立绘   ' + assetReport.chars + ' / ' + assetReport.charsWant);
+console.log('形象演进 ' + psReport.have + ' / ' + psReport.faceSlots + ' 表情图'
+  + '（' + psReport.states + ' 状态，' + psReport.beats + ' 个章内变化）'
+  + (psReport.missing.length ? '（缺 ' + psReport.missing.length + ' 张）' : ''));
 console.log('插画   P0 ' + cgReport.p0have + ' / ' + cgReport.p0 + ' 已生成'
   + (cgReport.missing.length ? '（缺 ' + cgReport.missing.length + ' 张：' + cgReport.missing.join(', ') + '）' : ''));
 const cgP1 = CG_LIST.filter(c => c.priority !== 'P0');

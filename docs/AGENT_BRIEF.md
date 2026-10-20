@@ -20,8 +20,10 @@
 | `docs/SPEC.md` `docs/STORY_BIBLE.md` `docs/AGENT_BRIEF.md` | root · 冻结 |
 | `art/geosvg.js` `art/palette.js` | root · 冻结 |
 | `src/data/characters.js` `src/data/backgrounds.js` | root · 冻结 |
+| `docs/reviews/char-progression-spec.json` `src/data/portraitStates.js` | root · 剧情造型清单与运行时表 |
 | `src/story/manifest.js` | root · 冻结 |
 | `tools/build-art.js` `tools/qa-shot.js` | root · 冻结 |
+| `tools/build-portrait-states.js` `tools/neko-states.js` | root · 剧情造型编译与出图 |
 | `art/portraits_*.js` | art-chars-* |
 | `art/scenes_*.js` `art/cg_*.js` `art/ui_*.js` | art-scenes-* / art-ui |
 | `index.html` `css/style.css` | web-shell |

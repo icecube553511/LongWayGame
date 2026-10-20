@@ -32,6 +32,21 @@ const DOCS = ['AGENTS.md', 'docs/PRODUCTION_SPEC.md', 'docs/SPEC.md', 'docs/ART_
   'docs/CG_DESIGN.md', 'docs/BG_DESIGN.md', 'docs/AGENT_BRIEF.md'];
 DOCS.forEach((d) => { if (!fs.existsSync(path.join(ROOT, d))) err('规范文件缺失：' + d); });
 
+/* 剧情造型这条产线的四个关键文件：清单、编译、生成、运行时表。
+ * 缺任何一个，都存在“清单写了但没人生成/引擎看不到”的假完成风险。 */
+const PORTRAIT_FILES = [
+  'docs/reviews/char-progression-spec.json',
+  'src/data/portraitStates.js',
+  'tools/build-portrait-states.js',
+  'tools/neko-states.js',
+  'tools/neko-post.py',
+  'tools/check-portrait-key.py',
+  'tools/qc-portraits.py',
+  'tools/apply-alpha.py',
+  'tools/make-expression-mask.py'
+];
+PORTRAIT_FILES.forEach((f) => { if (!fs.existsSync(path.join(ROOT, f))) err('剧情造型产线文件缺失：' + f); });
+
 /* 入口文件必须指向总纲，否则"新 agent 会读到"这句话不成立 */
 const REFS = [
   ['AGENTS.md', 'PRODUCTION_SPEC.md'],
@@ -97,6 +112,7 @@ if (stampsTable) {
 /* ---------- 输出 ---------- */
 console.log('\n=== 制作规范检查 ===');
 console.log('规范文件 ' + DOCS.length + ' 份：' + (errors.length ? '见下方' : '齐全'));
+console.log('剧情造型产线 ' + PORTRAIT_FILES.length + ' 份：' + (errors.length ? '见下方' : '齐全'));
 console.log('交叉引用 ' + REFS.length + ' 处');
 if (stampReport.length) console.log('群众印章 ' + Object.keys(stampsTable).length + ' 张（姿态/要求）：' + stampReport.join('  '));
 

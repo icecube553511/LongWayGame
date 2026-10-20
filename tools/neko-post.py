@@ -3,6 +3,8 @@
 
   python tools/neko-post.py                 # 处理 tmp/neko-raw 下的全部原始图
   python tools/neko-post.py mao_calm        # 只处理指定文件（不含扩展名）
+  python tools/neko-post.py --raw tmp/neko-states-raw --out assets/generated/chars \
+      mao_ch01_start_calm                   # 处理角色演进状态
 
 处理步骤：
   1. 以四角取样确定洋红底色，按色差生成 alpha（带软边，避免锯齿）
@@ -22,12 +24,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageFilter
+from PIL import Image, ImageChops, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "tmp" / "neko-raw"
 OUT = ROOT / "assets" / "generated" / "chars"
 TARGET = (600, 900)
+PNG_LIMIT = 512 * 1024
 HEAD_H_RATIO = 0.30         # 头部高度占画布高度
 HEAD_TOP_RATIO = 0.055      # 头顶距画布上边缘
 
@@ -62,14 +65,28 @@ NEAR = 60.0      # 完全透明
 FAR = 130.0      # 完全不透明（之间线性过渡，得到软边）
 
 
+def is_magenta(r: int, g: int, b: int) -> bool:
+    """洋红键色/残留的判别式。
+
+    上游偶尔返回「带 alpha 通道、但洋红底仍是不透明」的 RGBA；旧逻辑只看
+    alpha，成品里就会留下一整片洋红。这里不再依赖四角取样是否成功，
+    对任何红蓝高、绿色明显偏低的像素都强制抠掉。
+    """
+    return r > 150 and b > 150 and g + 60 < min(r, b) and (r + b - 2 * g) > 140
+
+
 def key_color(img: Image.Image) -> tuple[int, int, int]:
     w, h = img.size
     pts = [(2, 2), (w - 3, 2), (2, h - 3), (w - 3, h - 3)]
     px = img.load()
-    rs = [px[x, y][0] for x, y in pts]
-    gs = [px[x, y][1] for x, y in pts]
-    bs = [px[x, y][2] for x, y in pts]
-    return (sorted(rs)[1], sorted(gs)[1], sorted(bs)[1])
+    # 不能取四角中位数：角色可能把手/桌面/道具伸进下两角，中位数会偏成
+    # 红褐道具色，随后整片 #FF00FF 背景都被当成人物保留。
+    # 洋红键色的判别式是 R+B-2G，取四角里最“洋红”的那一角。
+    def magenta_score(p: tuple[int, int]) -> int:
+        r, g, b = px[p[0], p[1]][:3]
+        return int(r) + int(b) - 2 * int(g)
+    chosen = max(pts, key=magenta_score)
+    return tuple(px[chosen[0], chosen[1]][:3])
 
 
 def has_useful_alpha(img: Image.Image) -> bool:
@@ -82,6 +99,18 @@ def has_useful_alpha(img: Image.Image) -> bool:
     return alpha.getextrema()[0] < 250
 
 
+def strip_magenta_fringe(rgba: Image.Image, alpha: Image.Image) -> Image.Image:
+    """上游即使返回 alpha，也会在人物边缘留一圈洋红色 RGB 污染。
+    在源分辨率先按洋红色阈值削掉这条边，再做裁切缩放。"""
+    r, g, b = rgba.convert("RGB").split()
+    # 洋红边经过缩放/调色板量化后会变暗，不能只抓“亮洋红”。
+    # 用色相关系（R、B 同时明显高于 G）更可靠；红领章与肤色不同时满足 B>G。
+    m_r = ImageChops.subtract(r, g).point(lambda v: 255 if v >= 18 else 0)
+    m_b = ImageChops.subtract(b, g).point(lambda v: 255 if v >= 18 else 0)
+    mask = ImageChops.multiply(m_r, m_b)
+    return ImageChops.subtract(alpha, mask)
+
+
 def process(src: Path, dst: Path) -> str:
     source = Image.open(src)
     source.load()
@@ -90,7 +119,17 @@ def process(src: Path, dst: Path) -> str:
     if mode == "alpha":
         out = source.convert("RGBA")
         alpha = out.getchannel("A")
-        kr = kg = kb = -1
+        kr, kg, kb = key_color(source.convert("RGB"))
+        alpha = strip_magenta_fringe(out, alpha)
+        out.putalpha(alpha)
+        # 上游 alpha 不可信时，洋红底会原样留在画面里；再叠一层硬抠。
+        px = out.convert("RGB").load()
+        ap = alpha.load()
+        w, h = out.size
+        for y in range(h):
+            for x in range(w):
+                if is_magenta(*px[x, y]):
+                    ap[x, y] = 0
     else:
         img = source.convert("RGB")
         kr, kg, kb = key_color(img)
@@ -109,7 +148,7 @@ def process(src: Path, dst: Path) -> str:
                 elif d < FAR:
                     ap[x, y] = int(255 * (d - NEAR) / (FAR - NEAR))
                 # 额外的洋红抑制：绿色明显低于红蓝时也算背景
-                elif g + 40 < r and g + 40 < b and d < 260:
+                elif is_magenta(r, g, b) or (g + 40 < r and g + 40 < b and d < 260):
                     ap[x, y] = 0
 
         # 收缩一圈去掉残留底色，再轻微羽化
@@ -134,25 +173,57 @@ def process(src: Path, dst: Path) -> str:
     canvas = Image.new("RGBA", TARGET, (0, 0, 0, 0))
     canvas.paste(out, ((cw - w) // 2, int(ch * HEAD_TOP_RATIO) - int(top_row * scale)), out)
     out = canvas
+    # 缩放会把源图的洋红边混回人物边缘；缩到 600×900 后再削一次。
+    alpha_trimmed = strip_magenta_fringe(out, out.getchannel("A"))
+    out.putalpha(alpha_trimmed)
 
-    # 低多边形画风本来就是少量纯色块，量化到 160 色几乎无损，体积却小很多
-    alpha_small = out.getchannel("A")
-    out = out.convert("RGB").quantize(colors=160, method=Image.MEDIANCUT).convert("RGB").convert("RGBA")
-    out.putalpha(alpha_small)
-
+    # 低多边形画风本来就是少量纯色块。先量化到 160 色；若仍超 512 KB，
+    # 逐级降到 128/96/64 色（只丢噪点，不缩尺寸、不模糊）。
+    # 半透明边缘的 8 位噪声对 PNG 体积影响很大；保留 16 级 alpha，
+    # 足以保持低多边形硬边，同时让 600×900 成品稳定落在 512 KB 以内。
+    alpha_small = out.getchannel("A").point(lambda a: min(255, (a // 16) * 16))
+    rgba = out.convert("RGBA")
+    rgba.putalpha(alpha_small)
     dst.parent.mkdir(parents=True, exist_ok=True)
-    out.save(dst, "PNG", optimize=True)
-    cov = sum(1 for a in out.getchannel("A").getdata() if a > 8) / (TARGET[0] * TARGET[1])
+    used_colors = 160
+    for colors in (160, 128, 96, 64, 48, 32, 24, 16, 12):
+        used_colors = colors
+        # RGBA + FASTOCTREE 会生成带 transparency 的 P 模式 PNG：
+        # 低多边形本来色数少，这种写法几乎无视觉损失，体积通常只有 RGBA 的 1/4。
+        q = rgba.quantize(colors=colors, method=Image.FASTOCTREE)
+        q.save(dst, "PNG", optimize=True)
+        if dst.stat().st_size <= PNG_LIMIT:
+            out = q
+            break
+    out = q
+    cov = sum(alpha_small.histogram()[9:]) / (TARGET[0] * TARGET[1])
     key_text = "alpha" if mode == "alpha" else f"key=#{kr:02X}{kg:02X}{kb:02X}"
-    return f"{dst.name:28s} {key_text:18s} 实心占比={cov:5.1%}  {dst.stat().st_size // 1024}KB"
+    return (f"{dst.name:28s} {key_text:18s} 实心占比={cov:5.1%}  "
+            f"{used_colors}色  {dst.stat().st_size // 1024}KB")
 
 
 def main() -> int:
-    if not RAW.exists():
-        print("没有原始图目录：" + str(RAW), file=sys.stderr)
+    args = sys.argv[1:]
+    raw = RAW
+    out = OUT
+    filt = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--raw" and i + 1 < len(args):
+            raw = Path(args[i + 1]).resolve()
+            i += 2
+            continue
+        if a == "--out" and i + 1 < len(args):
+            out = Path(args[i + 1]).resolve()
+            i += 2
+            continue
+        filt.append(a)
+        i += 1
+    if not raw.exists():
+        print("没有原始图目录：" + str(raw), file=sys.stderr)
         return 1
-    filt = sys.argv[1:] if len(sys.argv) > 1 else None
-    files = sorted(RAW.glob("*.png"))
+    files = sorted(raw.glob("*.png"))
     if filt:
         files = [f for f in files if f.stem in filt]
     if not files:
@@ -160,10 +231,10 @@ def main() -> int:
         return 1
     for f in files:
         try:
-            print(process(f, OUT / (f.stem + ".png")))
+            print(process(f, out / (f.stem + ".png")))
         except Exception as e:  # noqa: BLE001
             print(f"{f.name} 处理失败：{e}", file=sys.stderr)
-    print(f"\n共处理 {len(files)} 张 → {OUT}")
+    print(f"\n共处理 {len(files)} 张 → {out}")
     return 0
 
 

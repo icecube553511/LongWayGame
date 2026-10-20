@@ -76,12 +76,12 @@ assets/generated/**         [生成物, 由 build-art.js 写入]
 | `t` | 字段 | 说明 |
 |---|---|---|
 | `bg` | `id`, `fx?`(`fade`/`cut`/`dissolve`/`black`), `ms?` | 切换背景（`id` 见 4.1） |
-| `show` | `who`, `face?`, `slot?`(`left`/`center`/`right`), `fx?`(`slidein`/`fadein`/`pop`) | 立绘登场（`who` 见 3.1） |
+| `show` | `who`, `face?`, `slot?`(`left`/`center`/`right`), `fx?`(`slidein`/`fadein`/`pop`), `portraitId?`, `displayName?` | 立绘登场（`who` 见 3.1）；`portraitId` 可临时指向一个形象演进状态，`displayName` 只改姓名条 |
 | `hide` | `who`, `fx?` | 立绘退场 |
 | `clear` | – | 清空所有立绘 |
-| `say` | `who`, `face?`, `text`, `note?`, `noPortrait?` | 有说话人的对白；`note` 为史料小注（可省略）；`noPortrait:true` = 这一句不要立绘（画面里只留背景，例：`ch03` 的「三发子弹」） |
+| `say` | `who`, `face?`, `text`, `note?`, `noPortrait?`, `portraitId?`, `displayName?` | 有说话人的对白；`note` 为史料小注（可省略）；`noPortrait:true` = 这一句不要立绘（画面里只留背景，例：`ch03` 的「三发子弹」） |
 | `narr` | `text`, `note?` | 旁白（无名框、居中偏上排版） |
-| `think` | `who`, `text`, `noPortrait?` | 内心独白（括号括起、斜体感）；`noPortrait` 同上 |
+| `think` | `who`, `text`, `noPortrait?`, `portraitId?`, `displayName?` | 内心独白（括号括起、斜体感）；`noPortrait` 同上 |
 | `title` | `text`, `sub?` | 章节内小标题卡（如「一九三五年一月·遵义」） |
 | `fx` | `kind`(`flash`/`shake`/`fadeout`/`fadein`/`snow`/`rain`/`ash`/`blood`/`star`), `ms?` | 全屏特效 |
 | `cg` | `id`, `text?`, `ms?`, `motion?` | 全屏插画（重要事件 CG）。`id` 取 `src/data/cg.js` 的 `cg_*`；老写法（写背景 id）仍可用。`text` 省略时用表里的 `caption`；`ms` 默认 4400；`motion` ∈ `zoom-in`/`pan-left`/`pan-right`/`still`/`impact`（`impact` = 进场挨一下的抖动，给炮击/爆炸用） |
@@ -140,6 +140,29 @@ archive: [
   { id: 'a_yudu', title: '于都河上的浮桥', text: '1934年10月…（120-300字史实短文）', tag: '史实' }
 ]
 ```
+
+### 2.6 角色形象演进
+
+角色的**逻辑 id** 不变（仍只用 §3.1 的 35 个），但外观可以随章节与剧情节点变化。
+唯一来源是 `docs/reviews/char-progression-spec.json`，由评审组先写清单，
+再编译成运行时的 `src/data/portraitStates.js`：
+
+```text
+docs/reviews/char-progression-spec.json     需求清单（状态、章映射、章内变化、表情）
+        ↓ node tools/build-portrait-states.js
+src/data/portraitStates.js                  引擎与生成器共用的运行时表
+        ↓ node tools/neko-states.js
+assets/generated/chars/{portraitId}_{face}.png
+```
+
+- `chapterStates[章][人物]` 是该角色本章的默认造型；引擎在 `show/say/think` 时自动解析。
+- 章内一次性的外观变化（例如捡到绑腿、背起铜锅、戴上银饰）写在 `beats`：
+  以剧本 `text` 的**连续原文片段**触发，必须在当前句念完后才切图，
+  并跨 `hide/clear` 保留到本章结束；存档快照包含这些变化。
+- 剧本显式写 `portraitId` 时优先级最高，用于一次性覆盖。
+- 每个状态的 `faces` 必须覆盖该状态所辖章节实际用到的全部表情，并包含 `calm`。
+- 状态位图缺失时，引擎回到人物基础 `{id}_{face}.png`，再回退 `.svg`，不允许报错或留白。
+- 新增/修改状态只改评审清单与重新生成的运行时表，不改人物 id、不改表情枚举。
 
 ## 3. 人物
 
@@ -231,7 +254,7 @@ archive: [
 >
 > | 来源 | 路径 | 尺寸 | 生成方式 |
 > |---|---|---|---|
-> | **首选** | `assets/generated/chars/{id}_{face}.png` | 600×900 透明 | `tools/neko-art.js` 调 NekoGptImage（`gpt-image-2.5-sunburst`）生成，`tools/neko-post.py` 抠底+缩放 |
+> | **首选** | `assets/generated/chars/{id}_{face}.png` | 600×900 透明（RGBA 或带 tRNS 的调色板 PNG） | `tools/neko-art.js` 调 NekoGptImage（`gpt-image-2.5-sunburst`）生成，`tools/neko-post.py` 抠底+缩放 |
 > | 兜底 | `assets/generated/chars/{id}_{face}.svg` | 600×900 透明 | `art/portraits_root.js` 程序化刻面立绘 |
 >
 > 只需生成**剧本实际引用到的 (人物, 表情) 组合**（当前 164 组，见 `tmp/devkit/face-need.json`）；
@@ -255,6 +278,13 @@ archive: [
 - **不允许出现悬空手臂**；半身立绘只使用自然垂手或按腰的姿态，不举手、不交叉。
 - 35 个角色必须在脸部层面一眼可区分（脸型、年龄、胡须、眼镜、发型帽型、肤色、性别）。
 - 8 种表情必须一眼可区分，且同时改变眉、眼、嘴三处。
+
+**剧情造型（2026-10-20 起）**：除基础 `{id}_{face}` 外，还可以有
+`assets/generated/chars/{portraitId}_{face}.png`（例如
+`xiaoman_ch16_snow_calm.png`）。`portraitId` 必须来自
+`docs/reviews/char-progression-spec.json`，且以对应人物 id 加下划线开头。
+造型只改变年龄感、磨损、脏污、伤情、服装/装备、道具、姿态与头部角度，
+**不得换脸、换帽型、改人物 id**。体积与尺寸仍按本节 600×900 / 512 KB 执行。
 
 ### 4.3 生成物路径规则（**引擎按此拼路径，不可改**）
 

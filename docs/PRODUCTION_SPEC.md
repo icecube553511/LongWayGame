@@ -32,7 +32,7 @@
 
 | 资产族 | 清单 | 生成 | 烘焙 | 成品 | 专项规范 |
 |---|---|---|---|---|---|
-| 立绘 600×900 | `src/data/characters.js` | `tools/neko-art.js` | `tools/neko-post.py` | `assets/generated/chars/{id}_{face}.png` | `ART_DIRECTION.md` §1 / §2 |
+| 立绘 600×900 | `src/data/characters.js` + `docs/reviews/char-progression-spec.json` | `tools/neko-art.js` / `tools/neko-states.js` | `tools/neko-post.py` | `assets/generated/chars/{id}_{face}.png` / `{portraitId}_{face}.png` | `ART_DIRECTION.md` §1 / §2 |
 | 重要事件插画 1920×1080 | `src/data/cg.js`（清单就叫 `cg.js`，与背景的 `bgart.js` 命名不同，是历史原因） | `tools/cg-art.js` | `tools/cg-post.py` | `assets/generated/cg/{cgId}.png` | `CG_DESIGN.md` |
 | 场景背景 1920×1080 | `src/data/bgart.js` | `tools/bg-art.js` | `tools/bg-post.py` | `assets/generated/bg/{bgId}.png` | `BG_DESIGN.md` |
 | 群众印章（贴图素材） | `tools/neko-crowd.js` 的 `POSES` | `tools/neko-crowd.js` | `tools/neko-crowd-post.py` | `art/ui_00_crowd_stamps.js`（base64）→ SVG 背景用 `<use>` 复用 | `ART_DIRECTION.md` §2.3.1 |
@@ -56,7 +56,7 @@
 |---|---|---|
 | 纯矢量 SVG（无内嵌位图） | **400 KB** | 控制碎多边形数量 |
 | 含内嵌位图素材的 SVG | **640 KB** | 贴图字节另算（群众印章、行军小人） |
-| 立绘 PNG（600×900 RGBA） | **512 KB** | 单人胸像 |
+| 立绘 PNG（600×900 RGBA 或带 tRNS 的调色板 PNG） | **512 KB** | 单人胸像；P+tRNS 按像素复扫透明边缘 |
 | 背景 PNG（1920×1080） | **1280 KB** | 背景每章都在场、30 张一起加载，比插画更该克制 |
 | 插画 PNG（1920×1080） | **1536 KB** | 细节量比背景高一档 |
 
@@ -90,6 +90,10 @@
 
 * 先看四角 alpha：接近全透明 → 直接用它自带的蒙版裁包围盒；
 * 否则按四角取键色扣洋红。
+* **四角取键色不能取中位数**：角色把手、桌面或道具伸进下方两角时，中位数会
+  偏成红褐色，随后整片洋红底被误判成不透明（2026-10-20 实测 13 张立绘中招）。
+  应取四角中 `R+B-2G` 最大的一角作为洋红键色，并用
+  `python tools/check-portrait-key.py` 扫全部成品的实际像素。
 
 **为什么必须这样**：RGBA 送进只认洋红的脚本，`.convert("RGB")` 会把透明压成**黑色**，
 再拿黑色当键色 —— 制服、靴子、头发这些暗部会被整片打成透明，人身上出现「窟窿」，而且不报错。

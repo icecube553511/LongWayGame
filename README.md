@@ -91,6 +91,8 @@ docs/                       技术契约、剧本圣经、美术总纲
 | `python tools/neko-crowd-post.py` | 群众素材抠底 / 缩放 / 三档明度 → 烘焙成 `art/ui_00_crowd_stamps.js` |
 | `node tools/check.js` | **总验收**：20 章完整性 + 剧本 DSL 合法性 + 资源是否齐备 + 死链 |
 | `node tools/check.js --chapter ch07` | 只检查一章 |
+| `node tools/build-portrait-states.js --check` | 角色剧情造型清单与运行时表一致（35 角色 / 160 状态 / 19 个章内变化） |
+| `python tools/check-portrait-key.py` | 逐像素检查立绘洋红底残留（PNG 头与体积之外的画面闸门） |
 | `node tools/validate-svg.js` | 校验生成物结构（防"属性里嵌套双引号导致整张图空白"这类静默故障） |
 | `node tools/lint-story.js src/story/ch07.js` | 剧本静态检查（更细的单章规则） |
 | `node tools/e2e-shot.js ch16` | 真浏览器端到端冒烟：跳到第 16 章并截图，同时报告 JS 报错条数 |

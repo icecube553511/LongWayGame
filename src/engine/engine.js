@@ -61,11 +61,29 @@
    * 以及 art/portraits_root.js 烘焙的矢量 SVG（兜底）。
    * 这样任何一张 PNG 缺失或加载失败时，游戏仍然显示得出人。 */
   var CHAR_EXT = ['.png', '.svg'];
-  function charPaths(who, face) {
-    var base = 'assets/generated/' + FOLDER.char + '/' + who + '_' + (face || 'calm');
-    return CHAR_EXT.map(function (e) { return base + e; });
+  /* 造型 id 可以是一个演进状态（如 xiaoman_ch16_snow），也可以是人物基础 id。
+   * 第三参 fallbackId 用于逐级回退：状态位图/矢量缺失时回到人物基础立绘，
+   * 这样新增状态还没烘焙全也不会让人物整段消失。 */
+  function charPaths(who, face, fallbackId) {
+    var ids = [who];
+    if (fallbackId && fallbackId !== who) ids.push(fallbackId);
+    var out = [];
+    ids.forEach(function (id) {
+      var base = 'assets/generated/' + FOLDER.char + '/' + id + '_' + (face || 'calm');
+      CHAR_EXT.forEach(function (e) { out.push(base + e); });
+    });
+    return out;
   }
-  function charPath(who, face) { return charPaths(who, face)[0]; }
+  function charPath(who, face, fallbackId) { return charPaths(who, face, fallbackId)[0]; }
+  /* 按当前章查形象演进状态；剧本显式 portraitId 的优先级更高。 */
+  function chapterPortraitId(who) {
+    if (chapterBeatStates[who]) return chapterBeatStates[who];
+    var ps = window.ART && window.ART.portraitStates;
+    var ch = VN.state && VN.state.chapter;
+    if (!ps || !ch || !ps.chapterStates) return '';
+    var row = ps.chapterStates[ch];
+    return (row && row[who]) || '';
+  }
   function uiPath(name) { return asset('ui', name); }
 
   /* ===== 1. 人物表（SPEC §3.1 固定 35 个 id） ===== */
@@ -363,10 +381,16 @@
     Object.keys(D.slots).forEach(function (k) {
       if (D.slots[k] && D.slots[k].dataset.who === who && D.slots[k].dataset.empty !== '1') found = D.slots[k];
     });
+    if (!found) {
+      Object.keys(D.slots).forEach(function (k) {
+        if (slotPending[k] && slotPending[k].who === who) found = D.slots[k];
+      });
+    }
     if (found) return found;
     var occupied = {};
     Object.keys(D.slots).forEach(function (k) {
       if (D.slots[k] && D.slots[k].dataset.empty !== '1') occupied[k] = 1;
+      else if (slotPending[k]) occupied[k] = 1;
     });
     if (!occupied.center) return D.slots.center;
     if (!occupied.left) return D.slots.left;
@@ -389,10 +413,45 @@
    * —— 由 root 修复 */
   var CROWD_IDS = { soldiers: 1, villagers: 1, yi_people: 1, narrator: 1 };
   var charFace = {};                       /* 本章每个角色最近一次用过的表情 */
+  var charSeq = {};                        /* who -> 显示/隐藏序号，丢弃晚到的旧图片加载 */
+  var slotSeq = {};                        /* slot -> 槽位占用序号，防止旧角色的晚到图抢槽 */
+  var slotPending = {};                    /* slot -> { who, token }，加载完成前也占住槽位 */
   /* 局部形象覆盖：逻辑 id 仍是人物表里的 id，但这一幕可以换用别的立绘与姓名。
    * 只由 show/say/think 的 portraitId、displayName 字段写入，hide/clear 时清除。
    * 用途：ch06 的台词人是白军俘虏，剧情逻辑仍沿用群众 id soldiers。 */
   var charScene = {};                      /* who -> { portraitId, displayName } */
+  var chapterBeatStates = {};              /* who -> 章内 beat 后的形象，跨 clear/hide 保留 */
+  var pendingPortraitBeats = [];           /* 当前这句念完后要切换的章内形象 */
+  function portraitBeats() {
+    var ps = window.ART && window.ART.portraitStates;
+    return (ps && Array.isArray(ps.beats)) ? ps.beats : [];
+  }
+  /* 章内变化按“原文连续片段”触发，不改剧本正文。命中后先排队，
+   * 等玩家把这一句念完、真正翻页时再换图，保证“说完才发生”。 */
+  function queuePortraitBeats(text) {
+    if (!text || !VN.state.chapter) return;
+    portraitBeats().forEach(function (b) {
+      if (b.chapter !== VN.state.chapter) return;
+      if (String(text).indexOf(b.after_text) < 0) return;
+      pendingPortraitBeats.push(b);
+    });
+  }
+  function applyPendingPortraitBeats() {
+    if (!pendingPortraitBeats.length) return;
+    var list = pendingPortraitBeats.slice();
+    pendingPortraitBeats.length = 0;
+    list.forEach(function (b) {
+      if (!b.character || !b.portraitId) return;
+      var cur = charScene[b.character] || {};
+      charScene[b.character] = {
+        portraitId: b.portraitId,
+        displayName: cur.displayName || ''
+      };
+      chapterBeatStates[b.character] = b.portraitId;
+      var slot = onStageSlotOf(b.character);
+      if (slot) showChar(b.character, charFace[b.character] || 'calm', null, 'fadein', { portraitId: b.portraitId });
+    });
+  }
   function onStageSlotOf(who) {
     var hit = null;
     Object.keys(D.slots).forEach(function (k) {
@@ -419,51 +478,79 @@
   }
   function showChar(who, face, slot, fx, step) {
     if (!who) return;
+    var seq = (charSeq[who] = (charSeq[who] || 0) + 1);
     face = FACES.indexOf(face) >= 0 ? face : 'calm';
     charFace[who] = face;
     var s = slotOf(who, slot);
     if (!s) return;
+    var slotToken = (slotSeq[s.dataset.slot] = (slotSeq[s.dataset.slot] || 0) + 1);
+    slotPending[s.dataset.slot] = { who: who, token: slotToken };
     var info = sceneMetaOf(who, step);
     /* 只有槽位里坐着的仍是同一逻辑 id 时才继承它的局部覆盖；
        否则换人上同一个槽会把上一位的立绘/姓名带过来。 */
     var same = s.dataset.who === who;
-    var portraitId = info.portraitId || (same ? s.dataset.portraitId : '') || who;
+    var portraitId = info.portraitId || (same ? s.dataset.portraitId : '') || chapterPortraitId(who) || who;
     var displayName = info.displayName || (same ? s.dataset.displayName : '') || '';
     var img = s.querySelector('img');
-    var paths = charPaths(portraitId, face);
+    var paths = charPaths(portraitId, face, who);
     if (s.dataset.who === who && s.dataset.portraitId === portraitId &&
         s.dataset.face === face && s.classList.contains('on')) {
+      delete slotPending[s.dataset.slot];
       s.dataset.displayName = displayName;
       return;
     }
-    var probe = new Image();
+    /* 先把槽位账记上，再让图片慢慢解码。这样同一角色后续的 say/think
+     * 不会因为“图还没 onload”而误判为不在台上，再去抢第二个槽位。 */
+    s.dataset.who = who;
+    s.dataset.portraitId = portraitId;
+    s.dataset.displayName = displayName;
+    s.dataset.face = face;
+    s.dataset.empty = '0';
     var tryIndex = 0;
-    probe.onload = function () {
-      img.setAttribute('src', probe.src);
+    img.onload = function () {
+      /* 这一轮加载期间，角色可能已经被 hide / 重新 show。
+       * 旧图的 onload 晚到就丢弃，避免把退场的人塞回空槽。 */
+      if (charSeq[who] !== seq || slotSeq[s.dataset.slot] !== slotToken) {
+        if (slotPending[s.dataset.slot] && slotPending[s.dataset.slot].token === slotToken) {
+          delete slotPending[s.dataset.slot];
+        }
+        return;
+      }
+      delete slotPending[s.dataset.slot];
       hideChar(who, s);                    /* 同一个人只留一个槽 */
-      s.dataset.who = who;
-      s.dataset.portraitId = portraitId;
-      s.dataset.displayName = displayName;
-      s.dataset.face = face;
-      s.dataset.empty = '0';
       s.classList.remove('leaving');
       s.classList.add('on');
       if (fx === 'pop') { s.classList.add('pop'); requestAnimationFrame(function () { s.classList.remove('pop'); }); }
       else if (fx !== 'fadein') { s.classList.add('slidein'); requestAnimationFrame(function () { s.classList.remove('slidein'); }); }
       unlock('chars', who);
     };
-    probe.onerror = function () {
+    img.onerror = function () {
       /* 首选格式缺失时依次回退；全部失败则静默不显示 */
       tryIndex++;
-      if (tryIndex < paths.length) probe.src = paths[tryIndex];
+      if (tryIndex < paths.length) img.src = paths[tryIndex];
+      else {
+        if (slotPending[s.dataset.slot] && slotPending[s.dataset.slot].token === slotToken) {
+          delete slotPending[s.dataset.slot];
+        }
+        s.dataset.empty = '1';
+        s.dataset.who = '';
+        s.dataset.portraitId = '';
+        s.dataset.displayName = '';
+      }
     };
-    probe.src = paths[tryIndex];
+    /* 直接用槽位里的 <img> 加载：它始终挂在 DOM 上，不会被 GC 回收，
+     * 也不存在“游离探针的 onload 永远不来”这种静默故障。 */
+    img.src = paths[tryIndex];
   }
   function hideChar(who, except) {
+    if (who) charSeq[who] = (charSeq[who] || 0) + 1;
+    else Object.keys(charSeq).forEach(function (k) { charSeq[k]++; });
     Object.keys(D.slots).forEach(function (k) {
       var s = D.slots[k];
       if (!s || s === except) return;
       if (who && s.dataset.who !== who) return;
+      slotSeq[k] = (slotSeq[k] || 0) + 1;
+      delete slotPending[k];
       s.classList.add('leaving');
       s.classList.remove('on');
       s.dataset.empty = '1';
@@ -937,7 +1024,12 @@
       chars.push({ slot: k, who: s.dataset.who, face: s.dataset.face || 'calm',
         portraitId: s.dataset.portraitId || '', displayName: s.dataset.displayName || '' });
     });
-    return { bg: front ? (front.getAttribute('src') || '') : '', chars: chars, scene: copyMap(charScene) };
+    return {
+      bg: front ? (front.getAttribute('src') || '') : '',
+      chars: chars,
+      scene: copyMap(charScene),
+      beatStates: copyMap(chapterBeatStates)
+    };
   }
   function restoreVisual(v) {
     if (!v) return;
@@ -955,6 +1047,7 @@
     if (back) back.classList.remove('on', 'slow-zoom');
     clearChars();
     charScene = {};
+    chapterBeatStates = v.beatStates ? copyMap(v.beatStates) : {};
     if (v.scene) Object.keys(v.scene).forEach(function (k) { charScene[k] = v.scene[k]; });
     (v.chars || []).forEach(function (c) { showChar(c.who, c.face, c.slot, 'fadein', c); });
     setWeather(VN.state.weather || null);
@@ -1077,6 +1170,7 @@
   function exec(s) {
     /* 每执行一步先清空「停在屏幕上的内容步」；只有下面的内容步会重新填上它。 */
     curGateStep = null;
+    queuePortraitBeats(s.text);
     switch (s.t) {
       /* 把 s.ms 传下去：SPEC §2.1 允许 bg 带 ms（全剧有 106 处作者写了，
          取值 600–1400ms），但引擎原先直接把 ms 丢掉，所有转场一律 620ms。
@@ -1208,6 +1302,7 @@
     if (VN.state.choice) return;
     if (finishTyping()) return;
     unblock();
+    applyPendingPortraitBeats();
     clearTimeout(autoTimer);
     run();
   }
@@ -1395,7 +1490,10 @@
     clearChars();
     hideCg(true);                           /* 新章节开场不该残留上一章的插画 */
     charFace = {};                          /* 表情记忆按章重置 */
+    charSeq = {};                           /* 旧章节的晚到加载全部作废 */
     charScene = {};                         /* 局部形象覆盖按章重置 */
+    chapterBeatStates = {};
+    pendingPortraitBeats = [];
     rewindBuf.length = 0;                   /* 倒退不跨章 */
     suppressRecord = false;
     setNote(null);
@@ -1495,8 +1593,14 @@
         /* 插画按候选链逐张预载：位图命中时后面的矢量不会真的去取（浏览器只在
            真正赋值给 <img> 时才会请求），所以这里只预载「最可能出现的两级」。 */
         if (s.t === 'cg') cgCandidates(s.id).slice(0, 2).forEach(grab);
-        if (s.t === 'show') grab(charPath(s.portraitId || s.who, s.face || 'calm'));
-        if (s.t === 'say' && s.face) grab(charPath(s.portraitId || s.who, s.face));
+        if (s.t === 'show') {
+          var showPid = s.portraitId || chapterPortraitId(s.who) || s.who;
+          grab(charPath(showPid, s.face || 'calm', s.who));
+        }
+        if (s.t === 'say' && s.face) {
+          var sayPid = s.portraitId || chapterPortraitId(s.who) || s.who;
+          grab(charPath(sayPid, s.face, s.who));
+        }
         if (s.t === 'if') { walk(s.then); walk(s.else); }
       });
     })(ch.steps);
@@ -1514,6 +1618,8 @@
       records: VN.state.records,
       history: VN.state.history.slice(-160),
       weather: VN.state.weather,
+      scene: charScene,
+      beatStates: chapterBeatStates,
       ts: Date.now(),
       preview: lastLines(2)
     };
@@ -1549,6 +1655,21 @@
     VN.state.weather = obj.weather || null;
     clearChars();
     charScene = {};
+    chapterBeatStates = {};
+    pendingPortraitBeats = [];
+    if (obj.scene && typeof obj.scene === 'object') {
+      Object.keys(obj.scene).forEach(function (k) {
+        var v = obj.scene[k];
+        if (v && typeof v === 'object') {
+          charScene[k] = { portraitId: v.portraitId || '', displayName: v.displayName || '' };
+        }
+      });
+    }
+    if (obj.beatStates && typeof obj.beatStates === 'object') {
+      Object.keys(obj.beatStates).forEach(function (k) {
+        if (typeof obj.beatStates[k] === 'string') chapterBeatStates[k] = obj.beatStates[k];
+      });
+    }
     hideCg(true);
     D.choiceLayer.classList.add('hidden');
     D.dialogue.classList.add('hidden');

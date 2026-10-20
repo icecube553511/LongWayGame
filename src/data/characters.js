@@ -7,7 +7,10 @@
   G.ART = G.ART || {};
 
   var FULL = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
-  var CROWD = ['calm', 'fierce', 'sad'];
+  /* 群众同样走 SPEC §4.2 的 35×8 全表情资产；剧本实际也用了
+     stern / smile / worry / weak / dawn。群体的“不同人”差异由三人组构图承担，
+     不再靠削减表情来省图。 */
+  var CROWD = FULL;
 
   var C = [
     /* ---- 历史人物 ---- */

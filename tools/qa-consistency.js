@@ -86,6 +86,7 @@ const PROBE = `
       return {
         slot: sl.dataset.slot,
         id: bookkept ? sl.dataset.who : '',
+        portraitId: bookkept ? (sl.dataset.portraitId || '') : '',
         on: bookkept,
         vis: vis,
         file: src.split('/').pop() || '',
@@ -143,6 +144,17 @@ const PROBE = `
   function snap(h) {
     var sl = slots();
     var vis = sl.filter(function (s) { return s.id; });
+    var ps = (window.ART && window.ART.portraitStates) || null;
+    var stateBad = [], stateFallback = [];
+    vis.forEach(function (s) {
+      var state = ps && ps.states && ps.states[s.portraitId];
+      if (state && state.character !== s.id) {
+        stateBad.push(s.slot + ':' + s.id + '→' + s.portraitId);
+      }
+      if (s.portraitId && s.file && s.file.indexOf(s.portraitId + '_') !== 0) {
+        stateFallback.push(s.slot + ':' + s.portraitId + '→' + s.file);
+      }
+    });
     var count = {};
     vis.forEach(function (s) { count[s.id] = (count[s.id] || 0) + 1; });
     var plate = document.getElementById('name-plate');
@@ -152,12 +164,17 @@ const PROBE = `
       name: h.name || '',
       text: String(h.text || '').slice(0, 46),
       onStage: vis.map(function (s) { return s.slot + '=' + s.id; }),
+      portraits: vis.map(function (s) {
+        return { slot: s.slot, id: s.id, portraitId: s.portraitId, file: s.file };
+      }),
       speakerOn: !h.who || CROWD.indexOf(h.who) >= 0 ||
         vis.some(function (s) { return s.id === h.who; }),
       crowd: CROWD.indexOf(h.who) >= 0,
       dup: Object.keys(count).filter(function (k) { return count[k] > 1; }),
       brokenChar: vis.filter(function (s) { return !s.complete || s.nw === 0; })
         .map(function (s) { return s.slot + ':' + s.file; }),
+      stateBad: stateBad,
+      stateFallback: stateFallback,
       namePlateHidden: !!(plate && plate.classList.contains('hidden')),
       bg: bgHealth().filter(function (b) { return !b.complete || b.nw === 0; })
         .map(function (b) { return b.id + ':' + b.file; })
@@ -274,6 +291,8 @@ function violations(rec) {
     if (!r.speakerOn) v.push(['不在台上', (r.crowd ? '[群众]' : '') + r.who + ' 说话但台上没有他的立绘', r]);
     if (r.dup.length) v.push(['重复立绘', '同屏重复：' + r.dup.join(','), r]);
     if (r.brokenChar.length) v.push(['缺立绘', r.brokenChar.join(' '), r]);
+    if (r.stateBad.length) v.push(['形象错位', r.stateBad.join(' '), r]);
+    if (r.stateFallback.length) v.push(['状态图回退', r.stateFallback.join(' '), r]);
     if (r.bg.length) v.push(['缺背景', r.bg.join(' '), r]);
   });
   return v;

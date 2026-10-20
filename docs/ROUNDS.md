@@ -630,3 +630,22 @@ AI 出的整屏位图 —— 人群的差异由提示词里的硬要求 + 独立
 合流后在 **`main` 的检出目录**上复验：`node tools/check.js` 检查通过（背景 34/34、位图 30/30、
 立绘 280/280、P0 插画 27/27）、体积自检 0 超档、`node tools/e2e-run.js` 20/20 章 / 24061 步 / 0 报错。
 `develop/Backbroad` 保留（与 `develop/Movie` 一样，作为这一轮的存档分支）。
+
+## 角色形象演进轮（2026-10-20，`/root`）
+
+用户要求：全部角色随剧情丰富形象，包含逐渐破旧、补给更新、表情/动作/手持道具、
+头部左右与俯仰、视线变化；先用检查组给需求，再由生成组出图，循环到主 agent 收口。
+
+| 项 | 结果 |
+|---|---|
+| 需求清单 | `docs/reviews/char-progression-spec.json`，35 角色 / 169 状态 / 282 个章映射 / 19 个章内 beat |
+| 运行时 | `src/data/portraitStates.js`，由 `tools/build-portrait-states.js` 从清单编译，`--check` 一致 |
+| 生成 | `tools/neko-states.js` + `tools/neko-post.py`，状态图 623 / 623 |
+| 主验图 | `docs/reviews/CHAR-PROGRESSION-ROUND2.md`；第一轮独立意见在 `docs/reviews/CHAR-PROGRESSION-SPEC.md` §8 |
+| 引擎 | 按章自动选造型；beat 按原文片段触发，跨 hide/clear 保留并可存档；修复同槽并发加载竞态 |
+| 图片闸门 | `python -X utf8 tools/check-portrait-key.py` → 802 张立绘，洋红残留 0 张超阈值 |
+| 全剧 | `node tools/e2e-run.js` → 20/20 章、24062 步、0 JS 报错；`qa-consistency` → 4449 句台词、0 违规 |
+
+返修过的问题：13 张洋红残图、9 个 ch16 雪山状态被草地/腊子口复用、部分表情不同机位、
+雪山厚衣、小满 17 岁与草地饥饿状态、朱德/毛泽东/聂荣臻/林彪/徐向前的识别点。
+仍保留的美术细项见 `CHAR-PROGRESSION-ROUND2.md` §4，不阻塞本轮功能与剧情连续性收口。
