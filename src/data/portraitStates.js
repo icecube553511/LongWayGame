@@ -12,7 +12,7 @@
   G.ART.portraitStates = {
   "version": 1,
   "source": "docs/reviews/char-progression-spec.json",
-  "source_sha256": "f372666a8e017783c2e4705084e6d783a3fd417a47eba55e25149adc086cfdcf",
+  "source_sha256": "b9e1c6bb325c433a54a43c500cec6d204980d934fdfe938c26712cff76ca5a06",
   "characters": {
     "mao": {
       "name": "毛泽东",
@@ -3334,8 +3334,8 @@
         "worry",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. A fifteen-year-old Chinese bugler with Sanwa-like child proportions: small and slightly undernourished, large head relative to the body, narrow shoulders, round soft cheeks, large clear eyes, and two clearly separate thin natural eyebrows with a clean gap at the bridge of the nose. No unibrow, no heavy inward-slanting angry eyebrows. An oversized faded blue-grey tunic with drooping shoulder seams and sleeves covering half the hands, dull red collar tabs, an octagonal cap one size too large with the brim pressed to the eyebrows, loose puttees and new straw sandals. Brass bugle on an olive canvas strap at his side, small satchel, one neat sleeve patch; posture upright but hesitant.",
-      "avoid_en": "no unibrow, no joined eyebrows, no heavy angry eyebrows, no adult proportions, no fitted uniform, no small cap, no rifle, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. A fifteen-year-old Chinese bugler with Sanwa-like child proportions: small and slightly undernourished, large head relative to the body, narrow shoulders, round soft cheeks and a soft rounded chin with a gently curved jawline rather than a pointed V-shaped jaw, large clear eyes, and two clearly separate thin natural eyebrows with a clean gap at the bridge of the nose. No unibrow, no heavy inward-slanting angry eyebrows. An oversized faded blue-grey tunic with drooping shoulder seams and sleeves covering half the hands, dull red collar tabs, an octagonal cap one size too large with the brim pressed to the eyebrows, loose puttees and new straw sandals. Brass bugle on an olive canvas strap at his side, small satchel, one neat sleeve patch; posture upright but hesitant.",
+      "avoid_en": "no pointed chin, no sharp V-shaped jaw, no unibrow, no joined eyebrows, no heavy angry eyebrows, no adult proportions, no fitted uniform, no small cap, no rifle, no extra people, no text"
     },
     "xiaoman_ch02_rain": {
       "id": "xiaoman_ch02_rain",
