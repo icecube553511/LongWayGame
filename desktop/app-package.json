@@ -1,0 +1,12 @@
+{
+  "name": "longway-game-martin",
+  "productName": "长征·万水千山",
+  "version": "1.0.0",
+  "description": "《长征·万水千山》二十章视觉小说",
+  "main": "main.js",
+  "author": {
+    "name": "Martin"
+  },
+  "copyright": "Copyright © 2026 Martin",
+  "license": "UNLICENSED"
+}

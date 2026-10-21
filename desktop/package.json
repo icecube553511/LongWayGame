@@ -1,0 +1,15 @@
+{
+  "name": "longwaygame-desktop-builder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "《长征·万水千山》Windows 桌面版构建工具",
+  "author": "Martin",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dist": "node build.js"
+  },
+  "devDependencies": {
+    "electron": "44.9.1",
+    "electron-builder": "26.15.3"
+  }
+}
