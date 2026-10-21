@@ -57,6 +57,18 @@ const BODY_REF_OVERRIDE = argOf('--body-ref', '');
 const NO_IDENTITY = argv.includes('--no-identity');
 const CROWD = { soldiers: 'three Red Army soldiers', villagers: 'three Chinese villagers', yi_people: 'three Yi people' };
 
+/* 剧情变种最容易在头部退化成柔和厚涂：身体有刻面，脸却像插画。
+ * 把这条锁进所有出图与局部表情提示词，保证之后重跑也能稳定复现图鉴的
+ * 大块面、硬边、左上硬光，而不是依赖单次返修参数。 */
+const HEAD_STYLE_LOCK = [
+  'HEAD GEOMETRY LOCK: build the head, face, hair, hat and collar from large, clearly',
+  'separated flat polygon facets. Forehead, temples, eye sockets, nose bridge, cheeks,',
+  'mouth and jaw must read as angular planes with crisp boundaries and broad flat value',
+  'steps under one hard light from the upper left. Match the gallery portrait exactly:',
+  'the face is a low-poly 3D sculpture, not a smooth painted portrait. No brush texture,',
+  'no fine grain, no airbrushed transitions, no soft photographic skin.'
+].join('\n');
+
 function loadStates() {
   const sandbox = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'src', 'data', 'portraitStates.js'), 'utf8'), sandbox, {
@@ -133,6 +145,8 @@ function basePrompt(charId, state, face) {
   return [
     STYLE,
     '',
+    HEAD_STYLE_LOCK,
+    '',
     crowd
       ? 'SUBJECT: half-body group portrait of exactly ' + crowd + ' from the Long March, 1934-1936 China.'
       : 'SUBJECT: half-body portrait of exactly one historical character from the Long March, 1934-1936 China.',
@@ -171,6 +185,8 @@ function editBasePrompt(charId, state, face, fromState) {
   return [
     STYLE,
     '',
+    HEAD_STYLE_LOCK,
+    '',
     crowd
       ? 'Edit the supplied three-person group portrait. Preserve exactly the same three individuals: builds, ages, bone structure,'
       : 'Edit the supplied single-character portrait. Preserve the exact same person: face shape, age, bone structure,',
@@ -201,6 +217,8 @@ function expressionPrompt(charId, state, face) {
     ? 'keep the face completely hidden; do not invent eyes, nose or mouth'
     : (FACEDESC[face] || FACEDESC.calm);
   return [
+    HEAD_STYLE_LOCK,
+    '',
     crowd
       ? 'Edit the supplied three-person group portrait. These are the same three people in the same story state.'
       : 'Edit the supplied single-character portrait. This is the same person, same story state.',
@@ -351,13 +369,19 @@ function identityStatePrompt(charId, state, face) {
   return [
     STYLE,
     '',
+    HEAD_STYLE_LOCK,
+    '',
     crowd
       ? 'Use Image 1 as the exact identity reference for the same three individuals, and Image 2 as the body, clothing, pose and story-state reference.'
       : 'Use Image 1 as the exact identity reference and Image 2 as the body, clothing, pose and story-state reference.',
     crowd
       ? 'Copy the same three builds, ages, faces, hair and head shapes from Image 1 exactly.'
       : 'Copy the face, head shape, apparent age, eyes, eyebrows, nose, mouth, skin tone and hair from Image 1 exactly. Do not average Image 1 and Image 2 faces. It must be the same person, not a different actor.',
-    'Use the clothing, wear, dirt, injuries, equipment, pose and props from Image 2.',
+    'Use Image 2 only as a continuity reference for the established clothing silhouette and overall framing.',
+    'The earlier state must not override this scene. Apply every wear, dirt, injury, pose and prop change listed below.',
+    'STATE-SPECIFIC POSTURE: ' + state.pose_cn.replace(/[。.]$/, '') + '.',
+    'STATE-SPECIFIC PROPS: ' + state.props_cn.join(', ') + '. These are the only permitted story props.',
+    'Remove any prop that belonged only to the earlier state and is not in this list.',
     'STORY STATE SUMMARY: ' + state.appearance_en,
     'EXPRESSION: ' + expression + '.',
     '',
