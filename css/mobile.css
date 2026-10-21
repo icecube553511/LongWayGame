@@ -289,11 +289,10 @@ html.longway-mobile .choice-tag {
 }
 
 /* ---------- 覆盖层与菜单 ---------- */
+/* 遮罩必须盖住整个舞台。安全区只约束内容，不能把遮罩本身向内缩，
+   否则横屏时导航栏/刘海一侧会露出一条未被遮住的游戏画面。 */
 html.longway-mobile #overlay {
-  top: var(--safe-top);
-  right: var(--safe-right);
-  bottom: var(--safe-bottom);
-  left: var(--safe-left);
+  inset: 0;
 }
 
 html.longway-mobile .ov {
@@ -303,7 +302,11 @@ html.longway-mobile .ov {
 html.longway-mobile .ov-head {
   flex-wrap: wrap;
   gap: 7px 12px;
-  padding: 10px 12px 9px;
+  padding:
+    calc(var(--safe-top) + 10px)
+    calc(var(--safe-right) + 12px)
+    9px
+    calc(var(--safe-left) + 12px);
 }
 
 html.longway-mobile .ov-title {
@@ -912,8 +915,8 @@ html.longway-mobile #text-box {
   border-color: rgba(210, 177, 93, .28);
   border-left-color: rgba(190, 53, 57, .88);
   box-shadow: 0 9px 26px rgba(3, 6, 12, .42);
-  -webkit-backdrop-filter: blur(5px) saturate(1.08);
-  backdrop-filter: blur(5px) saturate(1.08);
+  /* Android WebView 会缓存 backdrop-filter 覆盖过的区域；对话框下移后，
+     旧位置会冻结，天气粒子不再更新。半透明底色已足够，手机端不用背景模糊。 */
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -934,8 +937,6 @@ html.longway-mobile #next-arrow {
 html.longway-mobile #note-layer {
   bottom: calc(var(--safe-bottom) + 158px);
   background: rgba(7, 11, 18, .56);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
 }
 
 html.longway-mobile #quickbar {
@@ -1160,7 +1161,6 @@ html.longway-mobile .btn-danger:active {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.longway-mobile #text-box,
   html.longway-mobile .qbtn,
   html.longway-mobile .menu-item,
   html.longway-mobile .choice-btn {
