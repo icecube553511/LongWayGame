@@ -58,10 +58,10 @@ function prepareStage() {
       target: [{ target: 'portable', arch: ['x64'] }],
       icon: 'assets/icon.ico',
       legalTrademarks: 'Martin',
-      artifactName: 'LongWayGame-Martin-${version}.${ext}'
+      artifactName: 'LongWayGame-Main-Martin-${version}.${ext}'
     },
     portable: {
-      artifactName: 'LongWayGame-Martin-${version}.${ext}',
+      artifactName: 'LongWayGame-Main-Martin-${version}.${ext}',
       requestExecutionLevel: 'user'
     }
   };
@@ -95,6 +95,6 @@ const result = spawnSync(process.execPath, [
 if (result.error) fail(result.error.message);
 if (result.status !== 0) fail('electron-builder 退出码：' + result.status);
 
-const expected = path.join(OUTPUT, 'LongWayGame-Martin-1.0.0.exe');
+const expected = path.join(OUTPUT, 'LongWayGame-Main-Martin-1.0.0.exe');
 if (!fs.existsSync(expected)) fail('构建结束但未找到预期文件：' + expected);
 console.log('[桌面打包] 完成：' + expected);

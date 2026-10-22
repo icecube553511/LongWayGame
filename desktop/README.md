@@ -16,7 +16,7 @@ node desktop/build.js
 产物：
 
 ```text
-dist/exe/LongWayGame-Martin-1.0.0.exe
+dist/exe/LongWayGame-Main-Martin-1.0.0.exe
 ```
 
 EXE 的产品名、版权与文件描述都署名为 **Martin**。单文件便携版首次启动会在
