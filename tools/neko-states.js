@@ -20,7 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { spawnSync } = require('child_process');
-const { STYLE, FACEDESC, KEY_COLOR, getProvider } = require('./neko-art.js');
+const { STYLE, HEAD_STYLE_LOCK, FACEDESC, KEY_COLOR, getProvider } = require('./neko-art.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const STORY_DIR = path.join(ROOT, 'src', 'story');
@@ -56,18 +56,8 @@ const IDENTITY_OVERRIDE = argOf('--identity', '');
 const BODY_REF_OVERRIDE = argOf('--body-ref', '');
 const NO_IDENTITY = argv.includes('--no-identity');
 const CROWD = { soldiers: 'three Red Army soldiers', villagers: 'three Chinese villagers', yi_people: 'three Yi people' };
-
-/* 剧情变种最容易在头部退化成柔和厚涂：身体有刻面，脸却像插画。
- * 把这条锁进所有出图与局部表情提示词，保证之后重跑也能稳定复现图鉴的
- * 大块面、硬边、左上硬光，而不是依赖单次返修参数。 */
-const HEAD_STYLE_LOCK = [
-  'HEAD GEOMETRY LOCK: build the head, face, hair, hat and collar from large, clearly',
-  'separated flat polygon facets. Forehead, temples, eye sockets, nose bridge, cheeks,',
-  'mouth and jaw must read as angular planes with crisp boundaries and broad flat value',
-  'steps under one hard light from the upper left. Match the gallery portrait exactly:',
-  'the face is a low-poly 3D sculpture, not a smooth painted portrait. No brush texture,',
-  'no fine grain, no airbrushed transitions, no soft photographic skin.'
-].join('\n');
+/* HEAD_STYLE_LOCK 由 tools/neko-art.js 统一导出，基础立绘、剧情变种与
+ * 局部表情重绘共用同一段头部刻面锁，避免两条出图链各写一份后漂移。 */
 
 function loadStates() {
   const sandbox = { window: {} };
@@ -249,11 +239,15 @@ function expressionMaskPrompt(charId, state, face) {
     ? 'keep the face hidden and unchanged'
     : (FACEDESC[face] || FACEDESC.calm);
   return [
+    HEAD_STYLE_LOCK,
+    '',
     'Edit only the facial expression of the supplied portrait.',
     'Keep every pixel outside the face mask unchanged: same body pose, clothing, equipment, background, head angle, hair and hat.',
+    'Inside the mask, preserve the existing low-poly facets and flat value steps; do not smooth, airbrush or repaint the forehead, temples, eye sockets, nose bridge and cheeks.',
     'Change only eyebrows, eyes and mouth to: ' + expression + '.',
     'Do not redesign the face, clothing or props. Do not move the head or shoulders.',
-    'Exactly one person. No other people, no text, no watermark.'
+    'Exactly one person. No other people, no text, no watermark.',
+    'AVOID: smooth airbrushed shading, soft painted skin, photographic realism, anime line art, gradient skin.'
   ].join('\n');
 }
 
