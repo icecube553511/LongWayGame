@@ -527,6 +527,7 @@ function bakeBuffer(state, face, buf, force) {
 
 async function generateOne(state, face, prompt, refPath, label) {
   const stem = state.id + '_' + face;
+  const crowd = CROWD[state.character];
   const force = FORCE || forceStateFilter.indexOf(state.id) >= 0 ||
     forceFaceFilter.indexOf(state.id + ':' + face) >= 0;
   if (!force && SKIP && isGoodPng(path.join(OUT, stem + '.png'))) {

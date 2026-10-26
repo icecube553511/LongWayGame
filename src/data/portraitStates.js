@@ -12,7 +12,7 @@
   G.ART.portraitStates = {
   "version": 1,
   "source": "docs/reviews/char-progression-spec.json",
-  "source_sha256": "c8e93070685586ad7eb3cfe5a9e8a5cddb8b595c206858f37d577cf658a1a65e",
+  "source_sha256": "e477b967fbb1d9382250dc55cf75449206274adc56b05dab8a18a7e4150badd9",
   "characters": {
     "mao": {
       "name": "毛泽东",
@@ -572,7 +572,7 @@
         "pitch": "down 6deg",
         "gaze": "down_right"
       },
-      "pose_cn": "双肩下沉，站在摊开的地图旁，右手按住图角，左手握烟斗却不抽，身体重量压在一条腿上。",
+      "pose_cn": "双肩下沉，左手把雨湿的折图抱在胸前，右手按着图边，臂间夹着未点燃的烟斗；画面不画桌面、地面或支撑物。",
       "props_cn": [
         "八角帽",
         "未点燃的烟斗",
@@ -584,8 +584,8 @@
         "sad",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair, worn octagonal cap misshapen by rain, clean-shaven. Grey-green tunic crushed at the collar, soot on one shoulder, river mud speckled at the cuffs and long hem, dull dark-red collar tabs. Shoulders lowered over a rain-softened map, unlit pipe held loosely, head turned right and down, hollow exhaustion after the Xiang River.",
-      "avoid_en": "no clean uniform, no upright heroic pose, no bright collar tabs, no smoking, no extra figures, no blood on face, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair, worn octagonal cap misshapen by rain, clean-shaven. Grey-green tunic crushed at the collar, soot on one shoulder, river mud speckled at the cuffs and long hem, dull dark-red collar tabs. He holds a rain-softened folded map against his chest with his left hand, the right hand bracing its edge, an unlit pipe tucked near the same hand; head turned right and down, hollow exhaustion after the Xiang River. Clean waist silhouette with no table, map table, floor or scenery.",
+      "avoid_en": "no clean uniform, no upright heroic pose, no bright collar tabs, no smoking, no table, no desk, no floor, no extra figures, no blood on face, no text"
     },
     "mao_ch04_tongdao": {
       "id": "mao_ch04_tongdao",
@@ -605,7 +605,7 @@
         "pitch": "down 2deg",
         "gaze": "slightly_left"
       },
-      "pose_cn": "站在木桌边，左手撑桌，右手用铅笔点着地图，肩背仍瘦，但眼神比湘江时稳定。",
+      "pose_cn": "肩背仍瘦，左手把对折地图抱在胸前，右手用铅笔点着图面，眼神比湘江时稳定；不画木桌或地面。",
       "props_cn": [
         "八角帽",
         "烟斗",
@@ -618,8 +618,8 @@
         "smile",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair under a rain-dulled octagonal cap, clean-shaven. Grey-green tunic darkened at the shoulders by winter rain, dull dark-red collar tabs, muddy long hem, the tunic worn alone in the rain. Standing at a wooden table, left hand braced on the edge, right hand marking a folded map with a pencil, head turned slightly left, tired but steady gaze.",
-      "avoid_en": "no overcoat, no dry clean cloth, no bright red star, no seated pose, no smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair under a rain-dulled octagonal cap, clean-shaven. Grey-green tunic darkened at the shoulders by winter rain, dull dark-red collar tabs, muddy long hem, the tunic worn alone in the rain. He holds a folded map upright against his chest with his left hand and marks it with a pencil in his right, head turned slightly left, tired but steady gaze. Clean waist silhouette with no wooden table, desk, floor or scenery.",
+      "avoid_en": "no overcoat, no dry clean cloth, no bright red star, no seated pose, no table, no desk, no floor, no smile, no extra people, no text"
     },
     "mao_ch05_stretcher": {
       "id": "mao_ch05_stretcher",
@@ -670,7 +670,7 @@
         "pitch": "level",
         "gaze": "forward"
       },
-      "pose_cn": "坐在会议桌边，背略直，左手扶茶杯，右手执铅笔压在纸上，神情克制。",
+      "pose_cn": "背略直，左手把搪瓷茶杯端在胸前，右手执铅笔压住贴胸的折纸，神情克制；不画会议桌、椅子或地面。",
       "props_cn": [
         "八角帽",
         "烟斗",
@@ -685,8 +685,8 @@
         "fierce",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair, octagonal cap straightened, clean-shaven. Washed grey-green tunic, faded dark-red collar tabs, one small same-colour repair at the cuff, clean long hem but old cloth. Seated at a meeting table, left hand around an enamel cup, right hand holding a pencil over paper, level gaze, composed and watchful.",
-      "avoid_en": "no new uniform, no shiny boots, no smiling, no standing heroic pose, no cigarette smoke, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair, octagonal cap straightened, clean-shaven. Washed grey-green tunic, faded dark-red collar tabs, one small same-colour repair at the cuff, clean long hem but old cloth. He holds an enamel cup close to his chest with the left hand and a pencil over a folded paper held against his body with the right, level gaze, composed and watchful. Clean waist silhouette; no meeting table, chair, floor or scenery.",
+      "avoid_en": "no new uniform, no shiny boots, no smiling, no table, no desk, no chair, no floor, no standing heroic pose, no cigarette smoke, no extra people, no text"
     },
     "mao_ch08_chishui": {
       "id": "mao_ch08_chishui",
@@ -741,7 +741,7 @@
         "pitch": "down 7deg",
         "gaze": "down_left"
       },
-      "pose_cn": "双手撑在石上的地图边缘，身体前倾，目光压在渡口位置，肩背绷紧。",
+      "pose_cn": "双手把草纸地图举在胸前，身体前倾，旧书夹在臂间，目光压在渡口位置，肩背绷紧；不画石块、桌面或地面。",
       "props_cn": [
         "八角帽",
         "草纸地图",
@@ -753,8 +753,8 @@
         "calm",
         "stern"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair under a faded octagonal cap, clean-shaven. Tunic faded to ash grey, shoulder seam repaired with dark thread, frayed cuffs, trousers and puttees dark with river water, collar tabs only a faint outline. Both hands braced on a grass-paper map laid over stone, body leaning forward, head lowered toward the crossing, jaw tight.",
-      "avoid_en": "no clean clothes, no standing tall, no bright insignia, no smile, no boat in frame, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair under a faded octagonal cap, clean-shaven. Tunic faded to ash grey, shoulder seam repaired with dark thread, frayed cuffs, trousers and puttees dark with river water, collar tabs only a faint outline. Both hands hold a grass-paper map upright against his chest, an old book tucked between his left arm and the map, body leaning forward, head lowered toward the crossing, jaw tight. Clean waist silhouette; no stone slab, table, floor or scenery.",
+      "avoid_en": "no clean clothes, no table, no desk, no stone slab, no floor, no standing tall, no bright insignia, no smile, no boat in frame, no extra people, no text"
     },
     "mao_ch16_snow": {
       "id": "mao_ch16_snow",
@@ -903,7 +903,7 @@
         "pitch": "down 5deg",
         "gaze": "down"
       },
-      "pose_cn": "站着却像随时会倒下，一只手撑住地图桌边缘，另一只手攥着手帕，肩膀内收。",
+      "pose_cn": "站着却像随时会倒下，一只手把折起的电报抱在胸前，另一只手攥着手帕，肩膀内收；不画地图桌或地面。",
       "props_cn": [
         "军便帽",
         "染血白手帕",
@@ -917,8 +917,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-bent officer cap. Grey-green tunic soaked dark at the shoulders, faded red armband, collar open at one button, mud at the cuffs. Standing hollow-eyed with one hand bracing the edge of a map table, a white cotton handkerchief with a faint dark stain in the other hand, head down after three sleepless nights.",
-      "avoid_en": "no clean dry uniform, no upright energetic pose, no bright armband, no smile, no visible gore, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-bent officer cap. Grey-green tunic soaked dark at the shoulders, faded red armband, collar open at one button, mud at the cuffs. Standing hollow-eyed with a folded telegram held against his chest and a white cotton handkerchief with a faint dark stain in the other hand, head down after three sleepless nights. Clean waist silhouette; no map table, tabletop edge, floor or scenery.",
+      "avoid_en": "no clean dry uniform, no upright energetic pose, no bright armband, no table, no desk, no floor, no smile, no visible gore, no extra people, no text"
     },
     "zhou_ch04_tongdao": {
       "id": "zhou_ch04_tongdao",
@@ -938,7 +938,7 @@
         "pitch": "down 2deg",
         "gaze": "slightly_left"
       },
-      "pose_cn": "站在会议桌旁，左手压着地图，右手握铅笔，身体略向桌面倾，眼神疲惫但清醒。",
+      "pose_cn": "左手把地图抱在胸前，右手握铅笔点着图面，身体略前倾，眼神疲惫但清醒；不画会议桌或桌面。",
       "props_cn": [
         "军便帽",
         "地图包",
@@ -952,8 +952,8 @@
         "fierce",
         "weak"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a damp officer cap. Grey-green tunic dark at the shoulders from winter rain, worn alone, dull brown-red armband, muddy cuffs, collar buttoned. Standing at a meeting table, left hand flat on a map, right hand holding a pencil, body angled toward the table, tired but clear gaze.",
-      "avoid_en": "no overcoat, no dry cloth, no bright armband, no smile, no rifle, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a damp officer cap. Grey-green tunic dark at the shoulders from winter rain, worn alone, dull brown-red armband, muddy cuffs, collar buttoned. He holds a folded map upright against his chest with the left hand and marks it with a pencil in the right, body slightly forward, tired but clear gaze. Clean waist silhouette; no meeting table, desk, floor or scenery.",
+      "avoid_en": "no overcoat, no dry cloth, no table, no desk, no floor, no bright armband, no smile, no rifle, no extra people, no text"
     },
     "zhou_ch06_zunyi": {
       "id": "zhou_ch06_zunyi",
@@ -973,7 +973,7 @@
         "pitch": "down 3deg",
         "gaze": "forward"
       },
-      "pose_cn": "坐在会议桌边，双手把纸稿压在桌上，肩背略弯，嗓子哑、眼神坦然。",
+      "pose_cn": "双手把纸稿抱在胸前，肩背略弯，嗓子哑、眼神坦然；不画会议桌、椅子或地面。",
       "props_cn": [
         "军便帽",
         "会议纸稿",
@@ -987,8 +987,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a straightened officer cap. Washed grey-green tunic, repaired red armband, neat collar, patched cuff, still old cloth. Seated at a meeting table, both hands pressing a folded report, shoulders slightly bowed, hoarse and candid expression, eyes forward.",
-      "avoid_en": "no new uniform, no bright armband, no smile, no standing salute, no rifle, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a straightened officer cap. Washed grey-green tunic, repaired red armband, neat collar, patched cuff, still old cloth. Both hands hold a folded report against his chest, shoulders slightly bowed, hoarse and candid expression, eyes forward. Clean waist silhouette; no meeting table, chair, floor or scenery.",
+      "avoid_en": "no new uniform, no table, no desk, no chair, no floor, no bright armband, no smile, no standing salute, no rifle, no extra people, no text"
     },
     "zhou_ch08_chishui": {
       "id": "zhou_ch08_chishui",
@@ -1010,7 +1010,7 @@
         "pitch": "down 3deg",
         "gaze": "down_left"
       },
-      "pose_cn": "伏在地图前，右手食指沿河线移动，左手撑桌，肩背因连续机动显得更薄。",
+      "pose_cn": "双手把地图举在胸前，右手食指沿河线移动，左手压住图边，肩背因连续机动显得更薄；不画桌面。",
       "props_cn": [
         "军便帽",
         "地图包",
@@ -1024,8 +1024,8 @@
         "sad",
         "worry"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-stained officer cap. Grey-green tunic with red mud splashed across the lower sleeves and hem, faded armband, worn shoulder seam, collar open. Bent over a map, right forefinger tracing a river line, left hand braced on the table, thinner after weeks of marching and fighting.",
-      "avoid_en": "no clean uniform, no upright pose, no bright armband, no smile, no rifle, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-stained officer cap. Grey-green tunic with red mud splashed across the lower sleeves and hem, faded armband, worn shoulder seam, collar open. He holds a folded map upright against his chest, right forefinger tracing a river line and left hand bracing the paper, thinner after weeks of marching and fighting. Clean waist silhouette; no table, desk, floor or scenery.",
+      "avoid_en": "no clean uniform, no upright pose, no table, no desk, no floor, no bright armband, no smile, no rifle, no extra people, no text"
     },
     "zhou_ch12_jinsha": {
       "id": "zhou_ch12_jinsha",
@@ -1044,7 +1044,7 @@
         "pitch": "down 6deg",
         "gaze": "down_right"
       },
-      "pose_cn": "一手撑膝、一手按住石岸，咳完后肩背起伏，头低着，仍不肯坐下。",
+      "pose_cn": "一手撑膝、一手把渡江名册压在胸前，咳完后肩背起伏，头低着，仍不肯坐下；不画石岸或地面。",
       "props_cn": [
         "军便帽",
         "渡江名册",
@@ -1056,8 +1056,8 @@
         "stern",
         "weak"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a salt-stained officer cap. Grey-green tunic with salt marks, one sleeve rolled, armband faded almost pink, trousers wet to the knee, collar loose. One hand braced on a knee, the other flat on stone, shoulders heaving after a quiet cough, head low, refusing to sit down.",
-      "avoid_en": "no clean uniform, no upright strong pose, no bright armband, no smile, no horse, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a salt-stained officer cap. Grey-green tunic with salt marks, one sleeve rolled, armband faded almost pink, trousers wet to the knee, collar loose. One hand braced on his knee, the other holding a ferry roster against his chest, shoulders heaving after a quiet cough, head low, refusing to sit down. Clean waist silhouette; no stone bank, table, floor or scenery.",
+      "avoid_en": "no clean uniform, no upright strong pose, no stone slab, no ground, no table, no bright armband, no smile, no horse, no extra people, no text"
     },
     "zhou_ch14_dadu": {
       "id": "zhou_ch14_dadu",
@@ -1076,7 +1076,7 @@
         "pitch": "down 3deg",
         "gaze": "down_right"
       },
-      "pose_cn": "站在糖坊木桌旁，右手压着地图，左手扶桌沿，身体略前倾，语气放缓。",
+      "pose_cn": "双手把地图抱在胸前，右手压着图面，左手托住图边，身体略前倾，语气放缓；不画糖坊木桌或地面。",
       "props_cn": [
         "军便帽",
         "地图包",
@@ -1089,8 +1089,8 @@
         "smile",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-stained officer cap. Grey-green tunic worn by rain and river wind, armband faded brown, collar open, muddy cuffs, trousers wet to mid-calf. Standing at a wooden table in a sugar mill, right hand on a map, left hand on the table edge, body slightly forward, voice deliberately calm.",
-      "avoid_en": "no clean uniform, no bright armband, no horse, no smile, no upright strong pose, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Lean gaunt 36-year-old man, high cheekbones, thick dark eyebrows, short black hair under a rain-stained officer cap. Grey-green tunic worn by rain and river wind, armband faded brown, collar open, muddy cuffs, trousers wet to mid-calf. Both hands hold a folded map against his chest, body slightly forward, voice deliberately calm. Clean waist silhouette; no wooden table, desk, sugar-mill furniture, floor or scenery.",
+      "avoid_en": "no clean uniform, no bright armband, no horse, no table, no desk, no floor, no smile, no upright strong pose, no extra people, no text"
     },
     "zhou_ch16_snow": {
       "id": "zhou_ch16_snow",
@@ -4118,18 +4118,15 @@
       "dirt": 5,
       "injury": "exhausted",
       "outfit_cn": "同一身湿泥军装与发黑围裙，头巾松脱，脸颊深陷，双手仍搭在锅沿上。",
-      "equipment_cn": "铜锅（锅底干净发亮）、锅铲、空盐罐、旧粮袋。",
+      "equipment_cn": "铜锅（锅底干净发亮）。",
       "head": {
         "turn": "left 4deg",
         "pitch": "down 8deg",
         "gaze": "none"
       },
-      "pose_cn": "背靠铜锅坐着，眼睛闭着，双手搭在锅沿上，像只是睡着了。",
+      "pose_cn": "上身无力地倚在铜锅上，眼睛闭着，双手仍搭在锅沿，像只是睡着了；不画地面、灶台或散落炊具。",
       "props_cn": [
-        "铜锅",
-        "锅铲",
-        "空盐罐",
-        "旧粮袋"
+        "铜锅"
       ],
       "faces": [
         "calm",
@@ -4138,8 +4135,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Stout 40-year-old man reduced to skin and bone, cheeks deeply hollow, short black hair under a loosened muddy headband, head bare. Grey-green tunic smeared with black mud to the chest, oilcloth apron blackened, hands bony with raised veins. Sitting back against the copper pot, eyes closed, both hands still resting on its rim, the polished pot bottom catching the light.",
-      "avoid_en": "no healthy weight, no clean cloth, no military cap, no rifle, no smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Stout 40-year-old man reduced to skin and bone, cheeks deeply hollow, short black hair under a loosened muddy headband, head bare. Grey-green tunic smeared with black mud to the chest, oilcloth apron blackened, hands bony with raised veins. His torso rests against the copper pot, eyes closed, both hands still on its rim, the polished pot bottom catching the light. Clean waist silhouette; no ground, stove, loose ladle, salt jar, grain sack or scenery.",
+      "avoid_en": "no healthy weight, no clean cloth, no military cap, no rifle, no ground, no stove, no loose pot, no loose jar, no sack, no smile, no extra people, no text"
     },
     "he_xiaomei_ch01_start": {
       "id": "he_xiaomei_ch01_start",
@@ -4261,7 +4258,7 @@
         "pitch": "down 2deg",
         "gaze": "down_left"
       },
-      "pose_cn": "坐在药箱旁清点所剩不多的药品，双手把最后一卷绷带放好，肩背放松但眉头未展。",
+      "pose_cn": "双手把打开的便携药箱抱在胸腹前，把最后一卷绷带和登记本放好，肩背放松但眉头未展；不画桌面、地面或散落药具。",
       "props_cn": [
         "药箱",
         "少量纸包药",
@@ -4272,8 +4269,8 @@
         "calm",
         "smile"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman, short black hair under a straightened white nurse cap, young face washed clean, faded red cross armband. Washed white apron with faint permanent pink stains, neat patched cuffs, old cloth. Seated beside an open medicine box that holds only a few paper packets and one bandage roll, hands carefully closing the lid, shoulders relaxed but brow still tight.",
-      "avoid_en": "no new uniform, no clean spotless apron, no male face, no rifle, no broad smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman, short black hair under a straightened white nurse cap, young face washed clean, faded red cross armband. Washed white apron with faint permanent pink stains, neat patched cuffs, old cloth. She holds an open compact medicine box against her stomach, a few paper packets and one bandage roll inside, a small registry book tucked under the same arm, both hands carefully closing the lid; shoulders relaxed but brow still tight. Clean waist silhouette; no table, floor, ground, loose bottle, loose roll or scenery.",
+      "avoid_en": "no new uniform, no clean spotless apron, no male face, no rifle, no table, no desk, no floor, no ground, no loose book, no broad smile, no extra people, no text"
     },
     "he_xiaomei_ch07_supply": {
       "id": "he_xiaomei_ch07_supply",
@@ -4393,7 +4390,7 @@
       "dirt": 4,
       "injury": "frost",
       "outfit_cn": "单薄灰绿军装和白围裙，围裙冻硬、沾霜；护士帽结霜，药箱抱在怀里，没有棉衣。",
-      "equipment_cn": "药箱、空药瓶、盐水碗、撕成条的衣角。",
+      "equipment_cn": "斜挎的几乎空药箱、一卷冷湿绷带、撕成条的衣角。",
       "head": {
         "turn": "right 5deg",
         "pitch": "down 7deg",
@@ -4434,7 +4431,7 @@
         "pitch": "level",
         "gaze": "forward_left"
       },
-      "pose_cn": "站在窑洞前，双手把洗好的绷带卷起来，动作稳，肩背直。",
+      "pose_cn": "双手把洗好的绷带卷和登记本抱在胸前，药箱斜挎在腰侧，动作稳，肩背直；不画窑洞、桌面、地面或散落药具。",
       "props_cn": [
         "药箱",
         "灰白绷带",
@@ -4447,8 +4444,8 @@
         "sad",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman, short black hair under a straight white nurse cap, young face weathered but calm, red cross armband repaired. Washed grey-green tunic, re-starched but greyish white apron, patched cuffs. Standing before a cave dwelling, both hands rolling clean grey-white bandages with steady movements, shoulders straight.",
-      "avoid_en": "no new uniform, no spotless white apron, no male face, no rifle, no broad smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman, short black hair under a straight white nurse cap, young face weathered but calm, red cross armband repaired. Washed grey-green tunic, re-starched but greyish white apron, patched cuffs. Both hands hold one rolled grey-white bandage and a folded register against her apron with steady movements, a compact medical kit hanging against her waist, shoulders straight. Clean waist silhouette; no cave wall, table, desktop, bottle, loose rolls, floor or scenery.",
+      "avoid_en": "no new uniform, no spotless white apron, no male face, no rifle, no broad smile, no table, no desk, no bottle, no loose bandage on a surface, no floor, no cave wall, no extra people, no text"
     },
     "he_xiaomei_ch20_huining": {
       "id": "he_xiaomei_ch20_huining",
@@ -4467,7 +4464,7 @@
         "pitch": "down 4deg",
         "gaze": "down_right"
       },
-      "pose_cn": "坐在火堆边给伤员换药，双手极稳，肩背放松，脸上有淡淡的笑。",
+      "pose_cn": "站在收容点，双手把一卷灰白绷带和登记本抱在胸前，药箱斜挎在腰侧，肩背放松，脸上有淡淡的笑；不画火堆、桌面或伤员肢体。",
       "props_cn": [
         "药箱",
         "灰白绷带",
@@ -4479,8 +4476,8 @@
         "smile",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman grown into a steadier presence, short black hair under a neat white nurse cap, weathered young face, repaired red cross armband. Clean grey-green tunic, flat white apron, fine mended lines at the cuffs. Seated by a fire changing a dressing, both hands very steady, shoulders relaxed, a faint warm smile.",
-      "avoid_en": "no new uniform, no male face, no rifle, no broad grin, no bloody apron, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Thin 19-year-old woman grown into a steadier presence, short black hair under a neat white nurse cap, weathered young face, repaired red cross armband. Clean grey-green tunic, flat white apron, fine mended lines at the cuffs. She stands upright with both hands holding a roll of pale bandage and a small registry book against her chest, a compact medicine box at her hip, shoulders relaxed, a faint warm smile. Clean waist silhouette; no fire, table, chair, floor, loose bottle or patient's limbs.",
+      "avoid_en": "no new uniform, no male face, no rifle, no fire, no table, no chair, no floor, no loose bottle, no broad grin, no bloody apron, no extra people, no text"
     },
     "he_xiaomei_ch17_18_coldwet": {
       "id": "he_xiaomei_ch17_18_coldwet",
@@ -4500,11 +4497,10 @@
         "pitch": "down 7deg",
         "gaze": "down_right"
       },
-      "pose_cn": "跪在雪地里，双手把伤员的脚抱进怀里，肩背弓起，牙关打颤。",
+      "pose_cn": "上身前压，双手把一条冷湿绷带卷紧并贴在自己胸前，肩背弓起，牙关打颤；不画伤员肢体、地面或医疗器皿。",
       "props_cn": [
         "药箱",
-        "空药瓶",
-        "盐水碗",
+        "冷湿绷带",
         "撕条衣角"
       ],
       "faces": [
@@ -4515,8 +4511,8 @@
         "sad",
         "weak"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same young woman nurse, short bob, creased white nurse cap and faded red-cross armband. Thin grey-green tunic under a mud-wet white apron gone stiff, no padded coat, no scarf, no snow and no frost. The medicine box is nearly empty; one hand holds a scrap of bandage, the other braces a patient out of frame.",
-      "avoid_en": "no snow, no frost, no padded coat, no thick clothing, no male face, no clean apron, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same young woman nurse, short bob, creased white nurse cap and faded red-cross armband. Thin grey-green tunic under a mud-wet white apron gone stiff, no padded coat, no scarf, no snow and no frost. Her shoulders curl forward as both hands press a cold wet bandage against her chest; a nearly empty compact medicine box hangs at her hip. Clean waist silhouette; no patient limbs, table, floor, ground, loose bottle, bowl or scenery.",
+      "avoid_en": "no snow, no frost, no padded coat, no thick clothing, no male face, no clean apron, no table, no floor, no ground, no patient limb, no loose bottle, no bowl, no extra people, no text"
     },
     "guo_daniang_ch01_yudu": {
       "id": "guo_daniang_ch01_yudu",
@@ -4800,7 +4796,7 @@
         "pitch": "level",
         "gaze": "forward"
       },
-      "pose_cn": "站在桥头，右手握枪，左手扶铁索，身体前倾，脸上是决绝的平静。",
+      "pose_cn": "右手握枪，左手扶铁索，身体前倾，脸上是决绝的平静；只画到腰部的自然衣摆，不画桥面、腿脚或地面。",
       "props_cn": [
         "八角帽",
         "步枪",
@@ -4814,8 +4810,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall 22-year-old soldier, broad face soot-streaked, short black hair under a scorched octagonal cap. Grey-green tunic with burn marks, old left-shoulder bandage and right-leg white cloth, sleeves rolled twice, straw sandals tied tight. Standing at a bridgehead, right hand on the rifle, left hand gripping an iron chain, body forward, calm resolve.",
-      "avoid_en": "no clean uniform, no unburned cloth, no smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall 22-year-old soldier, broad face soot-streaked, short black hair under a scorched octagonal cap. Grey-green tunic with burn marks, old left-shoulder bandage, sleeves rolled twice, waist silhouette ending in torn natural cloth rather than a straight line. Right hand on the rifle, left hand gripping an iron chain, body forward, calm resolve. No bridge structure, floor, legs, sandals or scenery; no hard horizontal bottom edge.",
+      "avoid_en": "no clean uniform, no unburned cloth, no smile, no bridge deck, no floor, no legs, no sandals, no straight horizontal bottom edge, no extra people, no text"
     },
     "shi_zhu_ch15_burned": {
       "id": "shi_zhu_ch15_burned",
@@ -4832,7 +4828,7 @@
         "pitch": "down 8deg",
         "gaze": "down_right"
       },
-      "pose_cn": "靠在墙角坐着，右手抬到一半落下，头低着，呼吸很浅。",
+      "pose_cn": "半坐在看不到支撑物的地方，右手抬到一半落下，头低着，呼吸很浅；胸像在腰腹衣摆自然收束，不画墙、地面、腿脚或直切底边。",
       "props_cn": [
         "步枪",
         "红旗",
@@ -4846,8 +4842,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same tall Jiangxi soldier, face blackened with soot, tunic torn open. Clearly visible scorched red burns across the exposed chest and both forearms, rough white bandages at the edges, burns readable but not graphic gore. A burned red flag staff in one hand and rifle in the other, hair singed, no cap. Lift the exposure enough that the burns and face are readable.",
-      "avoid_en": "no clean face, no intact tunic, no invisible burns, no graphic gore, no excessive blood, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. The same tall Jiangxi soldier, face blackened with soot, tunic torn open. Clearly visible scorched red burns across the exposed chest and both forearms, rough white bandages at the edges, burns readable but not graphic gore. A burned red flag staff in one hand and rifle in the other, hair singed, no cap. The bust ends around the waist in a ragged natural garment silhouette, with no wall, floor, legs or straight horizontal cut. Lift the exposure enough that the burns and face are readable.",
+      "avoid_en": "no clean face, no intact tunic, no invisible burns, no graphic gore, no excessive blood, no wall, no floor, no legs, no straight horizontal bottom edge, no extra people, no text"
     },
     "a_yue_ch04_guide": {
       "id": "a_yue_ch04_guide",
@@ -5549,7 +5545,7 @@
         "pitch": "up 2deg",
         "gaze": "forward"
       },
-      "pose_cn": "坐着把新鞋带系紧，系完抬头看向对面碉堡，脸上有黑灰。",
+      "pose_cn": "半身前倾，双手把一只新麻绳草鞋举在胸前系紧鞋带，系完抬头看向对面碉堡，脸上有黑灰；不画腿脚、地面或坐具。",
       "props_cn": [
         "过大的八角帽",
         "草绳腰带",
@@ -5563,8 +5559,8 @@
         "weak",
         "dawn"
       ],
-      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. 13-year-old boy, smallest build, soot-smudged face, messy hair under an oversized cap. Grey-green tunic dirty with yellow dust, straw rope at the waist, and a new pair of tightly woven hemp-rope straw sandals, laces pulled firm. Seated after tying them, head lifting toward a concrete pillbox off frame, tired eyes steady.",
-      "avoid_en": "no old broken sandals, no clean uniform, no rifle, no smile, no extra people, no text"
+      "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. 13-year-old boy, smallest build, soot-smudged face, messy hair under an oversized cap. Grey-green tunic dirty with yellow dust, straw rope at the waist. He leans forward slightly, holding one new tightly woven hemp-rope straw sandal against his chest with both hands and pulling its lace firm, head lifting toward a concrete pillbox off frame, tired eyes steady. Clean waist silhouette; no legs, feet, ground, chair or scenery.",
+      "avoid_en": "no old broken sandals, no clean uniform, no rifle, no legs, no feet at the bottom edge, no floor, no chair, no smile, no extra people, no text"
     },
     "san_wa_ch19_north": {
       "id": "san_wa_ch19_north",
