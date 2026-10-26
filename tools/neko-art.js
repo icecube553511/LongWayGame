@@ -67,8 +67,8 @@ const IDS = Object.keys(ALL);
 
 /* 每个人物「必须画出来」的外形要点（与 art/portraits_root.js 的参数表一致） */
 const LOOK = {
-  mao: 'tall forehead with receding centre-parted long black hair, clean-shaven, thin face, plain grey-green Red Army tunic with red collar tabs',
-  zhou: 'lean gaunt face, thick dark eyebrows, short stubble beard, neat grey-green tunic',
+  mao: 'recognizable historical likeness of Mao Zedong at about age 41: high broad forehead, thick arched dark eyebrows, narrow almond-shaped deep-set eyes, straight strong nose, firm mouth with downturned corners, strong chin, clean-shaven, neat short black hair under a worn octagonal Red Army cap with a dull red star, faded grey-green Red Army tunic with dull dark-red collar tabs',
+  zhou: 'recognizable historical likeness of Zhou Enlai at about age 36: long oval face, high cheekbones, thick straight dark eyebrows, deep-set calm eyes, straight nose, gentle firm mouth, clean-shaven with no beard or stubble, neatly side-parted short black hair, faded grey-green Red Army tunic with a neat collar',
   zhu: 'broad square face, thick lips, grey-flecked short beard, soft officer cap with red star',
   zhang_wentian: 'scholarly long thin face, round wire-rimmed glasses, neat short hair',
   wang_jiaxiang: 'pale gaunt face, short hair, wounded and weak, bandage hints at the abdomen',

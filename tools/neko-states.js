@@ -20,7 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { spawnSync } = require('child_process');
-const { STYLE, FACEDESC, KEY_COLOR, getProvider } = require('./neko-art.js');
+const { STYLE, FACEDESC, KEY_COLOR, LOOK, getProvider } = require('./neko-art.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const STORY_DIR = path.join(ROOT, 'src', 'story');
@@ -42,6 +42,9 @@ const EXPR_ONLY = argv.includes('--expressions-only');
 const EXPR_MASK = argv.includes('--expression-mask');
 /* 只补表情、不重出 calm：用于单张表情返修，避免把已验收的状态基准图覆盖掉。 */
 const NO_CALM = argv.includes('--no-calm');
+/* 双图锁脸在“换整套服装 + 改动作”时仍可能混入另一张脸。
+ * 单基准模式只把该角色的原始 calm 图交给模型，身份优先级最高。 */
+const SINGLE_BASE = argv.includes('--single-base');
 const QUALITY = argOf('--quality', process.env.NEKO_QUALITY || 'low');
 const SIZE = argOf('--size', '1024x1536');
 const CONC = Math.max(1, Math.min(8, parseInt(argOf('--concurrency', '4'), 10)));
@@ -66,8 +69,23 @@ const HEAD_STYLE_LOCK = [
   'mouth and jaw must read as angular planes with crisp boundaries and broad flat value',
   'steps under one hard light from the upper left. Match the gallery portrait exactly:',
   'the face is a low-poly 3D sculpture, not a smooth painted portrait. No brush texture,',
-  'no fine grain, no airbrushed transitions, no soft photographic skin.'
+  'no fine grain, no airbrushed transitions, no soft photographic skin. Keep the left',
+  'cheek, jaw and chin as one clean closed mesh: no dark cracks, holes, spikes, melted',
+  'triangles or broken polygon seams.'
 ].join('\n');
+
+/* 周恩来肖像需要克制：忧虑与悲伤只做小幅眉眼和嘴角变化。 */
+const CHARACTER_FACE_OVERRIDE = {
+  zhou: {
+    worry: 'mild concern; inner ends of the eyebrows raised only slightly, eyes normal-sized and calm, mouth closed; no wide-eyed alarm and no exaggerated frown',
+    sad: 'quiet sorrow; inner eyebrows raised only slightly, eyes soft and looking a little down, mouth gently downturned; no grimace, no wide eyes and no crying'
+  }
+};
+
+function faceTextFor(charId, face) {
+  return (CHARACTER_FACE_OVERRIDE[charId] && CHARACTER_FACE_OVERRIDE[charId][face]) ||
+    FACEDESC[face] || FACEDESC.calm;
+}
 
 function loadStates() {
   const sandbox = { window: {} };
@@ -138,7 +156,8 @@ function injuryPhrase(code) {
 function basePrompt(charId, state, face) {
   const c = state.characterData;
   const crowd = CROWD[charId];
-  const faceText = FACEDESC[face] || FACEDESC.calm;
+  const look = LOOK[charId] || '';
+  const faceText = faceTextFor(charId, face);
   const expression = charId === 'narrator'
     ? 'no facial features; keep the face hidden under the hood, with emotion conveyed only by the set of the shoulders'
     : faceText;
@@ -151,6 +170,7 @@ function basePrompt(charId, state, face) {
       ? 'SUBJECT: half-body group portrait of exactly ' + crowd + ' from the Long March, 1934-1936 China.'
       : 'SUBJECT: half-body portrait of exactly one historical character from the Long March, 1934-1936 China.',
     'Name: ' + c.name + '. Role: ' + (c.role || 'Red Army figure') + '.',
+    look ? 'CANONICAL FACIAL LIKENESS: ' + look + '.' : '',
     'STORY STATE: ' + state.label + '.',
     'APPEARANCE (approved character-progression spec, follow it literally): ' + state.appearance_en,
     'WEAR LEVEL: ' + state.wear + ' of 5, dirt ' + state.dirt + ' of 5.',
@@ -179,9 +199,10 @@ function basePrompt(charId, state, face) {
 function editBasePrompt(charId, state, face, fromState) {
   const c = state.characterData;
   const crowd = CROWD[charId];
+  const look = LOOK[charId] || '';
   const expression = charId === 'narrator'
     ? 'leave the face completely hidden under the hood; do not create facial features'
-    : (FACEDESC[face] || FACEDESC.calm);
+    : faceTextFor(charId, face);
   return [
     STYLE,
     '',
@@ -192,6 +213,7 @@ function editBasePrompt(charId, state, face, fromState) {
       : 'Edit the supplied single-character portrait. Preserve the exact same person: face shape, age, bone structure,',
     'eyebrows, nose, mouth, skin tone, cap shape and the same low-poly rendering.',
     'This is a story progression of ' + c.name + ', not a redesign and not another actor.',
+    look ? 'CANONICAL FACIAL LIKENESS TO PRESERVE: ' + look + '.' : '',
     'Preserve the exact same face shape and apparent age as the reference image; only change the clothing, wear, dirt, gear, pose and head direction described below. Do not recast the character or make the face look years older.',
     fromState ? 'The reference shows the character at the start of the story.' : '',
     'Now change only the story state:',
@@ -215,7 +237,7 @@ function expressionPrompt(charId, state, face) {
   const crowd = CROWD[charId];
   const expression = charId === 'narrator'
     ? 'keep the face completely hidden; do not invent eyes, nose or mouth'
-    : (FACEDESC[face] || FACEDESC.calm);
+    : faceTextFor(charId, face);
   return [
     HEAD_STYLE_LOCK,
     '',
@@ -247,7 +269,7 @@ function expressionPrompt(charId, state, face) {
 function expressionMaskPrompt(charId, state, face) {
   const expression = charId === 'narrator'
     ? 'keep the face hidden and unchanged'
-    : (FACEDESC[face] || FACEDESC.calm);
+    : faceTextFor(charId, face);
   return [
     'Edit only the facial expression of the supplied portrait.',
     'Keep every pixel outside the face mask unchanged: same body pose, clothing, equipment, background, head angle, hair and hat.',
@@ -365,7 +387,7 @@ function identityStatePrompt(charId, state, face) {
   const crowd = CROWD[charId];
   const expression = charId === 'narrator'
     ? 'leave the face hidden under the hood; do not create facial features'
-    : (FACEDESC[face] || FACEDESC.calm);
+    : faceTextFor(charId, face);
   return [
     STYLE,
     '',
@@ -490,6 +512,13 @@ async function generateCalmIdentity(characterId, state, identityPath, stateRefPa
   }
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
+      if (identityPath && SINGLE_BASE) {
+        console.log('  → ' + state.id + '/calm（单图锁脸）' + (attempt > 1 ? '（重试 ' + attempt + '）' : ''));
+        const prompt = editBasePrompt(characterId, state, 'calm', false);
+        const full = EXTRA ? (prompt + '\n' + EXTRA) : prompt;
+        const buf = await requestImage(full, identityPath);
+        return bakeBuffer(state, 'calm', buf, force);
+      }
       console.log('  → ' + state.id + '/calm（双图锁脸）' + (attempt > 1 ? '（重试 ' + attempt + '）' : ''));
       let bodyRef = stateRefPath;
       if (!bodyRef) {
