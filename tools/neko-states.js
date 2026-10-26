@@ -62,6 +62,9 @@ const stateFilter = argOf('--only', '').split(',').map(s => s.trim()).filter(Boo
 const faceFilter = argOf('--faces', '').split(',').map(s => s.trim()).filter(Boolean);
 const forceStateFilter = argOf('--force-state', '').split(',').map(s => s.trim()).filter(Boolean);
 const forceFaceFilter = argOf('--force-face', '').split(',').map(s => s.trim()).filter(Boolean);
+/* 中断恢复：只补比时间点旧或不存在的表情成品，不覆盖刚生成的新图。 */
+const SINCE_RAW = argOf('--since', '');
+const SINCE_MS = SINCE_RAW ? Date.parse(SINCE_RAW) : 0;
 /* 单张返修用的补充提示词（只写画面，否定句仍走 avoid）；不写进长期清单。 */
 const EXTRA = argOf('--extra', '');
 const IDENTITY_OVERRIDE = argOf('--identity', '');
@@ -286,6 +289,7 @@ function expressionPrompt(charId, state, face) {
     crowd
       ? 'Change only the three facial expressions, each reflecting the same group mood: ' + expression + '.'
       : 'Change only the facial expression: ' + expression + '.',
+    crowd ? 'Preserve every individual\'s existing head direction and gaze from the reference. Do not rotate heads or make their gazes converge.' : '',
     crowd ? 'Keep exactly three people, with three different faces and builds.' : 'Keep exactly one person.',
     'Do not alter the clothing, equipment, props, head angle, pose, framing or background.',
     'BACKGROUND: perfectly flat solid magenta ' + KEY_COLOR + ' in every pixel behind the figure.',
@@ -297,6 +301,7 @@ function expressionPrompt(charId, state, face) {
 }
 
 function expressionMaskPrompt(charId, state, face) {
+  const crowd = CROWD[charId];
   const danger = isDangerState(state);
   const expression = charId === 'narrator'
     ? 'keep the face hidden and unchanged'
@@ -309,6 +314,7 @@ function expressionMaskPrompt(charId, state, face) {
     'Keep every pixel outside the face mask unchanged: same body pose, clothing, equipment, background, head angle, hair and hat.',
     'Inside the mask, preserve the existing low-poly facets and flat value steps; do not smooth, airbrush or repaint the forehead, temples, eye sockets, nose bridge and cheeks.',
     'Change only eyebrows, eyes and mouth to: ' + expression + '.',
+    crowd ? 'Preserve each person\'s existing gaze direction from the reference; do not make the group look toward one shared point.' : '',
     'Do not redesign the face, clothing or props. Do not move the head or shoulders.',
     'Exactly one person. No other people, no text, no watermark.',
     'AVOID: smooth airbrushed shading, soft painted skin, photographic realism, anime line art, gradient skin.'
@@ -677,6 +683,8 @@ async function pool(tasks, limit) {
     if (!baseResults[i]) return;
     const ref = path.join(OUT, p.state.id + '_calm.png');
     p.faces.filter(f => f !== 'calm').forEach(face => {
+      const outPath = path.join(OUT, p.state.id + '_' + face + '.png');
+      if (SINCE_MS && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs >= SINCE_MS) return;
       exprTasks.push(async () => generateOne(
         p.state, face, expressionPrompt(p.character, p.state, face), ref,
         p.state.id + '/' + face

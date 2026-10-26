@@ -59,7 +59,10 @@ const GROUP_COMPOSITION_LOCK = [
   'and an action motivated by their relationship to the others: protect, support,',
   'hold back, watch the threat, share a burden or seek comfort. Never clone poses.',
   'Example for a village family: the child may clutch the mother\'s sleeve in fear,',
-  'the father may shield the mother and child while also showing fear himself.'
+  'the father may shield the mother and child while also showing fear himself. For a',
+  'three-person group, use three different focal targets: one watches the external',
+  'threat or road, one looks toward a companion, and one looks down at a task, wound',
+  'or held object. No two people may share the same focal target.'
 ].join('\n');
 
 /* 危险/伤亡/战后场景中，不能用笑脸或庆祝动作消解叙事。 */
