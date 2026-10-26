@@ -24,6 +24,7 @@ const {
   STYLE,
   HEAD_STYLE_LOCK,
   GROUP_COMPOSITION_LOCK,
+  ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK,
   FACEDESC,
   KEY_COLOR,
@@ -70,6 +71,9 @@ const EXTRA = argOf('--extra', '');
 const IDENTITY_OVERRIDE = argOf('--identity', '');
 const BODY_REF_OVERRIDE = argOf('--body-ref', '');
 const NO_IDENTITY = argv.includes('--no-identity');
+/* 单人表情重绘沿用同状态 calm 的身体、alpha 与透明通道。
+ * 群像不能套用单人脸部椭圆，因此不启用这个最终合成。 */
+const LOCK_ALPHA = argv.includes('--lock-alpha') || argv.includes('--composite-mask');
 const CROWD = { soldiers: 'three Red Army soldiers', villagers: 'three Chinese villagers', yi_people: 'three Yi people' };
 /* HEAD_STYLE_LOCK 由 tools/neko-art.js 统一导出，基础立绘、剧情变种与
  * 局部表情重绘共用同一段头部刻面锁，避免两条出图链各写一份后漂移。 */
@@ -190,6 +194,7 @@ function basePrompt(charId, state, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
     '',
@@ -214,12 +219,13 @@ function basePrompt(charId, state, face) {
     '',
     'BACKGROUND: a perfectly flat solid uniform pure magenta ' + KEY_COLOR + ' filling every pixel',
     'behind the figure. Single flat colour only - no gradient, no texture, no shadow, no floor,',
-    'no horizon, no scenery. No ground, floor, platform or scenery is visible.',
+    'no horizon, no scenery. No ground, floor, platform, furniture or scenery is visible.',
     '',
     'AVOID: text, letters, watermark, signature, frame, border, photographic realism, anime line art,',
     'smooth airbrushed shading, glossy highlights, high saturation, different face,',
     'changed age, modern insignia, modern clothing, graphic wounds, excessive blood, floating props,',
-    'cropped head, full body, legs, ' + state.avoid_en
+    'cropped head, full body, legs, table, desk, chair, bench, bed, crate, stove, tabletop edge,',
+    'floor, ground, platform, scenery, another person\'s limbs, ' + state.avoid_en
   ].join('\n');
 }
 
@@ -235,6 +241,7 @@ function editBasePrompt(charId, state, face, fromState) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
     '',
@@ -259,7 +266,8 @@ function editBasePrompt(charId, state, face, fromState) {
     'and a perfectly flat pure magenta ' + KEY_COLOR + ' background in every pixel behind the figure.',
     crowd ? 'Exactly three people. No fourth person.' : 'Exactly one person. No other people.',
     'AVOID: text, watermark, frame, border, extra people, different face, changed age, modern clothing,',
-    'graphic wounds, excessive blood, floating props, full body, legs, ' + state.avoid_en
+    'graphic wounds, excessive blood, floating props, full body, legs, table, desk, chair, bench,',
+    'crate, stove, tabletop edge, floor, ground, platform, scenery, another person\'s limbs, ' + state.avoid_en
   ].join('\n');
 }
 
@@ -271,6 +279,7 @@ function expressionPrompt(charId, state, face) {
     : expressionTextFor(charId, state, face);
   return [
     HEAD_STYLE_LOCK,
+    ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
     '',
@@ -284,7 +293,7 @@ function expressionPrompt(charId, state, face) {
     'low-poly faceted style and the flat pure magenta background.',
     'Everything outside the eyebrows, eyes and mouth must stay as close to the reference as possible:',
     'same head size and position in frame, same shoulders, same hands, same arms, same props,',
-    'same table or background objects, same crop. Do not zoom, reposition, stand up, kneel down,',
+    'same clean transparent bust silhouette and same crop. Do not zoom, reposition, stand up, kneel down,',
     'turn the body, redraw the clothing, change the light, or repaint the whole picture.',
     crowd
       ? 'Change only the three facial expressions, each reflecting the same group mood: ' + expression + '.'
@@ -308,6 +317,7 @@ function expressionMaskPrompt(charId, state, face) {
     : expressionTextFor(charId, state, face);
   return [
     HEAD_STYLE_LOCK,
+    ISOLATED_BUST_LOCK,
     danger ? DANGER_TONE_LOCK : '',
     '',
     'Edit only the facial expression of the supplied portrait.',
@@ -435,6 +445,7 @@ function identityStatePrompt(charId, state, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
     '',
@@ -454,9 +465,12 @@ function identityStatePrompt(charId, state, face) {
     '',
     'FRAMING: head to waist, head occupying about one quarter of the image height, figure centred.',
     crowd ? 'Exactly three people from Image 1, no fourth person.' : 'Exactly one person. No other people.',
-    'BACKGROUND: perfectly flat solid pure magenta ' + KEY_COLOR + ' behind the figure, no floor, no scenery.',
+    'BACKGROUND: perfectly flat solid pure magenta ' + KEY_COLOR + ' behind the figure, no floor,',
+    'no ground, no furniture and no scenery.',
     'AVOID: changed face, older face, different facial structure, different actor, extra people, extra limbs,',
-    'full body, legs, text, watermark, frame, photographic realism, anime line art, glossy highlights, ' + state.avoid_en
+    'full body, legs, table, desk, chair, bench, bed, crate, stove, tabletop edge, floor, ground,',
+    'platform, scenery, another person\'s limbs, text, watermark, frame, photographic realism,',
+    'anime line art, glossy highlights, ' + state.avoid_en
   ].join('\n');
 }
 
@@ -537,8 +551,32 @@ async function generateOne(state, face, prompt, refPath, label) {
         buf = fs.readFileSync(tmpRaw);
       } else {
         buf = refPath ? await requestImage(full, refPath) : await requestTextImage(full);
+        if (LOCK_ALPHA && !crowd && refPath && face !== 'calm') {
+          const tmpRaw = path.join(RAW, stem + '_alpha-lock.png');
+          fs.writeFileSync(tmpRaw, buf);
+          const alpha = spawnSync('python', [
+            path.join(ROOT, 'tools', 'apply-alpha.py'),
+            tmpRaw,
+            refPath
+          ], { cwd: ROOT, encoding: 'utf8' });
+          if (alpha.status !== 0) throw new Error(alpha.stderr || '应用基准 alpha 失败');
+          buf = fs.readFileSync(tmpRaw);
+        }
       }
-      return bakeBuffer(state, face, buf, force);
+      const baked = bakeBuffer(state, face, buf, force);
+      if (LOCK_ALPHA && !crowd && refPath && face !== 'calm') {
+        /* neko-post.py 会按头肩重新取景；上游也可能忽略蒙版并重绘黑色背景。
+         * 成品只保留眉眼、鼻口两块五官区域，其余像素一律来自同状态 calm。 */
+        const outPath = path.join(OUT, stem + '.png');
+        const composite = spawnSync('python', [
+          path.join(ROOT, 'tools', 'composite-expression.py'),
+          refPath,
+          outPath
+        ], { cwd: ROOT, encoding: 'utf8' });
+        if (composite.status !== 0) throw new Error(composite.stderr || '合成表情蒙版失败');
+        if (!isGoodPng(outPath)) throw new Error('表情合成后不是完整 PNG');
+      }
+      return baked;
     } catch (e) {
       console.log('    × ' + e.message);
       if (attempt === 3) return false;

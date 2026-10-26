@@ -65,6 +65,22 @@ const GROUP_COMPOSITION_LOCK = [
   'or held object. No two people may share the same focal target.'
 ].join('\n');
 
+/* 剧情状态只描述人物此刻在做什么，不把所在房间一起搬进透明立绘。
+ * 模型很容易把“坐在桌边/蹲在灶边”画成人物加家具的小截图，切到舞台后
+ * 就出现横贯画面的桌板、地面或不透明矩形。 */
+const ISOLATED_BUST_LOCK = [
+  'ISOLATED BUST LOCK: render only the named character or named group as a clean',
+  'head-to-waist cut-out on a fully transparent background. The story may mention',
+  'a table, chair, bench, bed, crate, stove, floor, ground, room or another patient,',
+  'but none of those support objects may appear in the portrait. Express seated,',
+  'kneeling or leaning action through the torso, shoulders and arm relationship',
+  'while keeping a clean bust silhouette. Keep only a prop that the character is',
+  'physically holding or wearing against the body. No tabletop edge, no rectangular',
+  'floor slab, no furniture, no scenery and no detached limbs from another person.',
+  'Do not end the figure with a straight horizontal crop: let the clothing and body',
+  'edges taper or dissolve naturally into transparency before the bottom of the canvas.'
+].join('\n');
+
 /* 危险/伤亡/战后场景中，不能用笑脸或庆祝动作消解叙事。 */
 const DANGER_TONE_LOCK = [
   'DANGER TONE LOCK: this moment contains combat, immediate danger, injury, death or',
@@ -361,6 +377,7 @@ module.exports = {
   STYLE: STYLE,
   HEAD_STYLE_LOCK: HEAD_STYLE_LOCK,
   GROUP_COMPOSITION_LOCK: GROUP_COMPOSITION_LOCK,
+  ISOLATED_BUST_LOCK: ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK: DANGER_TONE_LOCK,
   FACES: FACES,
   FACEDESC: FACEDESC,
