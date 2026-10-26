@@ -39,7 +39,7 @@
       { t: 'hide', who: 'xiaoman' },
       { t: 'bg', id: 'bg_council_hall', fx: 'dissolve' },
       { t: 'title', text: '十二月十二日 · 恭城书院', sub: '紧急会议' },
-      { t: 'cg', id: 'cg_tongdao', text: '两张地图，摊在同一张桌子上。' },
+      { t: 'cg', id: 'cg_tongdao', text: '两张地图，一张是皱的，下面压着的那张也是皱的。' },
       { t: 'narr', text: '会议开在一间不太大的木屋里。屋角有一个火塘，火烧得不旺。' },
       { t: 'narr', text: '桌子摊着两张地图。' },
       { t: 'narr', text: '屋子外面，书院的天井里下着雨。雨不大，但是一直下。' },
