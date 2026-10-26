@@ -211,7 +211,7 @@ function basePrompt(charId, state, face) {
     '',
     'BACKGROUND: a perfectly flat solid uniform pure magenta ' + KEY_COLOR + ' filling every pixel',
     'behind the figure. Single flat colour only - no gradient, no texture, no shadow, no floor,',
-    'no horizon, no scenery. The figure stands on nothing.',
+    'no horizon, no scenery. No ground, floor, platform or scenery is visible.',
     '',
     'AVOID: text, letters, watermark, signature, frame, border, photographic realism, anime line art,',
     'smooth airbrushed shading, glossy highlights, high saturation, different face,',

@@ -12,7 +12,7 @@
   G.ART.portraitStates = {
   "version": 1,
   "source": "docs/reviews/char-progression-spec.json",
-  "source_sha256": "fa22f59576dbc07895ab36a896f1b8f762ecb51c81792c4d3eef6def0b961603",
+  "source_sha256": "db7a9f375cc6ff454201ac77558284276358af53c5e82b548c183c71239e2f68",
   "characters": {
     "mao": {
       "name": "毛泽东",
@@ -20,6 +20,7 @@
         "mao_ch01_ill",
         "mao_ch03_xiangjiang",
         "mao_ch04_tongdao",
+        "mao_ch05_stretcher",
         "mao_ch06_houchang",
         "mao_ch08_chishui",
         "mao_ch14_dadu",
@@ -619,6 +620,37 @@
       ],
       "appearance_en": "Single figure, 600x900 half-body bust, transparent background, low-poly faceted planes, hard light from upper left. Tall thin 41-year-old man, broad forehead, deep-set eyes, centre-parted long black hair under a rain-dulled octagonal cap, clean-shaven. Grey-green tunic darkened at the shoulders by winter rain, dull dark-red collar tabs, muddy long hem, the tunic worn alone in the rain. Standing at a wooden table, left hand braced on the edge, right hand marking a folded map with a pencil, head turned slightly left, tired but steady gaze.",
       "avoid_en": "no overcoat, no dry clean cloth, no bright red star, no seated pose, no smile, no extra people, no text"
+    },
+    "mao_ch05_stretcher": {
+      "id": "mao_ch05_stretcher",
+      "character": "mao",
+      "label": "黎平途中·疟疾未愈卧担架",
+      "chapters": [
+        "ch05"
+      ],
+      "wear": 2,
+      "dirt": 3,
+      "injury": "stretcher",
+      "outfit_cn": "同一身灰绿旧军装，肩背被冬雨和汗浸深，领章褪成暗红褐；腰间与胸口盖着一条洗旧、边缘起毛的灰毯，衣上没有新增血迹。",
+      "equipment_cn": "竹木担架、垫头粗布、薄灰毯、旧八角帽；无枪，手边不见地图和烟斗。",
+      "head": {
+        "turn": "right 8deg",
+        "pitch": "back 5deg",
+        "gaze": "slightly_left"
+      },
+      "pose_cn": "从担架头端略俯看的仰卧半身，后脑与双肩实落在担架枕布上，脸朝镜头略偏左，躯干沿画面向下延伸；薄灰毯从胸口盖到下缘，右手虚搭在毯边，两侧竹木担架杆与身体有清楚接触。",
+      "props_cn": [
+        "竹木担架",
+        "垫头粗布",
+        "薄灰毯",
+        "旧八角帽"
+      ],
+      "faces": [
+        "calm",
+        "weak"
+      ],
+      "appearance_en": "Single figure, 600x900 half-body portrait, transparent background, low-poly faceted planes, hard light from upper left. A supine 41-year-old Mao Zedong viewed from slightly above the head end of a carrying stretcher: broad forehead, deep-set eyes, centre-parted black hair under an old octagonal Red Army cap, clean-shaven. He lies flat on his back with the back of his head and both shoulders resting on a coarse cloth pad; his face turns slightly toward the viewer and his torso recedes down the frame. Faded grey-green tunic damp at the shoulders, dull dark-red collar tabs, a washed grey blanket pulled up across the chest and covering the lower frame, one hand resting weakly on the blanket edge. Sickly sallow complexion, hollow cheeks, sunken shadowed eyes, cracked lips and fever sweat at the temples; mentally alert but physically spent from malaria. The two bamboo stretcher poles run along both sides and visibly support the cloth and his shoulders.",
+      "avoid_en": "no standing, no upright torso, no seated pose, no desk, no map, no pipe, no fresh bandage, no blood, no extra people, no smiling, no heroic pose, no full body, no legs, no text"
     },
     "mao_ch06_houchang": {
       "id": "mao_ch06_houchang",
