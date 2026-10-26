@@ -20,7 +20,16 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { spawnSync } = require('child_process');
-const { STYLE, FACEDESC, KEY_COLOR, LOOK, getProvider } = require('./neko-art.js');
+const {
+  STYLE,
+  HEAD_STYLE_LOCK,
+  GROUP_COMPOSITION_LOCK,
+  DANGER_TONE_LOCK,
+  FACEDESC,
+  KEY_COLOR,
+  LOOK,
+  getProvider
+} = require('./neko-art.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const STORY_DIR = path.join(ROOT, 'src', 'story');
@@ -59,20 +68,8 @@ const IDENTITY_OVERRIDE = argOf('--identity', '');
 const BODY_REF_OVERRIDE = argOf('--body-ref', '');
 const NO_IDENTITY = argv.includes('--no-identity');
 const CROWD = { soldiers: 'three Red Army soldiers', villagers: 'three Chinese villagers', yi_people: 'three Yi people' };
-
-/* 剧情变种最容易在头部退化成柔和厚涂：身体有刻面，脸却像插画。
- * 把这条锁进所有出图与局部表情提示词，保证之后重跑也能稳定复现图鉴的
- * 大块面、硬边、左上硬光，而不是依赖单次返修参数。 */
-const HEAD_STYLE_LOCK = [
-  'HEAD GEOMETRY LOCK: build the head, face, hair, hat and collar from large, clearly',
-  'separated flat polygon facets. Forehead, temples, eye sockets, nose bridge, cheeks,',
-  'mouth and jaw must read as angular planes with crisp boundaries and broad flat value',
-  'steps under one hard light from the upper left. Match the gallery portrait exactly:',
-  'the face is a low-poly 3D sculpture, not a smooth painted portrait. No brush texture,',
-  'no fine grain, no airbrushed transitions, no soft photographic skin. Keep the left',
-  'cheek, jaw and chin as one clean closed mesh: no dark cracks, holes, spikes, melted',
-  'triangles or broken polygon seams.'
-].join('\n');
+/* HEAD_STYLE_LOCK 由 tools/neko-art.js 统一导出，基础立绘、剧情变种与
+ * 局部表情重绘共用同一段头部刻面锁，避免两条出图链各写一份后漂移。 */
 
 /* 周恩来肖像需要克制：忧虑与悲伤只做小幅眉眼和嘴角变化。 */
 const CHARACTER_FACE_OVERRIDE = {
@@ -85,6 +82,30 @@ const CHARACTER_FACE_OVERRIDE = {
 function faceTextFor(charId, face) {
   return (CHARACTER_FACE_OVERRIDE[charId] && CHARACTER_FACE_OVERRIDE[charId][face]) ||
     FACEDESC[face] || FACEDESC.calm;
+}
+
+const DANGER_RE = /(战斗|交火|打仗|作战|枪声|枪口|炮火|炮弹|轰炸|空袭|爆炸|弹片|血战|鲜血|染血|出血|负伤|受伤|重伤|濒死|牺牲|死亡|遗体|尸体|刚死|敌机|追兵|战场|战尘|突围|强渡|激战|夜攀|火线|夺桥|冻伤|血泡|绝壁|battle|combat|gunfire|shell|bombard|air raid|explosion|blood|wound|injur|dying|dead|death|corpse|burned|burn|under fire|assault|cliff|frostbite)/i;
+const DANGER_STATE_ID_RE = /_ch(03|08|09|10|11|14|15|16|17|18)_|_death$|_burned$|_wounded$|_shoulder$|_coldwet$/;
+
+function isDangerState(state) {
+  return DANGER_STATE_ID_RE.test(state.id) || DANGER_RE.test([
+    state.label,
+    state.appearance_en,
+    state.outfit_cn,
+    state.pose_cn
+  ].join(' '));
+}
+
+function expressionTextFor(charId, state, face) {
+  const text = faceTextFor(charId, face);
+  if (!isDangerState(state)) return text;
+  if (face === 'smile') {
+    return 'tense, unsmiling, tight-lipped resolve; no smile, no cheerful eyes, no celebratory gesture';
+  }
+  if (face === 'dawn') {
+    return 'quiet exhausted resolve; steady unsmiling eyes, no hope-filled smile and no celebratory gesture';
+  }
+  return text;
 }
 
 function loadStates() {
@@ -157,7 +178,8 @@ function basePrompt(charId, state, face) {
   const c = state.characterData;
   const crowd = CROWD[charId];
   const look = LOOK[charId] || '';
-  const faceText = faceTextFor(charId, face);
+  const danger = isDangerState(state);
+  const faceText = expressionTextFor(charId, state, face);
   const expression = charId === 'narrator'
     ? 'no facial features; keep the face hidden under the hood, with emotion conveyed only by the set of the shoulders'
     : faceText;
@@ -165,6 +187,8 @@ function basePrompt(charId, state, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    crowd ? GROUP_COMPOSITION_LOCK : '',
+    danger ? DANGER_TONE_LOCK : '',
     '',
     crowd
       ? 'SUBJECT: half-body group portrait of exactly ' + crowd + ' from the Long March, 1934-1936 China.'
@@ -200,13 +224,16 @@ function editBasePrompt(charId, state, face, fromState) {
   const c = state.characterData;
   const crowd = CROWD[charId];
   const look = LOOK[charId] || '';
+  const danger = isDangerState(state);
   const expression = charId === 'narrator'
     ? 'leave the face completely hidden under the hood; do not create facial features'
-    : faceTextFor(charId, face);
+    : expressionTextFor(charId, state, face);
   return [
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    crowd ? GROUP_COMPOSITION_LOCK : '',
+    danger ? DANGER_TONE_LOCK : '',
     '',
     crowd
       ? 'Edit the supplied three-person group portrait. Preserve exactly the same three individuals: builds, ages, bone structure,'
@@ -235,11 +262,14 @@ function editBasePrompt(charId, state, face, fromState) {
 
 function expressionPrompt(charId, state, face) {
   const crowd = CROWD[charId];
+  const danger = isDangerState(state);
   const expression = charId === 'narrator'
     ? 'keep the face completely hidden; do not invent eyes, nose or mouth'
-    : faceTextFor(charId, face);
+    : expressionTextFor(charId, state, face);
   return [
     HEAD_STYLE_LOCK,
+    crowd ? GROUP_COMPOSITION_LOCK : '',
+    danger ? DANGER_TONE_LOCK : '',
     '',
     crowd
       ? 'Edit the supplied three-person group portrait. These are the same three people in the same story state.'
@@ -267,15 +297,21 @@ function expressionPrompt(charId, state, face) {
 }
 
 function expressionMaskPrompt(charId, state, face) {
+  const danger = isDangerState(state);
   const expression = charId === 'narrator'
     ? 'keep the face hidden and unchanged'
-    : faceTextFor(charId, face);
+    : expressionTextFor(charId, state, face);
   return [
+    HEAD_STYLE_LOCK,
+    danger ? DANGER_TONE_LOCK : '',
+    '',
     'Edit only the facial expression of the supplied portrait.',
     'Keep every pixel outside the face mask unchanged: same body pose, clothing, equipment, background, head angle, hair and hat.',
+    'Inside the mask, preserve the existing low-poly facets and flat value steps; do not smooth, airbrush or repaint the forehead, temples, eye sockets, nose bridge and cheeks.',
     'Change only eyebrows, eyes and mouth to: ' + expression + '.',
     'Do not redesign the face, clothing or props. Do not move the head or shoulders.',
-    'Exactly one person. No other people, no text, no watermark.'
+    'Exactly one person. No other people, no text, no watermark.',
+    'AVOID: smooth airbrushed shading, soft painted skin, photographic realism, anime line art, gradient skin.'
   ].join('\n');
 }
 
@@ -385,13 +421,16 @@ async function requestImageMulti(prompt, refPaths) {
 function identityStatePrompt(charId, state, face) {
   const c = state.characterData;
   const crowd = CROWD[charId];
+  const danger = isDangerState(state);
   const expression = charId === 'narrator'
     ? 'leave the face hidden under the hood; do not create facial features'
-    : faceTextFor(charId, face);
+    : expressionTextFor(charId, state, face);
   return [
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    crowd ? GROUP_COMPOSITION_LOCK : '',
+    danger ? DANGER_TONE_LOCK : '',
     '',
     crowd
       ? 'Use Image 1 as the exact identity reference for the same three individuals, and Image 2 as the body, clothing, pose and story-state reference.'

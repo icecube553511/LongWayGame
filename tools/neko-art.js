@@ -38,6 +38,40 @@ const STYLE = [
   'game set in 1934-1936 China.'
 ].join('\n');
 
+/* 基础立绘同样最容易在头部退化成柔和厚涂：身体有刻面，脸却像插画。
+ * 与 tools/neko-states.js 共用同一段锁定，保证基础立绘、剧情变种和局部
+ * 表情重绘都按大块面、硬边、左上硬光出图。 */
+const HEAD_STYLE_LOCK = [
+  'HEAD GEOMETRY LOCK: build the head, face, hair, hat and collar from large, clearly',
+  'separated flat polygon facets. Forehead, temples, eye sockets, nose bridge, cheeks,',
+  'mouth and jaw must read as angular planes with crisp boundaries and broad flat value',
+  'steps under one hard light from the upper left. Match the gallery portrait exactly:',
+  'the face is a low-poly 3D sculpture, not a smooth painted portrait. No brush texture,',
+  'no fine grain, no airbrushed transitions, no soft photographic skin. Keep the left',
+  'cheek, jaw and chin as one clean closed mesh: no dark cracks, holes, spikes, melted',
+  'triangles or broken polygon seams.'
+].join('\n');
+
+/* 群像不是三个人各自摆姿势：视线、动作与身体关系必须共同讲同一件事。 */
+const GROUP_COMPOSITION_LOCK = [
+  'GROUP RELATIONSHIP LOCK: in a multi-person portrait, do not make every person',
+  'look toward the same point. Every individual must have a distinct gaze direction',
+  'and an action motivated by their relationship to the others: protect, support,',
+  'hold back, watch the threat, share a burden or seek comfort. Never clone poses.',
+  'Example for a village family: the child may clutch the mother\'s sleeve in fear,',
+  'the father may shield the mother and child while also showing fear himself.'
+].join('\n');
+
+/* 危险/伤亡/战后场景中，不能用笑脸或庆祝动作消解叙事。 */
+const DANGER_TONE_LOCK = [
+  'DANGER TONE LOCK: this moment contains combat, immediate danger, injury, death or',
+  'a recent death. No person may smile, look cheerful or excited, celebrate or use',
+  'relaxed celebratory gestures. Expressions and body language must stay tense,',
+  'guarded, grieving, exhausted or protective.'
+].join('\n');
+
+const CROWD_IDS = new Set(['soldiers', 'villagers', 'yi_people']);
+
 /* ---------------- 参数 ---------------- */
 const argv = process.argv.slice(2);
 const argOf = (f, d) => { const i = argv.indexOf(f); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
@@ -157,6 +191,9 @@ function promptFor(id, face) {
   return [
     STYLE,
     '',
+    HEAD_STYLE_LOCK,
+    CROWD_IDS.has(id) ? GROUP_COMPOSITION_LOCK : '',
+    '',
     sp
       ? 'SUBJECT: ' + (sp.subject || 'head-to-waist portrait of one Chinese Red Army figure from the Long March') + '.'
       : 'SUBJECT: half-body bust portrait of one Chinese Red Army figure from the Long March.',
@@ -181,10 +218,14 @@ function promptFor(id, face) {
 function editPromptFor(id, face) {
   const faceText = (SPECIAL_FACE[id] && SPECIAL_FACE[id][face]) || FACEDESC[face] || FACEDESC.calm;
   return [
+    HEAD_STYLE_LOCK,
+    CROWD_IDS.has(id) ? GROUP_COMPOSITION_LOCK : '',
+    '',
     'Edit the supplied reference image. This is the same single person and the same character design.',
     'Preserve exactly: facial identity and proportions, hair, cap, torn-away cap badge mark, clothing,',
-    'collar, belt, body pose, framing, camera angle, upper-left hard light and the flat pure magenta',
-    'background. Do not redesign the uniform. Do not add anyone or anything else.',
+    'collar, belt, body pose, framing, camera angle, upper-left hard light, the flat-shaded low-poly',
+    'faceted rendering and the flat pure magenta background. Do not redesign the uniform.',
+    'Do not smooth the face into a painted portrait. Do not add anyone or anything else.',
     'Change only the facial expression: ' + faceText + '.',
     'Keep the background perfectly flat solid magenta ' + KEY_COLOR + ' in every pixel behind the figure.',
     'AVOID: text, watermark, frame, border, extra people, weapons, red star, red collar tabs,',
@@ -315,6 +356,9 @@ if (require.main === module) (async () => {
 
 module.exports = {
   STYLE: STYLE,
+  HEAD_STYLE_LOCK: HEAD_STYLE_LOCK,
+  GROUP_COMPOSITION_LOCK: GROUP_COMPOSITION_LOCK,
+  DANGER_TONE_LOCK: DANGER_TONE_LOCK,
   FACES: FACES,
   FACEDESC: FACEDESC,
   LOOK: LOOK,
