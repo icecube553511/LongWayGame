@@ -29,15 +29,15 @@
     /* ================= 第一章 于都河畔 ================= */
     {
       id: 'bg_yudu_night', ch: 'ch01', name: '于都河夜渡',
-      prompt_en: 'A wide river in southern Jiangxi at night in October 1934. Five low pontoon bridges lie across the black water side by side, each built from mismatched household door panels, bed boards and wooden planks of different widths and greys, lashed to small wooden boats. A column of tiny soldiers walks the bridges in single file, end to end and close together, and not one torch or lamp is burning anywhere. The water carries only a cold faint sheen and a thin reflection of the low moon above the ridge line. On the near bank a throng of villagers stands still and silent, watching the bridges with bundles and children in their arms, and behind them the dark roofs of the village and low mountain ridges close the horizon.',
-      prompt_cn: '一九三四年十月，赣南于都河，夜里。五座低矮的浮桥并排横在黑水上，桥板是各家各户的门板、床板与木板拼的，宽窄新旧都不一样，下面系着小木船。队伍在桥上拉成一条细线，一个接一个，没有一支火把、没有一盏灯。水面上只有一层冷光和一缕低月的反照。近岸站着黑压压的乡亲，抱着包袱和孩子，不出声地看着桥上；身后是村子的深色屋脊与低矮的山脊线。',
-      must: ['five parallel pontoon bridges built from mismatched door panels and planks',
+      prompt_en: 'A wide river in southern Jiangxi at night in October 1934. Five low pontoon bridges lie across the black water side by side, each built from mismatched household door panels, bed boards and wooden planks of different widths and greys, lashed to small wooden boats. Every bridge deck runs in one continuous line from the near earthen bank to the far earthen bank: both ends visibly rest on dry ground and no bridge ends in open water. A column of tiny soldiers walks the bridges in single file, end to end and close together, and not one torch or lamp is burning anywhere. The water carries only a cold faint sheen and a thin reflection of the low moon above the ridge line. On the near bank a throng of villagers stands still and silent, watching the bridges with bundles and children in their arms, and behind them the dark roofs of the village and low mountain ridges close the horizon.',
+      prompt_cn: '一九三四年十月，赣南于都河，夜里。五座低矮的浮桥并排横在黑水上，桥板是各家各户的门板、床板与木板拼的，宽窄新旧都不一样，下面系着小木船。每座桥面都从近岸实地连续铺到对岸实地，两端清楚落在干岸上，没有一座桥头悬在水里。队伍在桥上拉成一条细线，一个接一个，没有一支火把、没有一盏灯。水面上只有一层冷光和一缕低月的反照。近岸站着黑压压的乡亲，抱着包袱和孩子，不出声地看着桥上；身后是村子的深色屋脊与低矮的山脊线。',
+      must: ['five continuous parallel pontoon bridges built from mismatched door panels and planks, each running bank to bank with both ends on dry land',
         'single-file column of tiny soldiers walking the bridges end to end',
         'black water with only a cold faint sheen',
         'throng of villagers standing silent on the near bank',
         'dark village roofs on the far bank', 'low mountain ridges closing the horizon'],
       crowd: 'a column of soldiers crossing the bridges and a throng of villagers standing on the near bank',
-      avoid: ['torches', 'lanterns', 'campfires', 'warm firelight', 'daylight', 'electric lights']
+      avoid: ['torches', 'lanterns', 'campfires', 'warm firelight', 'daylight', 'electric lights', 'floating bridge segments', 'bridge ends in open water', 'gaps between bridge and bank']
     },
     {
       id: 'bg_yudu_village', ch: 'ch01', name: '于都村庄清晨',
