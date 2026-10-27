@@ -202,8 +202,8 @@ const SPECIAL_FACE = {
 
 const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
 
-/* 这两个角色的旧版脸部明显比衣物更平滑。单独提高面部的多边形密度与转折，
- * 同时保留吴老六的方脸疤痕、石柱的圆脸宽颌，避免为了“刻面”把身份做丢。 */
+/* 这两个角色需要单独锁脸：吴老六优先保证五官与颊颌连续，
+ * 石柱继续保留圆脸宽颌的强刻面效果，避免为了“低多边形”把身份做丢。 */
 const FACE_GEOMETRY_OVERRIDES = {
   wu_laoliu: [
     'CHARACTER FACE ANATOMY LOCK, HIGHEST PRIORITY: keep the face anatomically coherent',
