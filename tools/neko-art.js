@@ -206,16 +206,20 @@ const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn
  * 同时保留吴老六的方脸疤痕、石柱的圆脸宽颌，避免为了“刻面”把身份做丢。 */
 const FACE_GEOMETRY_OVERRIDES = {
   wu_laoliu: [
-    'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: deliberately exaggerate',
-    'the facial polygon mesh. At least 65 percent of the visible face must be covered',
-    'by 30 or more clearly visible, large triangular and quadrilateral planes; no smooth',
-    'central mask or softly blended cheek is allowed. Build separate hard-edged planes',
-    'for the forehead, brow ridge, eye sockets, nose bridge, two nose wings, nose tip,',
-    'upper lip plane, lower lip plane, cheekbones, cheek hollows, upper jaw and two',
-    'lower-jaw planes. Use broad posterized skin values with strong 20-30 percent steps.',
-    'Keep the old pale scar as one narrow angular strip aligned to a polygon seam.',
-    'Render stubble as several flat charcoal patches, never fine painted hairs. This',
-    'must read first as a faceted low-poly sculpture and only second as a portrait.'
+    'CHARACTER FACE ANATOMY LOCK, HIGHEST PRIORITY: keep the face anatomically coherent',
+    'and well proportioned while retaining the broad low-poly rendering. Use clean planes',
+    'that follow the real structure of the face; the low-poly effect must come from broad',
+    'flat value changes and a clean angular silhouette, never from deforming the anatomy.',
+    'Keep a calm frontal head with only a very slight three-quarter turn, level eyes of',
+    'equal size, a centered continuous nose bridge with two clean nose wings, one unbroken',
+    'lip line with both mouth corners attached, full cheek volume on both sides, and one',
+    'continuous jawline flowing from each ear to a solid chin. All planes must belong to',
+    'one closed face surface: no dents, holes, cracks, spikes, melted or folded triangles,',
+    'collapsed cheeks, extra folds running from the mouth to the jaw, mismatched eyes,',
+    'twisted lips, or broken polygon seams. Do not turn the face into a cubist mask.',
+    'Keep the old scar as one short, thin, pale diagonal strip lying flat on the skin,',
+    'not a dark groove and not an extra facial crease. Render stubble as restrained flat',
+    'charcoal patches that follow the jaw surface, never fine painted hairs.'
   ].join('\n'),
   shi_zhu: [
     'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: render the broad round',
@@ -278,13 +282,13 @@ function editPromptFor(id, face) {
     '',
     'Edit the supplied reference image. This is the same single person and the same character design.',
     'Preserve exactly: facial identity and proportions, hair, cap, torn-away cap badge mark, clothing,',
-    'collar, belt, body pose, framing, camera angle, upper-left hard light, the flat-shaded low-poly',
+    'collar, dull red collar tabs, cap star, belt, body pose, framing, camera angle, upper-left hard light, the flat-shaded low-poly',
     'faceted rendering and the flat pure magenta background. Do not redesign the uniform.',
     'Do not smooth the face into a painted portrait. Do not add anyone or anything else.',
     'Change only the facial expression: ' + faceText + '.',
     'Keep the background perfectly flat solid magenta ' + KEY_COLOR + ' in every pixel behind the figure.',
-    'AVOID: text, watermark, frame, border, extra people, weapons, red star, red collar tabs,',
-    'emblem, armband, blood, bruises, photographic realism, anime line art, glossy highlights.'
+    'AVOID: text, watermark, frame, border, extra people, weapons, missing cap star, missing collar tabs,',
+    'altered insignia, emblem, armband, blood, bruises, photographic realism, anime line art, glossy highlights.'
   ].join('\n');
 }
 
