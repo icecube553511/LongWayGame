@@ -23,12 +23,13 @@ edit = Image.open(edit_path).convert("RGBA")
 if calm.size != edit.size:
     raise SystemExit("两张图尺寸不一致：%s vs %s" % (calm.size, edit.size))
 
-# 只覆盖眉眼与鼻口两块五官区域。单个人脸大椭圆会把头发两侧和轮廓外
-# 的生成背景一起带回来，所以拆成两块并严格避开帽檐、衣领与肩部。
+# 只覆盖眉眼与嘴部两块五官区域。单个人脸大椭圆会把头发两侧和轮廓外
+# 的生成背景一起带回来，也会让表情编辑有机改动下颌线；所以拆成两块，
+# 并严格避开帽檐、鼻梁、脸颊轮廓、下巴、衣领与肩部。
 mask = Image.new("L", calm.size, 0)
 draw = ImageDraw.Draw(mask)
-draw.ellipse((225, 210, 375, 290), fill=255)
-draw.ellipse((240, 275, 360, 350), fill=255)
+draw.ellipse((235, 215, 365, 268), fill=255)
+draw.ellipse((262, 286, 338, 326), fill=255)
 mask = mask.filter(ImageFilter.GaussianBlur(6))
 
 # 若上游把透明底涂成纯黑，椭圆内仍会夹带黑边。只在基准图该处本来

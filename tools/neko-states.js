@@ -27,6 +27,7 @@ const {
   ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK,
   FACE_GEOMETRY_OVERRIDES,
+  FACE_AVOID_OVERRIDES,
   FACEDESC,
   KEY_COLOR,
   LOOK,
@@ -94,6 +95,10 @@ function faceTextFor(charId, face) {
 
 function faceGeometryFor(charId) {
   return FACE_GEOMETRY_OVERRIDES[charId] || '';
+}
+
+function faceAvoidFor(charId) {
+  return FACE_AVOID_OVERRIDES[charId] || '';
 }
 
 const DANGER_RE = /(战斗|交火|打仗|作战|枪声|枪口|炮火|炮弹|轰炸|空袭|爆炸|弹片|血战|鲜血|染血|出血|负伤|受伤|重伤|濒死|牺牲|死亡|遗体|尸体|刚死|敌机|追兵|战场|战尘|突围|强渡|激战|夜攀|火线|夺桥|冻伤|血泡|绝壁|battle|combat|gunfire|shell|bombard|air raid|explosion|blood|wound|injur|dying|dead|death|corpse|burned|burn|under fire|assault|cliff|frostbite)/i;
@@ -231,7 +236,8 @@ function basePrompt(charId, state, face) {
     'smooth airbrushed shading, glossy highlights, high saturation, different face,',
     'changed age, modern insignia, modern clothing, graphic wounds, excessive blood, floating props,',
     'cropped head, full body, legs, table, desk, chair, bench, bed, crate, stove, tabletop edge,',
-    'floor, ground, platform, scenery, another person\'s limbs, ' + state.avoid_en
+    'floor, ground, platform, scenery, another person\'s limbs' +
+      (faceAvoidFor(charId) ? ', ' + faceAvoidFor(charId) : '') + ', ' + state.avoid_en
   ].join('\n');
 }
 
@@ -274,7 +280,8 @@ function editBasePrompt(charId, state, face, fromState) {
     crowd ? 'Exactly three people. No fourth person.' : 'Exactly one person. No other people.',
     'AVOID: text, watermark, frame, border, extra people, different face, changed age, modern clothing,',
     'graphic wounds, excessive blood, floating props, full body, legs, table, desk, chair, bench,',
-    'crate, stove, tabletop edge, floor, ground, platform, scenery, another person\'s limbs, ' + state.avoid_en
+    'crate, stove, tabletop edge, floor, ground, platform, scenery, another person\'s limbs' +
+      (faceAvoidFor(charId) ? ', ' + faceAvoidFor(charId) : '') + ', ' + state.avoid_en
   ].join('\n');
 }
 
@@ -313,7 +320,8 @@ function expressionPrompt(charId, state, face) {
     'AVOID: text, watermark, frame, border, extra people, changed clothing, changed props,',
     'different head angle, changed pose, changed crop, zoomed out, full body, standing up, kneeling down,',
     'redrawn background, bleached clothing, washed-out image, graphic wounds, excessive blood,',
-    'photographic realism, anime line art.'
+    'photographic realism, anime line art' +
+      (faceAvoidFor(charId) ? ', ' + faceAvoidFor(charId) : '') + '.'
   ].join('\n');
 }
 
@@ -336,7 +344,8 @@ function expressionMaskPrompt(charId, state, face) {
     crowd ? 'Preserve each person\'s existing gaze direction from the reference; do not make the group look toward one shared point.' : '',
     'Do not redesign the face, clothing or props. Do not move the head or shoulders.',
     'Exactly one person. No other people, no text, no watermark.',
-    'AVOID: smooth airbrushed shading, soft painted skin, photographic realism, anime line art, gradient skin.'
+    'AVOID: smooth airbrushed shading, soft painted skin, photographic realism, anime line art, gradient skin' +
+      (faceAvoidFor(charId) ? ', ' + faceAvoidFor(charId) : '') + '.'
   ].join('\n');
 }
 
@@ -480,7 +489,8 @@ function identityStatePrompt(charId, state, face) {
     'AVOID: changed face, older face, different facial structure, different actor, extra people, extra limbs,',
     'full body, legs, table, desk, chair, bench, bed, crate, stove, tabletop edge, floor, ground,',
     'platform, scenery, another person\'s limbs, text, watermark, frame, photographic realism,',
-    'anime line art, glossy highlights, ' + state.avoid_en
+    'anime line art, glossy highlights' +
+      (faceAvoidFor(charId) ? ', ' + faceAvoidFor(charId) : '') + ', ' + state.avoid_en
   ].join('\n');
 }
 

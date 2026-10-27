@@ -149,7 +149,7 @@ const LOOK = {
   guo_daniang: 'woman in her fifties, blue cotton headscarf, deeply lined face, plain blue homespun jacket',
   shi_zhu: 'twenty-two-year-old sturdy Jiangxi peasant soldier, broad round honest face, high faceted cheekbones, blunt strong chin, thick straight eyebrows, deep-set steady eyes, octagonal cap, carries a red flag',
   a_yue: 'Miao ethnic girl of sixteen, dark skin, silver head ornaments in a row across the brow, silver neck rings, dark indigo jacket',
-  wu_laoliu: 'thirty-five-year-old Chinese veteran squad leader, square weathered face, prominent cheekbones, broad jaw, deep-set eyes, thick low brows, old pale scar along one cheek, short black stubble, worn faded tunic',
+  wu_laoliu: 'thirty-five-year-old Chinese veteran squad leader, broad rectangular weathered face with realistic bilateral symmetry, firm cheekbones, full balanced lower face, broad gently squared chin, level deep-set eyes, thick low brows, one thin old pale scar lying flat on one cheek, short black stubble, worn faded tunic',
   san_wa: 'thirteen-year-old boy, small and thin, oversized tunic, octagonal cap',
   soldiers: 'a generic young Red Army soldier, octagonal cap with red star, grey-green tunic',
   villagers: 'a middle-aged Chinese peasant man in a cloth headscarf and dark blue homespun jacket',
@@ -206,20 +206,17 @@ const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn
  * 石柱继续保留圆脸宽颌的强刻面效果，避免为了“低多边形”把身份做丢。 */
 const FACE_GEOMETRY_OVERRIDES = {
   wu_laoliu: [
-    'CHARACTER FACE ANATOMY LOCK, HIGHEST PRIORITY: keep the face anatomically coherent',
-    'and well proportioned while retaining the broad low-poly rendering. Use clean planes',
-    'that follow the real structure of the face; the low-poly effect must come from broad',
-    'flat value changes and a clean angular silhouette, never from deforming the anatomy.',
-    'Keep a calm frontal head with only a very slight three-quarter turn, level eyes of',
-    'equal size, a centered continuous nose bridge with two clean nose wings, one unbroken',
-    'lip line with both mouth corners attached, full cheek volume on both sides, and one',
-    'continuous jawline flowing from each ear to a solid chin. All planes must belong to',
-    'one closed face surface: no dents, holes, cracks, spikes, melted or folded triangles,',
-    'collapsed cheeks, extra folds running from the mouth to the jaw, mismatched eyes,',
-    'twisted lips, or broken polygon seams. Do not turn the face into a cubist mask.',
-    'Keep the old scar as one short, thin, pale diagonal strip lying flat on the skin,',
-    'not a dark groove and not an extra facial crease. Render stubble as restrained flat',
-    'charcoal patches that follow the jaw surface, never fine painted hairs.'
+    'CHARACTER FACE ANATOMY LOCK, HIGHEST PRIORITY: render a coherent 35-year-old man',
+    'with realistic bilateral symmetry and a continuous outer head silhouette.',
+    'The face is broad and roughly rectangular, not diamond-shaped and not triangular.',
+    'The two jaw angles sit at the same height under the ears. The jaw sides descend',
+    'almost vertically and taper only slightly into a broad, gently squared chin whose',
+    'front edge is wide and centered. The lower face keeps full cheek volume on both',
+    'sides. Low-poly facets are interior skin-shading planes only; they must not cut',
+    'notches into the cheek or jaw outline. Keep the eyes level and equal in size, the',
+    'nose centered, and one centered, horizontal mouth with both corners attached.',
+    'Keep the old scar as one short, thin, pale mark lying flat on one cheek. Render',
+    'stubble as restrained flat charcoal patches that follow the existing jaw surface.'
   ].join('\n'),
   shi_zhu: [
     'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: render the broad round',
@@ -236,8 +233,32 @@ const FACE_GEOMETRY_OVERRIDES = {
   ].join('\n')
 };
 
+const FACE_AVOID_OVERRIDES = {
+  wu_laoliu: [
+    'asymmetric jaw', 'crooked chin', 'pointed chin', 'narrow V-shaped jaw',
+    'diamond-shaped face', 'triangular lower face', 'warped mouth', 'uneven mouth corners',
+    'extra jaw crease', 'jagged facial silhouette', 'cubist face mask'
+  ].join(', ')
+};
+
+const FACE_FRAMING_OVERRIDES = {
+  wu_laoliu: [
+    'Face nearly straight toward the camera, centred and level.',
+    'Keep only a 3-degree yaw at most so both temples, both cheek planes,',
+    'both jaw angles and both ears remain fully readable and evenly balanced.'
+  ].join(' ')
+};
+
 function faceGeometryFor(id) {
   return FACE_GEOMETRY_OVERRIDES[id] || '';
+}
+
+function faceAvoidFor(id) {
+  return FACE_AVOID_OVERRIDES[id] || '';
+}
+
+function faceFramingFor(id) {
+  return FACE_FRAMING_OVERRIDES[id] || '';
 }
 
 function promptFor(id, face) {
@@ -258,7 +279,8 @@ function promptFor(id, face) {
     'Name: ' + (sp ? sp.name : c.name) + '. Role: ' + (sp ? sp.role : c.role) + '.',
     'Appearance: ' + look.replace(/\.$/, '') + '.',
     'Framing: head to waist, head occupying about one quarter of the image height, figure centred,',
-    'facing the viewer with a slight three-quarter turn, shoulders square, arms resting naturally',
+    (faceFramingFor(id) || 'facing the viewer with a slight three-quarter turn'),
+    'shoulders square, arms resting naturally',
     'at the sides. Exactly one person. No other people, no floating objects.',
     '',
     'EXPRESSION: ' + faceText + '.',
@@ -269,6 +291,7 @@ function promptFor(id, face) {
     '',
     'AVOID: text, letters, watermark, signature, frame, border, photographic realism,',
     'anime line art, smooth airbrushed shading, glossy highlights, high saturation' +
+      (faceAvoidFor(id) ? ', ' + faceAvoidFor(id) : '') +
       (sp && sp.avoid ? ', ' + sp.avoid : '') + '.'
   ].join('\n');
 }
@@ -288,7 +311,8 @@ function editPromptFor(id, face) {
     'Change only the facial expression: ' + faceText + '.',
     'Keep the background perfectly flat solid magenta ' + KEY_COLOR + ' in every pixel behind the figure.',
     'AVOID: text, watermark, frame, border, extra people, weapons, missing cap star, missing collar tabs,',
-    'altered insignia, emblem, armband, blood, bruises, photographic realism, anime line art, glossy highlights.'
+    'altered insignia, emblem, armband, blood, bruises, photographic realism, anime line art, glossy highlights' +
+      (faceAvoidFor(id) ? ', ' + faceAvoidFor(id) : '') + '.'
   ].join('\n');
 }
 
@@ -420,6 +444,8 @@ module.exports = {
   ISOLATED_BUST_LOCK: ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK: DANGER_TONE_LOCK,
   FACE_GEOMETRY_OVERRIDES: FACE_GEOMETRY_OVERRIDES,
+  FACE_AVOID_OVERRIDES: FACE_AVOID_OVERRIDES,
+  FACE_FRAMING_OVERRIDES: FACE_FRAMING_OVERRIDES,
   FACES: FACES,
   FACEDESC: FACEDESC,
   LOOK: LOOK,
