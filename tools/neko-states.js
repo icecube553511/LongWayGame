@@ -26,6 +26,7 @@ const {
   GROUP_COMPOSITION_LOCK,
   ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK,
+  FACE_GEOMETRY_OVERRIDES,
   FACEDESC,
   KEY_COLOR,
   LOOK,
@@ -89,6 +90,10 @@ const CHARACTER_FACE_OVERRIDE = {
 function faceTextFor(charId, face) {
   return (CHARACTER_FACE_OVERRIDE[charId] && CHARACTER_FACE_OVERRIDE[charId][face]) ||
     FACEDESC[face] || FACEDESC.calm;
+}
+
+function faceGeometryFor(charId) {
+  return FACE_GEOMETRY_OVERRIDES[charId] || '';
 }
 
 const DANGER_RE = /(战斗|交火|打仗|作战|枪声|枪口|炮火|炮弹|轰炸|空袭|爆炸|弹片|血战|鲜血|染血|出血|负伤|受伤|重伤|濒死|牺牲|死亡|遗体|尸体|刚死|敌机|追兵|战场|战尘|突围|强渡|激战|夜攀|火线|夺桥|冻伤|血泡|绝壁|battle|combat|gunfire|shell|bombard|air raid|explosion|blood|wound|injur|dying|dead|death|corpse|burned|burn|under fire|assault|cliff|frostbite)/i;
@@ -194,6 +199,7 @@ function basePrompt(charId, state, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    faceGeometryFor(charId),
     ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
@@ -241,6 +247,7 @@ function editBasePrompt(charId, state, face, fromState) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    faceGeometryFor(charId),
     ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
@@ -279,6 +286,7 @@ function expressionPrompt(charId, state, face) {
     : expressionTextFor(charId, state, face);
   return [
     HEAD_STYLE_LOCK,
+    faceGeometryFor(charId),
     ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',
@@ -317,6 +325,7 @@ function expressionMaskPrompt(charId, state, face) {
     : expressionTextFor(charId, state, face);
   return [
     HEAD_STYLE_LOCK,
+    faceGeometryFor(charId),
     ISOLATED_BUST_LOCK,
     danger ? DANGER_TONE_LOCK : '',
     '',
@@ -445,6 +454,7 @@ function identityStatePrompt(charId, state, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    faceGeometryFor(charId),
     ISOLATED_BUST_LOCK,
     crowd ? GROUP_COMPOSITION_LOCK : '',
     danger ? DANGER_TONE_LOCK : '',

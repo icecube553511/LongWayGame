@@ -147,9 +147,9 @@ const LOOK = {
   li_tiezhu: 'forty-year-old cook, weathered round face, dark stubble, cloth apron over the tunic, a bronze cooking pot slung on his back',
   he_xiaomei: 'nineteen-year-old army nurse woman, short bob, white apron over the tunic, red cross armband, wooden medicine box',
   guo_daniang: 'woman in her fifties, blue cotton headscarf, deeply lined face, plain blue homespun jacket',
-  shi_zhu: 'twenty-two-year-old sturdy Jiangxi peasant soldier, round honest face, octagonal cap, carries a red flag',
+  shi_zhu: 'twenty-two-year-old sturdy Jiangxi peasant soldier, broad round honest face, high faceted cheekbones, blunt strong chin, thick straight eyebrows, deep-set steady eyes, octagonal cap, carries a red flag',
   a_yue: 'Miao ethnic girl of sixteen, dark skin, silver head ornaments in a row across the brow, silver neck rings, dark indigo jacket',
-  wu_laoliu: 'thirty-five-year-old veteran squad leader, unshaven, worn faded tunic',
+  wu_laoliu: 'thirty-five-year-old Chinese veteran squad leader, square weathered face, prominent cheekbones, broad jaw, deep-set eyes, thick low brows, old pale scar along one cheek, short black stubble, worn faded tunic',
   san_wa: 'thirteen-year-old boy, small and thin, oversized tunic, octagonal cap',
   soldiers: 'a generic young Red Army soldier, octagonal cap with red star, grey-green tunic',
   villagers: 'a middle-aged Chinese peasant man in a cloth headscarf and dark blue homespun jacket',
@@ -202,6 +202,40 @@ const SPECIAL_FACE = {
 
 const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
 
+/* 这两个角色的旧版脸部明显比衣物更平滑。单独提高面部的多边形密度与转折，
+ * 同时保留吴老六的方脸疤痕、石柱的圆脸宽颌，避免为了“刻面”把身份做丢。 */
+const FACE_GEOMETRY_OVERRIDES = {
+  wu_laoliu: [
+    'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: deliberately exaggerate',
+    'the facial polygon mesh. At least 65 percent of the visible face must be covered',
+    'by 30 or more clearly visible, large triangular and quadrilateral planes; no smooth',
+    'central mask or softly blended cheek is allowed. Build separate hard-edged planes',
+    'for the forehead, brow ridge, eye sockets, nose bridge, two nose wings, nose tip,',
+    'upper lip plane, lower lip plane, cheekbones, cheek hollows, upper jaw and two',
+    'lower-jaw planes. Use broad posterized skin values with strong 20-30 percent steps.',
+    'Keep the old pale scar as one narrow angular strip aligned to a polygon seam.',
+    'Render stubble as several flat charcoal patches, never fine painted hairs. This',
+    'must read first as a faceted low-poly sculpture and only second as a portrait.'
+  ].join('\n'),
+  shi_zhu: [
+    'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: render the broad round',
+    'face like a flat-shaded low-poly strategy-game bust, not a painted portrait.',
+    'Cover at least 70 percent of the visible face with large triangular and',
+    'quadrilateral planes. The forehead must be four separate angled planes, each',
+    'cheek must show at least four adjacent trapezoid planes, the nose must be a',
+    'three-plane wedge with two hard nose-wing facets, and the jaw must split into',
+    'two broad side blocks around a blunt chin. Keep the eyes and mouth simplified',
+    'and faceted. Use strongly posterized skin values with visible 20-30 percent',
+    'light steps; no smooth central mask, airbrushing, fine skin texture or realistic',
+    'portrait shading is allowed. Preserve the youthful honest identity and dark',
+    'straight eyebrows, but the polygon construction must read before the likeness.'
+  ].join('\n')
+};
+
+function faceGeometryFor(id) {
+  return FACE_GEOMETRY_OVERRIDES[id] || '';
+}
+
 function promptFor(id, face) {
   const sp = SPECIAL_SUBJECTS[id];
   const c = ALL[id] || {};
@@ -211,6 +245,7 @@ function promptFor(id, face) {
     STYLE,
     '',
     HEAD_STYLE_LOCK,
+    faceGeometryFor(id),
     CROWD_IDS.has(id) ? GROUP_COMPOSITION_LOCK : '',
     '',
     sp
@@ -238,6 +273,7 @@ function editPromptFor(id, face) {
   const faceText = (SPECIAL_FACE[id] && SPECIAL_FACE[id][face]) || FACEDESC[face] || FACEDESC.calm;
   return [
     HEAD_STYLE_LOCK,
+    faceGeometryFor(id),
     CROWD_IDS.has(id) ? GROUP_COMPOSITION_LOCK : '',
     '',
     'Edit the supplied reference image. This is the same single person and the same character design.',
@@ -379,6 +415,7 @@ module.exports = {
   GROUP_COMPOSITION_LOCK: GROUP_COMPOSITION_LOCK,
   ISOLATED_BUST_LOCK: ISOLATED_BUST_LOCK,
   DANGER_TONE_LOCK: DANGER_TONE_LOCK,
+  FACE_GEOMETRY_OVERRIDES: FACE_GEOMETRY_OVERRIDES,
   FACES: FACES,
   FACEDESC: FACEDESC,
   LOOK: LOOK,
