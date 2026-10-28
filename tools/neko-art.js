@@ -149,7 +149,7 @@ const LOOK = {
   guo_daniang: 'woman in her fifties, blue cotton headscarf, deeply lined face, plain blue homespun jacket',
   shi_zhu: 'twenty-two-year-old sturdy Jiangxi peasant soldier, broad round honest face, high faceted cheekbones, blunt strong chin, thick straight eyebrows, deep-set steady eyes, octagonal cap, carries a red flag',
   a_yue: 'Miao ethnic girl of sixteen, dark skin, silver head ornaments in a row across the brow, silver neck rings, dark indigo jacket',
-  wu_laoliu: 'thirty-five-year-old Chinese veteran squad leader, broad rectangular weathered face with realistic bilateral symmetry, firm cheekbones, full balanced lower face, broad gently squared chin, level deep-set eyes, thick low brows, one thin old pale scar lying flat on one cheek, short black stubble, worn faded tunic',
+  wu_laoliu: 'thirty-five-year-old Chinese veteran squad leader with the canonical face established at commit b1e721c: a long weathered face, angular high cheekbones, straight thick eyebrows, deep-set narrow eyes, a straight strong nose, restrained black moustache and chin stubble, one thin old pale scar lying flat on one cheek, a worn octagonal Red Army cap, and a faded grey-green tunic with a diagonal leather strap',
   san_wa: 'thirteen-year-old boy, small and thin, oversized tunic, octagonal cap',
   soldiers: 'a generic young Red Army soldier, octagonal cap with red star, grey-green tunic',
   villagers: 'a middle-aged Chinese peasant man in a cloth headscarf and dark blue homespun jacket',
@@ -202,21 +202,18 @@ const SPECIAL_FACE = {
 
 const FACES = ['calm', 'stern', 'smile', 'sad', 'worry', 'fierce', 'weak', 'dawn'];
 
-/* 这两个角色需要单独锁脸：吴老六优先保证五官与颊颌连续，
+/* 这两个角色需要单独锁脸：吴老六锁定 b1e721c 的既有长相，
  * 石柱继续保留圆脸宽颌的强刻面效果，避免为了“低多边形”把身份做丢。 */
 const FACE_GEOMETRY_OVERRIDES = {
   wu_laoliu: [
-    'CHARACTER FACE ANATOMY LOCK, HIGHEST PRIORITY: render a coherent 35-year-old man',
-    'with realistic bilateral symmetry and a continuous outer head silhouette.',
-    'The face is broad and roughly rectangular, not diamond-shaped and not triangular.',
-    'The two jaw angles sit at the same height under the ears. The jaw sides descend',
-    'almost vertically and taper only slightly into a broad, gently squared chin whose',
-    'front edge is wide and centered. The lower face keeps full cheek volume on both',
-    'sides. Low-poly facets are interior skin-shading planes only; they must not cut',
-    'notches into the cheek or jaw outline. Keep the eyes level and equal in size, the',
-    'nose centered, and one centered, horizontal mouth with both corners attached.',
-    'Keep the old scar as one short, thin, pale mark lying flat on one cheek. Render',
-    'stubble as restrained flat charcoal patches that follow the existing jaw surface.'
+    'CANONICAL WU LAOLIU IDENTITY LOCK, HIGHEST PRIORITY: preserve the face design',
+    'shown in the b1e721c reference. Keep the same long weathered face, high angular',
+    'cheekbones, straight thick eyebrows, deep-set narrow eyes, straight strong nose,',
+    'restrained black moustache and chin stubble, and the same narrow-to-square jaw.',
+    'Keep the old scar as one short, thin, pale mark lying flat on one cheek. Build the',
+    'face from broad hard-edged polygon planes with crisp boundaries and flat value',
+    'steps, but do not redesign the bone structure, widen the jaw into a new face, or',
+    'smooth the surface into a painted portrait.'
   ].join('\n'),
   shi_zhu: [
     'CHARACTER FACE PLANE LOCK, HIGHEST STYLIZATION PRIORITY: render the broad round',
@@ -235,9 +232,10 @@ const FACE_GEOMETRY_OVERRIDES = {
 
 const FACE_AVOID_OVERRIDES = {
   wu_laoliu: [
-    'asymmetric jaw', 'crooked chin', 'pointed chin', 'narrow V-shaped jaw',
-    'diamond-shaped face', 'triangular lower face', 'warped mouth', 'uneven mouth corners',
-    'extra jaw crease', 'jagged facial silhouette', 'cubist face mask'
+    'different actor', 'redesigned face', 'overly broad rectangular jaw',
+    'different cheekbone structure', 'asymmetric jaw', 'crooked chin',
+    'pointed chin', 'triangular lower face', 'warped mouth', 'uneven mouth corners',
+    'jagged facial silhouette', 'cubist face mask', 'smooth airbrushed skin'
   ].join(', ')
 };
 
